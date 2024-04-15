@@ -30,6 +30,7 @@ import Agent from '../models/Agent';
 import ChatTimer from '../models/ChatTimer';
 import { loadLiveChatHistory } from './controllers/loadLiveChatHistory';
 import { Op } from 'sequelize';
+import { getFlowPage } from './controllers/flowController';
 const app = express();
 app.use(cookieParser());
 // Set up view engine
@@ -58,8 +59,10 @@ app.use(session({
 app.use(flash());
 // Routes
 app.use('/', indexRouter);
+
 app.post('/api/chat-response', chatResponse);
 app.get('/view-documents', adminLogged, viewDocuments);
+app.get('/view-flow-page', getFlowPage);
 app.get('/upload-documents', adminLogged, (req: Request, res: Response) => {
     res.render('upload-documents');
 });
