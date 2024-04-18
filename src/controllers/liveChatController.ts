@@ -27,12 +27,12 @@ try {
         },
         order: [['id', 'DESC']],
     });
-    if(){
+    // if(){
 
-    }
-    else{
+    // }
+    // else{
         
-    }
+    // }
 }
 catch (error) {
     console.error("Error processing question:", error);

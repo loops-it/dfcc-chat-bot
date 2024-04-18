@@ -160,6 +160,18 @@
       padding-top: 5px;
       padding-bottom: 5px;
     }
+    .liveagentBtn{
+      font-family: "Poppins", sans-serif;
+      font-size: 12px;
+      border-radius: 15px;
+      background-color: #000;
+      border: none;
+      color: #fff;
+      width: 100%;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      margin-top: 10px;
+    }
 
     @media screen and (max-width: 600px) {
       .background {
@@ -232,16 +244,19 @@
     .loading {
       animation: fadeIn 0.5s ease-in-out infinite alternate, visible 0.5s ease-in-out infinite alternate;
     }
-    .typingmsg-wrapper{
+
+    .typingmsg-wrapper {
       background-color: #fff;
       color: #000;
     }
-    .typing-msg{
+
+    .typing-msg {
       color: #000;
       font-size: 25px;
       padding: 5px !important;
     }
-    .error-message{
+
+    .error-message {
       background-color: #ec1e289c;
       color: #fff;
       padding: 10px;
@@ -355,6 +370,15 @@
           return `<li style="margin-bottom: 10px !important;">${item}</li>`;
         }).join('');
         messageDiv.innerHTML = `<div><ul style="list-style: none; padding: 0px !important">${listItems}</ul></div>`;
+      } else {
+        messageDiv.innerHTML = `<div>${content}</div>`;
+      }
+      if (content.includes("I'm sorry.. no information documents found for data retrieval.")) {
+        messageDiv.innerHTML = `
+        <button id="retryButton" class="liveagentBtn">Chat with live agent</button>
+      <div>${content}</div>
+      
+    `;
       } else {
         messageDiv.innerHTML = `<div>${content}</div>`;
       }
