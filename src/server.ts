@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import indexRouter from './routes/index';
 import { chatResponse } from './controllers/chatController';
+import { liveChat } from './controllers/liveChatController';
 import "dotenv/config";
 import bodyParser from 'body-parser';
 import { viewDocuments } from './controllers/viewDocumentsController';
@@ -61,6 +62,7 @@ app.use(flash());
 app.use('/', indexRouter);
 
 app.post('/api/chat-response', chatResponse);
+app.post('/live-chat-agent', liveChat);
 app.get('/view-documents', adminLogged, viewDocuments);
 app.get('/view-flow-page', getFlowPage);
 app.get('/upload-documents', adminLogged, (req: Request, res: Response) => {
