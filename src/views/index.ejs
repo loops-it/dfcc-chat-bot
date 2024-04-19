@@ -160,7 +160,8 @@
       padding-top: 5px;
       padding-bottom: 5px;
     }
-    .liveagentBtn{
+
+    .liveagentBtn {
       font-family: "Poppins", sans-serif;
       font-size: 12px;
       border-radius: 15px;
@@ -365,7 +366,7 @@
       const isList = listRegex.test(content);
 
       // If it's a list, format it as an unordered list
-      if (isList) {
+      /*if (isList) {
         const listItems = content.split('\n').map(item => {
           return `<li style="margin-bottom: 10px !important;">${item}</li>`;
         }).join('');
@@ -379,6 +380,20 @@
       <div>${content}</div>
       
     `;
+      } else {
+        messageDiv.innerHTML = `<div>${content}</div>`;
+      }
+      messageDiv.prepend(image);
+
+      responseDiv.appendChild(messageDiv);
+      // Scroll down to the latest message
+      responseDiv.scrollTop = responseDiv.scrollHeight;*/
+       // If it's a list, format it as an unordered list
+       if (isList) {
+        const listItems = content.split('\n').map(item => {
+          return `<li style="margin-bottom: 10px !important;">${item}</li>`;
+        }).join('');
+        messageDiv.innerHTML = `<div><ul style="list-style: none; padding: 0px !important">${listItems}</ul></div>`;
       } else {
         messageDiv.innerHTML = `<div>${content}</div>`;
       }
