@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import indexRouter from './routes/index';
 import { chatResponse } from './controllers/chatController';
-import { liveChat,saveRating, switchToAgent,chatUserClose,chatTimeOut } from './controllers/liveChatController';
+import { liveChat } from './controllers/liveChatController';
 import "dotenv/config";
 import bodyParser from 'body-parser';
 import { viewDocuments } from './controllers/viewDocumentsController';
@@ -63,10 +63,6 @@ app.use('/', indexRouter);
 
 app.post('/api/chat-response', chatResponse);
 app.post('/live-chat-agent', liveChat);
-app.post('/save-rating', saveRating);
-app.post('/switch-to-live-agent', switchToAgent);
-app.post('/chat-close-by-user', chatUserClose);
-app.post('/chat-timeout', chatTimeOut);
 app.get('/view-documents', adminLogged, viewDocuments);
 app.get('/view-flow-page', getFlowPage);
 app.get('/upload-documents', adminLogged, (req: Request, res: Response) => {
@@ -309,6 +305,55 @@ app.get('/webhook', (req, res) => {
     }
   }
 });
+
+app.post('/webhook', (req, res) => {
+  const body = req.body;
+  if (body.object === 'page') {
+    body.entry.forEach((entry: any) => {
+      const webhookEvent = entry.messaging[0];
+      console.log(webhookEvent);
+      // Your business logic goes here
+      handleMessage(webhookEvent);
+    });
+    res.status(200).send('EVENT_RECEIVED');
+  } else {
+    res.sendStatus(404);
+  }
+});
+
+const handleMessage = (event: any) => {
+  const senderId = event.sender.id;
+  const message = event.message;
+
+  if (message && message.text) {
+    const response = {
+      text: `You sent the message: "${message.text}". Now, how can I help you?`,
+    };
+    sendMessage(senderId, response);
+  }
+};
+
+const sendMessage = async (recipientId: string, message: any) => {
+  const requestBody = {
+    recipient: {
+      id: recipientId,
+    },
+    message: message,
+  };
+
+  try {
+    const response = await fetch(`https://graph.facebook.com/v13.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+    console.log('Message sent:', response);
+  } catch (error) {
+    console.error('Unable to send message:', error);
+  }
+};
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
