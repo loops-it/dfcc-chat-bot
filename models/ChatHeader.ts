@@ -9,6 +9,7 @@ class ChatHeader extends Model {
   public rating!: string;
   public feedback!: string;
   public status!: string;
+  public is_time_out!: string;
 }
 
 ChatHeader.init(
@@ -39,6 +40,10 @@ ChatHeader.init(
         allowNull: false,
       },
     status: {
+        type: new DataTypes.STRING(),
+        allowNull: false,
+      },
+    is_time_out: {
         type: new DataTypes.STRING(),
         allowNull: false,
       },
