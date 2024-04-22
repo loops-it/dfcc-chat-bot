@@ -289,6 +289,22 @@ app.post("/refresh-live-chat-inner",refreshLiveChatInner)
 
 
 
+app.get('/webhook', (req, res) => {
+  const VERIFY_TOKEN = "dfcc123";
+
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+  console.log(req.query);
+  if (mode && token) {
+    if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+      console.log('WEBHOOK_VERIFIED');
+      res.status(200).send(challenge);
+    } else {
+      res.sendStatus(403);
+    }
+  }
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
