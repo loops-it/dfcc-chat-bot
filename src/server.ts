@@ -294,7 +294,7 @@ app.post("/refresh-live-chat-inner",refreshLiveChatInner)
 
 
 app.get('/webhook', (req, res) => {
-  const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+  const VERIFY_TOKEN = "dfcc123";
 
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
