@@ -32,6 +32,7 @@
     "@types/mysql": "^2.15.26",
     "@types/pdf-parse": "^1.1.4",
     "@types/sequelize": "^4.28.20",
+    "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",

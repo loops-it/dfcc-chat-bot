@@ -1,5 +1,6 @@
 // src/server.ts
 import express, { Request, Response } from 'express';
+import axios from 'axios';
 import path from 'path';
 import indexRouter from './routes/index';
 import { chatResponse } from './controllers/chatController';
@@ -326,8 +327,8 @@ const handleMessage = (message_body: any) => {
   console.log("handleMessage body",message_body)
   const senderId = message_body.sender.id;
   const message = message_body.message.text;
-  console.log("senderId",senderId)
-  console.log("message",message)
+  // console.log("senderId",senderId)
+  // console.log("message",message)
 
   const reply = `You sent the message: "${message}". Now, how can I help you?`;
 
@@ -336,7 +337,11 @@ const handleMessage = (message_body: any) => {
 };
 
 const sendMessage = async (recipientId: string, reply: any) => {
-  const requestBody = {
+
+  console.log("recipientId",recipientId)
+  console.log("reply",reply)
+
+  const data = {
     recipient: {
       id: recipientId,
     },
@@ -347,14 +352,19 @@ const sendMessage = async (recipientId: string, reply: any) => {
   };
 
   try {
-    const response = await fetch(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, {
-      method: "POST",
+    // const response = await fetch(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(requestBody),
+    // });
+    const response = await axios.post(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, data, {
       headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
+        'Content-Type': 'application/json'
+      }
     });
-    console.log('Message sent:', response);
+    console.log(response.data);
   } catch (error) {
     console.error('Unable to send message:', error);
   }
