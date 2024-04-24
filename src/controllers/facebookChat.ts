@@ -59,51 +59,51 @@ const handleMessage = async (message_body: any) => {
     const senderId = message_body.sender.id;
     const userQuestion = message_body.message.text;
 
-    console.log("userQuestion",userQuestion)
+    console.log("userQuestion", userQuestion)
 
-    const embedding = await openai.embeddings.create({
-        model: "text-embedding-ada-002",
-        input: userQuestion,
-    });
-
-    console.log("embedding", embedding.data[0].embedding);
-
-    const queryResponse = await namespace.query({
-        vector: embedding.data[0].embedding,
-        topK: kValue,
-        includeMetadata: true,
-    });
-    console.log("queryResponse", queryResponse);
-
-    const results: string[] = [];
-
-    queryResponse.matches.forEach(match => {
-        if (match.metadata && typeof match.metadata.Title === 'string') {
-            const result = `Title: ${match.metadata.Title}, \n Content: ${match.metadata.Text} \n \n `;
-            results.push(result);
-        }
-    });
-
-    let context = results.join('\n');
-    
-    console.log("context", context);
-    
-    const gptPrompt = `You are a helpful assistant and you are friendly. Your name is DFCC GPT. 
-    Answer user question Only based on given Context: ${context}, your answer must be less than 150 words. 
-    If the user asks for information like your email or address, you'll provide DFCC email and address. 
-    If answer has list give it as numberd list. If it has math question relevent to given Context give calculated answer, 
-    If user question is not relevent to the Context just say "I'm sorry.. no information documents found for data retrieval.". 
-    Do NOT make up any answers and questions not relevant to the context using public information.`;
-
-    // const completion = await openai.chat.completions.create({
-    //     model: "gpt-3.5-turbo",
-    //     messages: "asd",
-    //     max_tokens: 180,
-    //     temperature: 0
+    // const embedding = await openai.embeddings.create({
+    //     model: "text-embedding-ada-002",
+    //     input: userQuestion,
     // });
+
+    // console.log("embedding", embedding.data[0].embedding);
+
+//     const queryResponse = await namespace.query({
+//         vector: embedding.data[0].embedding,
+//         topK: kValue,
+//         includeMetadata: true,
+//     });
+//     console.log("queryResponse", queryResponse);
+
+//     const results: string[] = [];
+
+//     queryResponse.matches.forEach(match => {
+//         if (match.metadata && typeof match.metadata.Title === 'string') {
+//             const result = `Title: ${match.metadata.Title}, \n Content: ${match.metadata.Text} \n \n `;
+//             results.push(result);
+//         }
+//     });
+
+//     let context = results.join('\n');
+
+//     console.log("context", context);
+    
+//     const gptPrompt = `You are a helpful assistant and you are friendly. Your name is DFCC GPT. 
+//     Answer user question Only based on given Context: ${context}, your answer must be less than 150 words. 
+//     If the user asks for information like your email or address, you'll provide DFCC email and address. 
+//     If answer has list give it as numberd list. If it has math question relevent to given Context give calculated answer, 
+//     If user question is not relevent to the Context just say "I'm sorry.. no information documents found for data retrieval.". 
+//     Do NOT make up any answers and questions not relevant to the context using public information.`;
+
+//     // const completion = await openai.chat.completions.create({
+//     //     model: "gpt-3.5-turbo",
+//     //     messages: "asd",
+//     //     max_tokens: 180,
+//     //     temperature: 0
+//     // });
     const completion = await openai.completions.create({
         model: "gpt-3.5-turbo",
-        prompt: gptPrompt,
+        prompt: userQuestion,
         max_tokens: 180,
         temperature: 0
     });
@@ -111,7 +111,7 @@ const handleMessage = async (message_body: any) => {
     let reply: string | null = completion.choices[0].text;
   
     console.log("completion", completion.choices[0].text);
-   sendMessage(senderId, reply);
+//    sendMessage(senderId, reply);
   
   };
 
