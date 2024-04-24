@@ -55,13 +55,15 @@ export const facebookChat = async (req: Request, res: Response) => {
 };
 
 const handleMessage = async (message_body: any) => {
-    console.log("handleMessage body",message_body)
+    console.log("handleMessage body",message_body);
     const senderId = message_body.sender.id;
     const userQuestion = message_body.message.text;
 
+    console.log("userQuestion",userQuestion)
+
     const embedding = await openai.embeddings.create({
         model: "text-embedding-ada-002",
-        input: "what is aloka account",
+        input: userQuestion,
     });
 
     console.log("embedding", embedding.data[0].embedding);
@@ -83,6 +85,7 @@ const handleMessage = async (message_body: any) => {
     });
 
     let context = results.join('\n');
+    
     console.log("context", context);
     
     const gptPrompt = `You are a helpful assistant and you are friendly. Your name is DFCC GPT. 
