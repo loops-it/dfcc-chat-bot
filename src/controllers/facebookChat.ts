@@ -36,10 +36,10 @@ export const facebookChat = async (req: Request, res: Response) => {
 
     try {
         if (body.object === 'page') {
-            body.entry.forEach((entry: any) => {
+            body.entry.forEach(async (entry: any) => {
             const message_body = entry.messaging[0];
             //console.log("messages",entry.messaging);
-            handleMessage(message_body);
+            await handleMessage(message_body);
             });
             res.status(200).send('EVENT_RECEIVED');
         } else {
@@ -80,8 +80,10 @@ const handleMessage = async (message_body: any) => {
             results.push(result);
         }
     });
+
     let context = results.join('\n');
     console.log("context", context);
+    
     const gptPrompt = `You are a helpful assistant and you are friendly. Your name is DFCC GPT. 
     Answer user question Only based on given Context: ${context}, your answer must be less than 150 words. 
     If the user asks for information like your email or address, you'll provide DFCC email and address. 
