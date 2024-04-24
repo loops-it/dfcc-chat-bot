@@ -310,12 +310,12 @@ app.post('/webhook', (req, res) => {
   const body = req.body;
   console.log("message body",body)
   if (body.object === 'page') {
-    // body.entry.forEach((entry: any) => {
-    //   const webhookEvent = entry.messaging[0];
-    //   console.log(webhookEvent);
-    //   // Your business logic goes here
-    //   handleMessage(webhookEvent);
-    // });
+    body.entry.forEach((entry: any) => {
+      const webhookEvent = entry.messaging[0];
+      console.log("messaging",entry.messaging);
+      // Your business logic goes here
+      handleMessage(webhookEvent);
+    });
     handleMessage(body)
     res.status(200).send('EVENT_RECEIVED');
   } else {
