@@ -329,20 +329,21 @@ const handleMessage = (message_body: any) => {
   console.log("senderId",senderId)
   console.log("message",message)
 
-  const response = {
-      text: `You sent the message: "${message}". Now, how can I help you?`,
-  };
+  const reply = `You sent the message: "${message}". Now, how can I help you?`;
 
-  // sendMessage(senderId, response);
+ sendMessage(senderId, reply);
 
 };
 
-const sendMessage = async (recipientId: string, message: any) => {
+const sendMessage = async (recipientId: string, reply: any) => {
   const requestBody = {
     recipient: {
       id: recipientId,
     },
-    message: message,
+    messaging_type: "RESPONSE",
+    message: {
+      text: reply,
+    },
   };
 
   try {
