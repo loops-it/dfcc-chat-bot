@@ -21,13 +21,16 @@ interface ChatEntry {
     content: string;
 }
 
+const index = pc.index("dfccchatbot");
+const namespace = index.namespace('pinecone-gpt-test')
+let kValue = 2
+
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
 
 export const facebookChat = async (req: Request, res: Response) => {
 
     
-    const index = pc.index("dfccchatbot");
-    const namespace = index.namespace('pinecone-gpt-test')
+
   
     const body = req.body;
 
@@ -51,14 +54,53 @@ export const facebookChat = async (req: Request, res: Response) => {
 
 };
 
-const handleMessage = (message_body: any) => {
+const handleMessage = async (message_body: any) => {
     console.log("handleMessage body",message_body)
     const senderId = message_body.sender.id;
-    const message = message_body.message.text;
+    let userQuestion = message_body.message.text;
 
+    const embedding = await openai.embeddings.create({
+        model: "text-embedding-ada-002",
+        input: userQuestion,
+    });
 
+    const queryResponse = await namespace.query({
+        vector: embedding.data[0].embedding,
+        topK: kValue,
+        includeMetadata: true,
+    });
 
-    const reply = `You sent the message: "${message}". Now, how can I help you?`;
+    const results: string[] = [];
+
+    queryResponse.matches.forEach(match => {
+        if (match.metadata && typeof match.metadata.Title === 'string') {
+            const result = `Title: ${match.metadata.Title}, \n Content: ${match.metadata.Text} \n \n `;
+            results.push(result);
+        }
+    });
+    let context = results.join('\n');
+
+    const gptPrompt = `You are a helpful assistant and you are friendly. Your name is DFCC GPT. 
+    Answer user question Only based on given Context: ${context}, your answer must be less than 150 words. 
+    If the user asks for information like your email or address, you'll provide DFCC email and address. 
+    If answer has list give it as numberd list. If it has math question relevent to given Context give calculated answer, 
+    If user question is not relevent to the Context just say "I'm sorry.. no information documents found for data retrieval.". 
+    Do NOT make up any answers and questions not relevant to the context using public information.`;
+
+    // const completion = await openai.chat.completions.create({
+    //     model: "gpt-3.5-turbo",
+    //     messages: "asd",
+    //     max_tokens: 180,
+    //     temperature: 0
+    // });
+    const completion = await openai.completions.create({
+        model: "gpt-3.5-turbo",
+        prompt: gptPrompt,
+        max_tokens: 180,
+        temperature: 0
+    });
+
+    let reply: string | null = completion.choices[0].text;
   
    sendMessage(senderId, reply);
   
