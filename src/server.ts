@@ -324,6 +324,7 @@ app.post('/webhook', (req, res) => {
 });
 
 const handleMessage = (body: any) => {
+  console.log("handleMessage body",body)
   const senderId = body.sender.id;
   const message = body.message.text;
   console.log("senderId",senderId)
@@ -332,7 +333,7 @@ const handleMessage = (body: any) => {
   const response = {
       text: `You sent the message: "${message.text}". Now, how can I help you?`,
   };
-  
+
   sendMessage(senderId, response);
 
 };
