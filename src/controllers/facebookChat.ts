@@ -61,6 +61,15 @@ const handleMessage = async (message_body: any) => {
 
     console.log("userQuestion", userQuestion)
 
+    const completion = await openai.completions.create({
+        model: "gpt-3.5-turbo",
+        prompt: userQuestion,
+        max_tokens: 180,
+        temperature: 0
+    });
+
+    console.log("completion", completion);
+
     // const embedding = await openai.embeddings.create({
     //     model: "text-embedding-ada-002",
     //     input: userQuestion,
@@ -101,16 +110,16 @@ const handleMessage = async (message_body: any) => {
 //     //     max_tokens: 180,
 //     //     temperature: 0
 //     // });
-    const completion = await openai.completions.create({
-        model: "gpt-3.5-turbo",
-        prompt: userQuestion,
-        max_tokens: 180,
-        temperature: 0
-    });
+//     const completion = await openai.completions.create({
+//         model: "gpt-3.5-turbo",
+//         prompt: gptPrompt,
+//         max_tokens: 180,
+//         temperature: 0
+//     });
 
-    let reply: string | null = completion.choices[0].text;
+//     let reply: string | null = completion.choices[0].text;
   
-    console.log("completion", completion.choices[0].text);
+//     console.log("completion", completion.choices[0].text);
 //    sendMessage(senderId, reply);
   
   };
