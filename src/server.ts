@@ -308,31 +308,30 @@ app.get('/webhook', (req, res) => {
 
 app.post('/webhook', (req, res) => {
   const body = req.body;
-  console.log("message body",body)
+  //console.log("message body",body)
   if (body.object === 'page') {
     body.entry.forEach((entry: any) => {
-      const webhookEvent = entry.messaging[0];
-      console.log("messaging",entry.messaging);
+      const message_body = entry.messaging[0];
+      console.log("messages",entry.messaging);
       // Your business logic goes here
-      handleMessage(webhookEvent);
+      handleMessage(message_body);
     });
-    handleMessage(body)
     res.status(200).send('EVENT_RECEIVED');
   } else {
     res.sendStatus(404);
   }
 });
 
-const handleMessage = (body: any) => {
-  console.log("handleMessage body",body)
-  // const senderId = body.sender.id;
-  // const message = body.message.text;
-  // console.log("senderId",senderId)
-  // console.log("message",message)
+const handleMessage = (message_body: any) => {
+  console.log("handleMessage body",message_body)
+  const senderId = message_body.sender.id;
+  const message = message_body.message.text;
+  console.log("senderId",senderId)
+  console.log("message",message)
 
-  // const response = {
-  //     text: `You sent the message: "${message.text}". Now, how can I help you?`,
-  // };
+  const response = {
+      text: `You sent the message: "${message}". Now, how can I help you?`,
+  };
 
   // sendMessage(senderId, response);
 
