@@ -79,7 +79,9 @@ const handleMessage = async (message_body: any) => {
         }
     });
     let context = results.join('\n');
-
+    console.log("context", context
+        
+    );
     const gptPrompt = `You are a helpful assistant and you are friendly. Your name is DFCC GPT. 
     Answer user question Only based on given Context: ${context}, your answer must be less than 150 words. 
     If the user asks for information like your email or address, you'll provide DFCC email and address. 
@@ -102,6 +104,7 @@ const handleMessage = async (message_body: any) => {
 
     let reply: string | null = completion.choices[0].text;
   
+    console.log("completion", completion.choices[0].text);
    sendMessage(senderId, reply);
   
   };
