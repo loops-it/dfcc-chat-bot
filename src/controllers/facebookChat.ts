@@ -2,11 +2,11 @@ import OpenAI from "openai";
 import { Pinecone } from '@pinecone-database/pinecone'
 import axios from 'axios';
 import "dotenv/config";
-import { Request as ExpressRequest, Response } from 'express';
+import { Request as ExpressRequest } from 'express';
 import File from '../../models/File';
 import BotChats from '../../models/BotChats';
 import {Translate} from '@google-cloud/translate/build/src/v2';
-
+import { Request, Response } from 'express';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 if (!process.env.PINECONE_API_KEY || typeof process.env.PINECONE_API_KEY !== 'string') {
     throw new Error('Pinecone API key is not defined or is not a string.');
@@ -23,7 +23,7 @@ interface ChatEntry {
 
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
 
-export const facebookChat = async (req: RequestWithChatId, res: Response) => {
+export const facebookChat = async (req: Request, res: Response) => {
 
     
     const index = pc.index("dfccchatbot");
@@ -56,7 +56,7 @@ const handleMessage = (message_body: any) => {
     const senderId = message_body.sender.id;
     const message = message_body.message.text;
 
-    
+
 
     const reply = `You sent the message: "${message}". Now, how can I help you?`;
   
