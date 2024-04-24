@@ -57,11 +57,11 @@ export const facebookChat = async (req: Request, res: Response) => {
 const handleMessage = async (message_body: any) => {
     console.log("handleMessage body",message_body)
     const senderId = message_body.sender.id;
-    let userQuestion = message_body.message.text;
+    const userQuestion = message_body.message.text;
 
     const embedding = await openai.embeddings.create({
         model: "text-embedding-ada-002",
-        input: userQuestion,
+        input: "what is aloka account",
     });
 
     console.log("embedding", embedding.data[0].embedding);
@@ -71,6 +71,7 @@ const handleMessage = async (message_body: any) => {
         topK: kValue,
         includeMetadata: true,
     });
+    console.log("queryResponse", queryResponse);
 
     const results: string[] = [];
 
@@ -115,7 +116,8 @@ const sendMessage = async (recipientId: string, reply: any) => {
 
     // console.log("recipientId",recipientId)
     // console.log("reply",reply)
-  
+  console.log("sendMessage",123)
+
     const data = {
       recipient: {
         id: recipientId,
