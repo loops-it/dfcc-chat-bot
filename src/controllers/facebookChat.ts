@@ -37,13 +37,23 @@ const handleMessage = async (message_body: any) => {
   console.log("userQuestion", userQuestion)
 
   const completion = await openai.completions.create({
-      model: "gpt-3.5-turbo",
-      prompt: 'tell me a joke',
-      max_tokens: 180,
-      temperature: 0
+    model: "gpt-3.5-turbo",
+    prompt: 'tell me a joke',
+    max_tokens: 180,
+    temperature: 0
   });
 
   console.log("completion", completion);
+
+  const completionA = await openai.chat.completions.create({
+    messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      { role: "user", content: "tell me a joke" }
+    ],
+    model: "gpt-3.5-turbo",
+  });
+
+  console.log(completionA.choices[0]);
 
   // const embedding = await openai.embeddings.create({
   //     model: "text-embedding-ada-002",
