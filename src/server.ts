@@ -5,6 +5,7 @@ import path from 'path';
 import indexRouter from './routes/index';
 import { chatResponse } from './controllers/chatController';
 import { liveChat } from './controllers/liveChatController';
+import { facebookChat } from './controllers/facebookChat';
 import "dotenv/config";
 import bodyParser from 'body-parser';
 import { viewDocuments } from './controllers/viewDocumentsController';
@@ -306,69 +307,63 @@ app.get('/webhook', (req, res) => {
     }
   }
 });
+app.post("/webhook",facebookChat)
 
-app.post('/webhook', (req, res) => {
-  const body = req.body;
-  //console.log("message body",body)
-  if (body.object === 'page') {
-    body.entry.forEach((entry: any) => {
-      const message_body = entry.messaging[0];
-      console.log("messages",entry.messaging);
-      // Your business logic goes here
-      handleMessage(message_body);
-    });
-    res.status(200).send('EVENT_RECEIVED');
-  } else {
-    res.sendStatus(404);
-  }
-});
+// app.post('/webhook', (req, res) => {
+//   const body = req.body;
+//   //console.log("message body",body)
+//   if (body.object === 'page') {
+//     body.entry.forEach((entry: any) => {
+//       const message_body = entry.messaging[0];
+//       console.log("messages",entry.messaging);
+//       // Your business logic goes here
+//       handleMessage(message_body);
+//     });
+//     res.status(200).send('EVENT_RECEIVED');
+//   } else {
+//     res.sendStatus(404);
+//   }
+// });
 
-const handleMessage = (message_body: any) => {
-  console.log("handleMessage body",message_body)
-  const senderId = message_body.sender.id;
-  const message = message_body.message.text;
-  // console.log("senderId",senderId)
-  // console.log("message",message)
+// const handleMessage = (message_body: any) => {
+//   console.log("handleMessage body",message_body)
+//   const senderId = message_body.sender.id;
+//   const message = message_body.message.text;
+//   // console.log("senderId",senderId)
+//   // console.log("message",message)
 
-  const reply = `You sent the message: "${message}". Now, how can I help you?`;
+//   const reply = `You sent the message: "${message}". Now, how can I help you?`;
 
- sendMessage(senderId, reply);
+//  sendMessage(senderId, reply);
 
-};
+// };
 
-const sendMessage = async (recipientId: string, reply: any) => {
+// const sendMessage = async (recipientId: string, reply: any) => {
 
-  console.log("recipientId",recipientId)
-  console.log("reply",reply)
+//   console.log("recipientId",recipientId)
+//   console.log("reply",reply)
 
-  const data = {
-    recipient: {
-      id: recipientId,
-    },
-    messaging_type: "RESPONSE",
-    message: {
-      text: reply,
-    },
-  };
+//   const data = {
+//     recipient: {
+//       id: recipientId,
+//     },
+//     messaging_type: "RESPONSE",
+//     message: {
+//       text: reply,
+//     },
+//   };
 
-  try {
-    // const response = await fetch(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(requestBody),
-    // });
-    const response = await axios.post(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, data, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    console.log(response.data);
-  } catch (error) {
-    console.error('Unable to send message:', error);
-  }
-};
+//   try {
+//     const response = await axios.post(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, data, {
+//       headers: {
+//         'Content-Type': 'application/json'
+//       }
+//     });
+//     console.log(response.data);
+//   } catch (error) {
+//     console.error('Unable to send message:', error);
+//   }
+// };
 
 
 const PORT = process.env.PORT || 3001;
