@@ -252,7 +252,7 @@ Standalone question:`
               } catch (error) {
                 console.error('Unable to send message:', error);
             }
-            //res.json({ answer: translatedResponse, chatHistory: chatHistory, chatId: userChatId });
+            res.json({ status: "success", });
         // }
 
         
