@@ -6,6 +6,7 @@ import indexRouter from './routes/index';
 import { chatResponse } from './controllers/chatController';
 import { liveChat } from './controllers/liveChatController';
 import { facebookChat } from './controllers/facebookChat';
+import { chatControllerFacebook } from './controllers/chatControllerFacebook';
 import "dotenv/config";
 import bodyParser from 'body-parser';
 import { viewDocuments } from './controllers/viewDocumentsController';
@@ -307,7 +308,7 @@ app.get('/webhook', (req, res) => {
     }
   }
 });
-app.post("/webhook",facebookChat)
+app.post("/webhook",chatControllerFacebook)
 
 // app.post('/webhook', (req, res) => {
 //   const body = req.body;
