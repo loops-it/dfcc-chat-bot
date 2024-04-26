@@ -31,6 +31,7 @@ import { LiveChatHistoryOnload,LiveChatHistoryMessages,LiveChatHistoryRefresh,Li
 import Admin from '../models/Admin';
 import User from '../models/User';
 import BotChats from '../models/BotChats';
+import Sector from '../models/Sector';
 import Agent from '../models/Agent';
 import ChatTimer from '../models/ChatTimer';
 import { loadLiveChatHistory } from './controllers/loadLiveChatHistory';
@@ -212,6 +213,12 @@ app.get('/add-sector',adminLogged, (req: Request, res: Response) => {
   res.render('add-sector', {successMessage: successMessage,errorMessage: errorMessage});
 });
 app.post('/add-sector', sectorAdd);
+
+app.get('/manage-sectors',adminLogged, async (req: Request, res: Response) => {
+  const sectors = await Sector.findAll({});
+  res.render('manage-sectors', {sectors: sectors});
+});
+
 app.get('/add-agent',adminLogged, (req: Request, res: Response) => {
     const successMessage = req.flash('success')[0];
     const errorMessage = req.flash('error')[0];
@@ -219,6 +226,9 @@ app.get('/add-agent',adminLogged, (req: Request, res: Response) => {
 });
 app.post('/agent-add', agentCreateAccount);
 app.get('/manage-agents',adminLogged, async (req: Request, res: Response) => {
+  const agents = await Agent.findAll({});
+  res.render('manage-agents', {agents: agents});
+});
   app.get('/deactivate-agent/:id', adminLogged, async (req: Request, res: Response) => {
     let user_id = req.params.id;
     await Agent.update(
@@ -263,9 +273,7 @@ app.get('/edit-agent', adminLogged, async (req: Request, res: Response) => {
 });
   res.render('edit-agent', {agent_details: agent_details,login_details: login_details,languages: languages});
 });
-  const agents = await Agent.findAll({});
-  res.render('manage-agents', {agents: agents});
-});
+
 
 app.post('/agent-update', agentUpdateAccount);
 app.post('/agent-update-with-password', agentUpdateWithPassword);
