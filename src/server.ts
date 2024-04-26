@@ -23,6 +23,7 @@ import flash from "express-flash";
 import cookieParser from 'cookie-parser';
 import ChatHeader from '../models/ChatHeader';
 import AgentLanguages from '../models/AgentLanguages';
+import { sectorAdd } from './controllers/sectors';
 import { adminAccountCreate,adminUpdate,matchPassword,adminUpdateWithPassword } from './controllers/adminAccount';
 import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword } from './controllers/AgentAccount';
 import { botChatsOnload,botChatsGetMessages,botChatsRefresh,botChatsRefreshMessage} from './controllers/botChats';
@@ -205,6 +206,12 @@ app.get('/view-agent-feedbacks', adminLogged, async (req: Request, res: Response
       });
     res.render('view-agent-feedbacks', { agent: agent, chats: chats });
 });
+app.get('/add-sector',adminLogged, (req: Request, res: Response) => {
+  const successMessage = req.flash('success')[0];
+  const errorMessage = req.flash('error')[0];
+  res.render('add-sector', {successMessage: successMessage,errorMessage: errorMessage});
+});
+app.post('/add-sector', sectorAdd);
 app.get('/add-agent',adminLogged, (req: Request, res: Response) => {
     const successMessage = req.flash('success')[0];
     const errorMessage = req.flash('error')[0];
