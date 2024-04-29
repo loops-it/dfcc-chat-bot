@@ -232,7 +232,7 @@ Standalone question:`
                 { 
                 sender_id: message_body.sender.id,
                 message_sent_by: 'assistant',
-                message: translatedQuestion,
+                message: botResponse,
                 },
             );
 
