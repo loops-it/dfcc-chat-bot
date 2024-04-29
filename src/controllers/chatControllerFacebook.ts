@@ -93,7 +93,7 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
         await FacebookChats.create(
             { 
             sender_id: message_body.sender.id,
-            message_sent_by: 'customer',
+            message_sent_by: 'user',
             message: translatedQuestion,
             },
         );
