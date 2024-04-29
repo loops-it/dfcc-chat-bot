@@ -7,6 +7,7 @@ class User extends Model {
   public password!: string;
   public user_role!: number;
   public status!: string;
+  public online_status!: string;
 }
 
 User.init(
@@ -31,6 +32,10 @@ User.init(
     status: {
       type: new DataTypes.STRING(),
       allowNull: false,
+    },
+    online_status: {
+      type: new DataTypes.STRING(),
+      allowNull: true,
     },
   },
   {

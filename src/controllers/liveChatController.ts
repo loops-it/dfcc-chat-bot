@@ -8,47 +8,67 @@ import AgentLanguages from '../../models/AgentLanguages';
 import ChatTimer from '../../models/ChatTimer';
 import Agent from '../../models/Agent';
 import BotChats from '../../models/BotChats';
+import OfflineFormSubmissions from '../../models/OfflineFormSubmissions';
+import Sector from '../../models/Sector';
+import * as nodemailer from 'nodemailer';
+
 interface UserDecodedToken extends JwtPayload {
   id: string;
   
 }
+
+var transport = nodemailer.createTransport({
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+      user: "2bf02341e7caef",
+      pass: "4ad3976e23311c"
+    }
+  });
+
 export const switchToAgent = async (req: Request, res: Response, next: NextFunction) => {
     const {chatId} = req.body
     try {
-        const chat_main = await BotChats.findOne({
-            where: {
-              message_id: chatId
+        const onlineUser = await User.findOne({ where: { online_status: 'online',status: 'active',user_role: 2 } });
+        if(onlineUser){
+            const chat_main = await BotChats.findOne({
+                where: {
+                  message_id: chatId
+                }
+            });
+            const chats = await BotChats.findAll({
+                where: {
+                  message_id: chatId
+                },
+                order: [['id', 'ASC']]
+            });
+            if(chat_main){
+                await ChatHeader.create({
+                message_id: chatId,
+                language: chat_main.language,
+                status: "live",
+                agent: "unassigned",
+            });
             }
-        });
-        const chats = await BotChats.findAll({
-            where: {
-              message_id: chatId
-            },
-            order: [['id', 'ASC']]
-        });
-        if(chat_main){
-            await ChatHeader.create({
-            message_id: chatId,
-            language: chat_main.language,
-            status: "live",
-            agent: "unassigned",
-        });
-        }
-        for (var c = 0; c < chats.length; c++) {
-
-            await LiveChat.create({
-              message_id: chatId,
-              sent_by: chats[c].message_sent_by,
-              message: chats[c].message,
-      
+            for (var c = 0; c < chats.length; c++) {
+    
+                await LiveChat.create({
+                  message_id: chatId,
+                  sent_by: chats[c].message_sent_by,
+                  message: chats[c].message,
+          
+                })
+            }
+            await BotChats.destroy({
+                where: {
+                  message_id: chatId
+                }
             })
+            res.json({ status: "success" }) 
         }
-        await BotChats.destroy({
-            where: {
-              message_id: chatId
-            }
-        })
-        res.json({ status: "success" }) 
+       else{
+        res.json({ status: "fail"}) 
+       }
     }
     catch (error) {
         console.error("Error processing question:", error);
@@ -172,3 +192,49 @@ export const chatTimeOut = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
+export const offlineFormSubmissions = async (req: Request, res: Response, next: NextFunction) => {
+    const {chatId, name, email, subject, message} = req.body
+    try {
+        const is_form_exist = await OfflineFormSubmissions.findOne({ where: { chatId: 1 } });
+        if(is_form_exist){
+            res.json({ status: "fail",message: "You have already submitted this form." })
+        }
+        else{
+            await OfflineFormSubmissions.create({
+                chatId: 1,
+                name: "test",
+                email: "test",
+                subject: "test",
+                message: "test",
+            })
+            const sector = await Sector.findOne({ where: { sector_name: "Finance" } });
+
+            if(sector){
+            const mailOptions = {
+                from: 'mail@dfcc.lk',
+                to: sector.email,
+                subject: 'Offline Form Submission',
+                text: 'Test user message.'
+            };
+
+            transport.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.error('Error occurred:', error.message);
+                    return;
+                }
+                console.log('Email sent:', info.response);
+            });
+
+            res.json({ status: "success",message: "Your message has been sent." }) 
+            }
+            else{
+            res.json({ status: "fail",message: "Sector not found." })
+            }
+            
+        }     
+    }
+    catch (error) {
+        console.error("Error processing question:", error);
+        res.status(500).json({ error: "An error occurred." });
+    }
+};

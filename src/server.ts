@@ -4,7 +4,7 @@ import axios from 'axios';
 import path from 'path';
 import indexRouter from './routes/index';
 import { chatResponse } from './controllers/chatController';
-import { liveChat } from './controllers/liveChatController';
+import { liveChat,offlineFormSubmissions } from './controllers/liveChatController';
 import { facebookChat } from './controllers/facebookChat';
 import { chatControllerFacebook } from './controllers/chatControllerFacebook';
 import "dotenv/config";
@@ -68,6 +68,7 @@ app.use('/', indexRouter);
 
 app.post('/api/chat-response', chatResponse);
 app.post('/live-chat-agent', liveChat);
+app.get('/live-chat-offline-form', offlineFormSubmissions);
 app.get('/view-documents', adminLogged, viewDocuments);
 app.get('/view-flow-page', getFlowPage);
 app.get('/upload-documents', adminLogged, (req: Request, res: Response) => {
@@ -399,6 +400,24 @@ app.post("/webhook",chatControllerFacebook)
 //   }
 // };
 
+
+app.get('/go-offline',agentLogged, async (req: Request, res: Response) => {
+  const id = req.query.id;
+  await User.update(
+    { online_status: "offline" },
+    { where: { id: id } }
+  );
+  res.redirect('agent-dashboard');
+});
+
+app.get('/go-online',agentLogged, async (req: Request, res: Response) => {
+  const id = req.query.id;
+  await User.update(
+    { online_status: "online" },
+    { where: { id: id } }
+  );
+  res.redirect('agent-dashboard');
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
