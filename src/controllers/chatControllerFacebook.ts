@@ -235,14 +235,50 @@ Standalone question:`
             // );
             console.log("botResponse",botResponse);
             // console.log("translatedResponse",translatedResponse);
+            
+            ///////// Normal Message ////////
+            // const data = {
+            //     recipient: {
+            //       id: message_body.sender.id
+            //     },
+            //     messaging_type: "RESPONSE",
+            //     message: {
+            //       text: botResponse,
+            //     },
+            //   };
+
+            ///////// Button Template ////////
             const data = {
                 recipient: {
                   id: message_body.sender.id
                 },
                 messaging_type: "RESPONSE",
-                message: {
-                  text: botResponse,
-                },
+                message:{
+                    "attachment":{
+                      "type":"template",
+                      "payload":{
+                        "template_type":"button",
+                        "text":"Test buttons!",
+                        "buttons":[
+                          {
+                            "type":"postback",
+                            "title":"Postback Button 1",
+                            "payload":"1"
+                          },
+                          {
+                            "type":"postback",
+                            "title":"Postback Button 21",
+                            "payload":"2"
+                          },
+                          {
+                            "type":"postback",
+                            "title":"Postback Button 3",
+                            "payload":"3"
+                          }
+                        ]
+                      }
+                    }
+                  }
               };
 
             const response = await axios.post(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, data, {
