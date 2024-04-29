@@ -23,7 +23,7 @@ import flash from "express-flash";
 import cookieParser from 'cookie-parser';
 import ChatHeader from '../models/ChatHeader';
 import AgentLanguages from '../models/AgentLanguages';
-import { sectorAdd } from './controllers/sectors';
+import { sectorAdd, sectorEdit } from './controllers/sectors';
 import { adminAccountCreate,adminUpdate,matchPassword,adminUpdateWithPassword } from './controllers/adminAccount';
 import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword } from './controllers/AgentAccount';
 import { botChatsOnload,botChatsGetMessages,botChatsRefresh,botChatsRefreshMessage} from './controllers/botChats';
@@ -217,6 +217,24 @@ app.post('/add-sector', sectorAdd);
 app.get('/manage-sectors',adminLogged, async (req: Request, res: Response) => {
   const sectors = await Sector.findAll({});
   res.render('manage-sectors', {sectors: sectors});
+});
+app.get('/edit-sector', adminLogged, async (req: Request, res: Response) => {
+  const id = req.query.id;
+
+  const sector_details  = await Sector.findOne({
+      where: {
+          id : id,
+      },
+  });
+  res.render('edit-sector', {sector_details: sector_details});
+});
+app.post('/edit-sector', sectorEdit);
+app.get('/delete-sector',adminLogged, async (req: Request, res: Response) => {
+  const id = req.query.id;
+  await Sector.destroy(
+    { where: { id: id } }
+  );
+  res.redirect('manage-sectors');
 });
 
 app.get('/add-agent',adminLogged, (req: Request, res: Response) => {
