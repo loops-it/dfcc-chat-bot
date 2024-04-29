@@ -6,7 +6,7 @@ form.addEventListener("submit", () =>{
             email: email.value,
         }
        
-        fetch("add-agent", {
+        fetch("add-sector", {
             method: "post",
             body: JSON.stringify(adminadd),
             headers: {
