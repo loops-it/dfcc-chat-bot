@@ -25,7 +25,8 @@ const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIAL
 
 export const chatControllerFacebook = async (req: RequestWithChatId, res: Response) => {
     const body = req.body;
-    let message_body;
+    //let message_body; 
+    let message_body: { message: { text: any }; sender: { id: any } } = { message: { text: '' }, sender: { id: '' } };  
     let chatHistory = req.body.messages || [];
     
     if (body.object === 'page') {
@@ -36,6 +37,8 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
     } else {
             res.sendStatus(404);
     }
+
+    
     chatHistory.push({ role: 'user', content:  message_body.message.text });
     // console.log("req : ", req.body.chatId) 
     const index = pc.index("dfccchatbot");
