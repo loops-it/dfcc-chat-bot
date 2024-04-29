@@ -38,13 +38,16 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
             res.sendStatus(404);
     }
 
-    // const old_chats = await FacebookChats.findAll({
-    //     where: {
-    //       sender_id: message_body.sender.id
-    //     },
-    //     order: [['id', 'ASC']]
-    // });
-
+    const old_chats = await FacebookChats.findAll({
+        where: {
+          sender_id: message_body.sender.id
+        },
+        limit: 10,
+        order: [['createdAt', 'DESC']]
+    });
+    for (var i = 0; i < old_chats.length; i++) {
+        chatHistory.push({ role: old_chats[i].message_sent_by, content:  old_chats[i].message });
+    }
     chatHistory.push({ role: 'user', content:  message_body.message.text });
     // console.log("req : ", req.body.chatId) 
     const index = pc.index("dfccchatbot");
