@@ -112,7 +112,7 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
 
             const chatHistoryString = JSON.stringify(filteredChatHistory);
 
-            console.log("chatHistoryString", chatHistoryString);
+            //console.log("chatHistoryString", chatHistoryString);
          
 
             const questionRephrasePrompt = `As a senior banking assistant, kindly assess whether the FOLLOWUP QUESTION related to the CHAT HISTORY or if it introduces a new question. If the FOLLOWUP QUESTION is unrelated, refrain from rephrasing it. However, if it is related, please rephrase it as an independent query utilizing relevant keywords from the CHAT HISTORY, even if it is a question related to the calculation. If the user asks for information like email or address, provide DFCC email and address.
@@ -239,7 +239,7 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
                 },
             );
 
-            console.log("botResponse",botResponse);
+            //console.log("botResponse",botResponse);
             // console.log("translatedResponse",translatedResponse);
             
             ///////// Normal Message ////////
@@ -294,7 +294,7 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
                     'Content-Type': 'application/json'
                   }
                 });
-            console.log(response.data);
+            //console.log(response.data);
            
             res.json({ status: "success", });
         // }
