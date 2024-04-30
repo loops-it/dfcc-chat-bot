@@ -173,7 +173,7 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
             });
             let context = results.join('\n');
 
-
+            console.log("CONTEXT DATA : ",context)
 
             // set system prompt
             // =============================================================================
