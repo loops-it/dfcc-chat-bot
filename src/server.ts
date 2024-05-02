@@ -74,8 +74,8 @@ app.post('/api/chat-response-flow', chatFlowResponse);
 app.post('/api/products-data', chatFlowData);
 
 app.post('/api/chat-response', chatResponse);
-app.post('/live-chat-agent', liveChatUser);
-app.post('/live-chat-user', liveChat);
+app.post('/live-chat-agent', liveChat);
+app.post('/live-chat-user', liveChatUser);
 app.post('/switch-to-live-agent', switchToAgent);
 app.post('/save-rating', saveRating);
 app.get('/live-chat-offline-form', offlineFormSubmissions);
