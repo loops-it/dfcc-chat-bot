@@ -4,7 +4,7 @@ import axios from 'axios';
 import path from 'path';
 import indexRouter from './routes/index';
 import { chatResponse } from './controllers/chatController';
-import { liveChat } from './controllers/liveChatController';
+import { liveChat,offlineFormSubmissions } from './controllers/liveChatController';
 import { facebookChat } from './controllers/facebookChat';
 import { chatControllerFacebook } from './controllers/chatControllerFacebook';
 import "dotenv/config";
@@ -23,7 +23,7 @@ import flash from "express-flash";
 import cookieParser from 'cookie-parser';
 import ChatHeader from '../models/ChatHeader';
 import AgentLanguages from '../models/AgentLanguages';
-import { sectorAdd } from './controllers/sectors';
+import { sectorAdd, sectorEdit } from './controllers/sectors';
 import { adminAccountCreate,adminUpdate,matchPassword,adminUpdateWithPassword } from './controllers/adminAccount';
 import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword } from './controllers/AgentAccount';
 import { botChatsOnload,botChatsGetMessages,botChatsRefresh,botChatsRefreshMessage} from './controllers/botChats';
@@ -75,6 +75,7 @@ app.post('/api/products-data', chatFlowData);
 
 app.post('/api/chat-response', chatResponse);
 app.post('/live-chat-agent', liveChat);
+app.get('/live-chat-offline-form', offlineFormSubmissions);
 app.get('/view-documents', adminLogged, viewDocuments);
 app.get('/view-flow-page', getFlowPage);
 app.get('/upload-documents', adminLogged, (req: Request, res: Response) => {
@@ -224,6 +225,24 @@ app.post('/add-sector', sectorAdd);
 app.get('/manage-sectors',adminLogged, async (req: Request, res: Response) => {
   const sectors = await Sector.findAll({});
   res.render('manage-sectors', {sectors: sectors});
+});
+app.get('/edit-sector', adminLogged, async (req: Request, res: Response) => {
+  const id = req.query.id;
+
+  const sector_details  = await Sector.findOne({
+      where: {
+          id : id,
+      },
+  });
+  res.render('edit-sector', {sector_details: sector_details});
+});
+app.post('/edit-sector', sectorEdit);
+app.get('/delete-sector',adminLogged, async (req: Request, res: Response) => {
+  const id = req.query.id;
+  await Sector.destroy(
+    { where: { id: id } }
+  );
+  res.redirect('manage-sectors');
 });
 
 app.get('/add-agent',adminLogged, (req: Request, res: Response) => {
@@ -388,6 +407,24 @@ app.post("/webhook",chatControllerFacebook)
 //   }
 // };
 
+
+app.get('/go-offline',agentLogged, async (req: Request, res: Response) => {
+  const id = req.query.id;
+  await User.update(
+    { online_status: "offline" },
+    { where: { id: id } }
+  );
+  res.redirect('agent-dashboard');
+});
+
+app.get('/go-online',agentLogged, async (req: Request, res: Response) => {
+  const id = req.query.id;
+  await User.update(
+    { online_status: "online" },
+    { where: { id: id } }
+  );
+  res.redirect('agent-dashboard');
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

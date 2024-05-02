@@ -3,7 +3,7 @@ import { Pinecone } from '@pinecone-database/pinecone'
 import "dotenv/config";
 import { Request as ExpressRequest, Response } from 'express';
 import File from '../../models/File';
-import BotChats from '../../models/BotChats';
+import FacebookChats from '../../models/FacebookChats';
 import {Translate} from '@google-cloud/translate/build/src/v2';
 import axios from 'axios';
 
@@ -38,7 +38,16 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
             res.sendStatus(404);
     }
 
-    
+    const old_chats = await FacebookChats.findAll({
+        where: {
+          sender_id: message_body.sender.id
+        },
+        limit: 10,
+        order: [['createdAt', 'DESC']]
+    });
+    for (var i = 0; i < old_chats.length; i++) {
+        chatHistory.push({ role: old_chats[i].message_sent_by, content:  old_chats[i].message });
+    }
     chatHistory.push({ role: 'user', content:  message_body.message.text });
     // console.log("req : ", req.body.chatId) 
     const index = pc.index("dfccchatbot");
@@ -81,15 +90,13 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
         if (lastUserIndex !== -1) {
             chatHistory[lastUserIndex].content = translatedQuestion;
         }
-        // await BotChats.create(
-        //     { 
-        //     message_id: userChatId,
-        //     language: language,
-        //     message: userQuestion,
-        //     message_sent_by: 'customer',
-        //     viewed_by_admin: 'no',
-        //     },
-        // );
+        await FacebookChats.create(
+            { 
+            sender_id: message_body.sender.id,
+            message_sent_by: 'user',
+            message: translatedQuestion,
+            },
+        );
 
         let kValue = 2
 
@@ -105,16 +112,16 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
 
             const chatHistoryString = JSON.stringify(filteredChatHistory);
 
-
+            //console.log("chatHistoryString", chatHistoryString);
          
 
-const questionRephrasePrompt = `As a senior banking assistant, kindly assess whether the FOLLOWUP QUESTION related to the CHAT HISTORY or if it introduces a new question. If the FOLLOWUP QUESTION is unrelated, refrain from rephrasing it. However, if it is related, please rephrase it as an independent query utilizing relevent keywords from the CHAT HISTORY, even if it is a question related to the calculation. If the user asks for information like email or address, provide DFCC email and address.
-----------
-CHAT HISTORY: {${chatHistoryString}}
-----------
-FOLLOWUP QUESTION: {${translatedQuestion}}
-----------
-Standalone question:`
+            const questionRephrasePrompt = `As a senior banking assistant, kindly assess whether the FOLLOWUP QUESTION related to the CHAT HISTORY or if it introduces a new question. If the FOLLOWUP QUESTION is unrelated, refrain from rephrasing it. However, if it is related, please rephrase it as an independent query utilizing relevant keywords from the CHAT HISTORY, even if it is a question related to the calculation. If the user asks for information like email or address, provide DFCC email and address.
+            ----------
+            CHAT HISTORY: {${chatHistoryString}}
+            ----------
+            FOLLOWUP QUESTION: {${translatedQuestion}}
+            ----------
+            Standalone question:`
 
             
 
@@ -166,7 +173,7 @@ Standalone question:`
             });
             let context = results.join('\n');
 
-
+            //console.log("CONTEXT DATA : ",context)
 
             // set system prompt
             // =============================================================================
@@ -220,21 +227,22 @@ Standalone question:`
   
 
             // add assistant to array
-            chatHistory.push({ role: 'assistant', content: botResponse });
+            //chatHistory.push({ role: 'assistant', content: botResponse });
 
             // }
 
-            // await BotChats.create(
-            //     { 
-            //     message_id: userChatId,
-            //     language: language,
-            //     message: translatedResponse,
-            //     message_sent_by: 'bot',
-            //     viewed_by_admin: 'no',
-            //     },
-            // );
-            console.log("botResponse",botResponse);
+            await FacebookChats.create(
+                { 
+                sender_id: message_body.sender.id,
+                message_sent_by: 'assistant',
+                message: botResponse,
+                },
+            );
+
+            //console.log("botResponse",botResponse);
             // console.log("translatedResponse",translatedResponse);
+            
+            ///////// Normal Message ////////
             const data = {
                 recipient: {
                   id: message_body.sender.id
@@ -245,12 +253,48 @@ Standalone question:`
                 },
               };
 
+            ///////// Button Template ////////
+            // const data = {
+            //     recipient: {
+            //       id: message_body.sender.id
+            //     },
+            //     messaging_type: "RESPONSE",
+            //     message:{
+            //         "attachment":{
+            //           "type":"template",
+            //           "payload":{
+            //             "template_type":"button",
+            //             "text":"Test buttons!",
+            //             "buttons":[
+            //               {
+            //                 "type":"postback",
+            //                 "title":"Postback Button 1",
+            //                 "payload":"1"
+            //               },
+            //               {
+            //                 "type":"postback",
+            //                 "title":"Postback Button 21",
+            //                 "payload":"2"
+            //               },
+            //               {
+            //                 "type":"postback",
+            //                 "title":"Postback Button 3",
+            //                 "payload":"3"
+            //               }
+            //             ]
+            //           }
+            //         }
+            //       }
+            //   };
+
+
+
             const response = await axios.post(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, data, {
                   headers: {
                     'Content-Type': 'application/json'
                   }
                 });
-            console.log(response.data);
+            //console.log(response.data);
            
             res.json({ status: "success", });
         // }

@@ -30,6 +30,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/multer": "^1.4.11",
     "@types/mysql": "^2.15.26",
+    "@types/nodemailer": "^6.4.14",
     "@types/pdf-parse": "^1.1.4",
     "@types/sequelize": "^4.28.20",
     "axios": "^1.6.8",
@@ -45,6 +46,7 @@
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
     "mysql2": "^3.9.3",
+    "nodemailer": "^6.9.13",
     "pdf-parse": "^1.1.1",
     "sequelize": "^6.37.1"
   }

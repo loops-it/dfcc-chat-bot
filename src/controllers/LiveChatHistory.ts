@@ -8,7 +8,7 @@ import AgentLanguages from '../../models/AgentLanguages';
 import ChatTimer from '../../models/ChatTimer';
 interface UserDecodedToken extends JwtPayload {
   id: string;
-  
+   
 }
 
 export const LiveChatHistoryOnload = async (req: Request, res: Response, next: NextFunction) => {
