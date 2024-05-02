@@ -56,6 +56,7 @@ export const switchToAgent = async (req: Request, res: Response, next: NextFunct
                 agent: "unassigned",
             });
             }
+            if(chats){
             for (var c = 0; c < chats.length; c++) {
     
                 await LiveChat.create({
@@ -64,6 +65,7 @@ export const switchToAgent = async (req: Request, res: Response, next: NextFunct
                   message: chats[c].message,
           
                 })
+            }
             }
             await BotChats.destroy({
                 where: {
