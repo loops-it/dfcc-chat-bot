@@ -187,6 +187,32 @@
       margin-top: 10px;
     }
 
+    .btnYesToClose {
+      font-family: "Poppins", sans-serif;
+      font-size: 12px;
+      border-radius: 30px;
+      background-color: #A90e09;
+      border: none;
+      color: #fff;
+      width: 250px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      margin-top: 10px;
+    }
+
+    .btnNotoClose {
+      font-family: "Poppins", sans-serif;
+      font-size: 12px;
+      border-radius: 30px;
+      background-color: #000;
+      border: none;
+      color: #fff;
+      width: 250px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      margin-top: 10px;
+    }
+
     @media screen and (max-width: 600px) {
       .background {
         padding: 5px !important;
@@ -277,6 +303,26 @@
       border-radius: 10px !important;
       margin-top: 10px;
     }
+
+    .rating-icon {
+      font-size: 25px;
+      color: gold;
+    }
+
+    .rating-icons {
+      border: none !important;
+    }
+
+    .star-rating-form {
+      margin-bottom: 10px;
+    }
+
+    .feedbackMessage {
+      border-radius: 10px;
+      border: none;
+      background-color: #a7a7a72a;
+      width: 250px;
+    }
   </style>
 </head>
 
@@ -324,7 +370,7 @@
   <script>
     // Initialize the chat history variasble
     let chatHistory = [];
-
+    let messageDiv;
 
     // Function to append a typing animation message
     function showTypingAnimation() {
@@ -362,10 +408,60 @@
       responseDiv.innerHTML = errorMessage;
     }
 
+
+    let chatTimeoutId; // Variable to store the timeout ID
+
+    // Function to start the chat timeout
+    function startChatTimeout() {
+      chatTimeoutId = setTimeout(showEndChatAlert, 30000); // Set timeout for 30 seconds
+    }
+
+    // Function to reset the chat timeout
+    function resetChatTimeout() {
+      clearTimeout(chatTimeoutId); // Clear previous timeout
+      startChatTimeout(); // Start a new timeout
+    }
+
+    let endChatAlertShown = false;
+    // Function to show the end chat alert
+    function showEndChatAlert() {
+      if (!endChatAlertShown) { // Check if the alert has not been shown
+        endChatAlertShown = true; // Set the flag to true to indicate the alert has been shown
+
+        const responseDiv = document.getElementById("response");
+        const alertDiv = document.createElement("div");
+        alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
+        alertDiv.setAttribute("role", "alert");
+        alertDiv.innerHTML = `
+            It seems you haven't sent a message for a while. Do you want to end the chat?
+            <div class="d-flex flex-row">
+              <button type="button" class="btnYesToClose btn-end-chat">Yes</button>
+              <button type="button" class="btnNotoClose ms-2" data-bs-dismiss="alert">Cancel</button>
+            </div>
+        `;
+        responseDiv.appendChild(alertDiv);
+        alertDiv.scrollIntoView({ behavior: "smooth" });
+
+        // Add event listener for the "Yes" button
+        const endChatButton = alertDiv.querySelector(".btn-end-chat");
+        endChatButton.addEventListener("click", handleEndChat);
+      }
+    }
+
+    // Function to handle ending the chat
+    function handleEndChat() {
+      // Clear the chat timeout
+      clearTimeout(chatTimeoutId);
+
+      // Show star rating form message
+      appendMessageToResponse('bot', "Please rate your chat experience:", null, true);
+    }
+
+
     // Function to append a message to the response div
-    function appendMessageToResponse(role, content, data) {
+    function appendMessageToResponse(role, content, data, isRatingForm = false) {
       const responseDiv = document.getElementById("response");
-      const messageDiv = document.createElement("div");
+      messageDiv = document.createElement("div");
       messageDiv.classList.add(role === 'user' ? "user-message" : "bot-message");
 
       // Create an image element for the message
@@ -389,44 +485,148 @@
       }
       else if (content.includes("I'm sorry.. no information documents found for data retrieval.")) {
         messageDiv.innerHTML = `
-        <button id="retryButton" class="liveagentBtn">Chat with live agent</button>
+        <button id="LiveAgentButton" class="liveagentBtn">Chat with live agent</button>
       <div>${content}</div>
       
     `;
-      } else if (data && !data.productOrService.includes("sorry")) {
-    messageDiv.innerHTML = `
-        <button id="ProductButton" class="viewProductsBtn">View product & services</button>
-        <div>${content}</div>`;
-    const productButton = messageDiv.querySelector("#ProductButton");
-    productButton.addEventListener("click", async function() {
-        try {
-            const response = await fetch("/api/products-data", {
+        const liveAgentButton = messageDiv.querySelector("#LiveAgentButton");
+        liveAgentButton.addEventListener("click", async function () {
+          let responseCame = false; // Variable to track if response came
+          const intervalId = setInterval(checkResponse, 3000); // Check response every 3 seconds
+
+          async function checkResponse() {
+            if (responseCame) {
+              clearInterval(intervalId); // Stop checking once response comes
+              return;
+            }
+
+            try {
+              const response = await fetch("/live-chat-agent", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                  "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ chatId: data.chatId })
+              });
+
+              if (response.ok) {
+                responseCame = true;
+                const responseData = await response.json();
+                console.log("live chat data : ", responseData);
+                // Check if agent ID is present in responseData
+                if (responseData.agentId) {
+                  showAlert("Now you are chatting with agent ID: " + responseData.agentId);
+                } else {
+                  showAlert("One of our Customer Support agents will be with you soon. Stay tuned");
+                }
+              }
+            } catch (error) {
+              console.error("Error fetching products data:", error);
+              // Handle error
+              showAlert("Error connecting to live chat. Please try again later.");
+            }
+          }
+
+          function showAlert(message) {
+            const responseDiv = document.getElementById("response");
+            const alertDiv = document.createElement("div");
+            alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
+            alertDiv.setAttribute("role", "alert");
+            alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+            responseDiv.appendChild(alertDiv);
+            alertDiv.scrollIntoView({ behavior: "smooth" });
+          }
+        });
+
+
+
+
+      }
+      else if (data && !data.productOrService.includes("sorry")) {
+        messageDiv.innerHTML = `
+        <button id="ProductButton" class="viewProductsBtn">View product & services</button>
+        <div>${content}</div>`;
+        const productButton = messageDiv.querySelector("#ProductButton");
+        productButton.addEventListener("click", async function () {
+          try {
+            const response = await fetch("/api/products-data", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ chatId: data.chatId })
             });
             const responseData = await response.json();
             console.log("product data : ", responseData.productData)
-        } catch (error) {
+          } catch (error) {
             console.error("Error fetching products data:", error);
             // Handle the error, e.g., display an error message to the user
-        }
-    });
-}
-
-
-
+          }
+        });
+      }
       else {
         messageDiv.innerHTML = `<div>${content}</div>`;
       }
+
+      if (isRatingForm) {
+        // Show star rating form message
+        const ratingFormHTML = `
+      <div class="star-rating-form d-flex flex-column" style="margin-bottom: 10px;">
+        <label for="rating">Rate your experience:</label>
+        <div class="rating-icons" style="border: none !important;">
+          <i class="bi bi-star rating-icon"></i>
+          <i class="bi bi-star rating-icon"></i>
+          <i class="bi bi-star rating-icon"></i>
+          <i class="bi bi-star rating-icon"></i>
+          <i class="bi bi-star rating-icon"></i>
+        </div>
+        <input type="hidden" id="rating" name="rating" value="0">
+        <textarea type="text" id="feedbackMessage" name="feedbackMessage" class="feedbackMessage"></textarea>
+        <button id="submitRatingButton" class="btnNotoClose">Submit</button>
+      </div>
+    `;
+        messageDiv.innerHTML += ratingFormHTML;
+
+        // Add event listener for the submit rating button
+        const submitRatingButton = messageDiv.querySelector("#submitRatingButton");
+        submitRatingButton.addEventListener("click", handleRatingSubmission);
+
+        // Add event listeners for the rating icons
+        const ratingIcons = messageDiv.querySelectorAll('.rating-icon');
+        ratingIcons.forEach((icon, index) => {
+          icon.addEventListener('click', () => {
+            // Set the rating value based on the index of the clicked star icon
+            const ratingInput = messageDiv.querySelector("#rating");
+            ratingInput.value = index + 1;
+
+            // Highlight the selected star and unhighlight the rest
+            ratingIcons.forEach((star, i) => {
+              if (i <= index) {
+                star.classList.add('bi-star-fill');
+                star.classList.remove('bi-star');
+              } else {
+                star.classList.remove('bi-star-fill');
+                star.classList.add('bi-star');
+              }
+            });
+          });
+        });
+      }
+
+      // Reset the chat timeout
+      resetChatTimeout();
+
       messageDiv.prepend(image);
 
       responseDiv.appendChild(messageDiv);
       // Scroll down to the latest message
       responseDiv.scrollTop = responseDiv.scrollHeight;
     }
+
+    
 
     document.getElementById("questionForm").addEventListener("submit", async function (event) {
       event.preventDefault();
@@ -541,34 +741,67 @@
       // Scroll down to the latest message
       responseDiv.scrollTop = responseDiv.scrollHeight;
     }
+  
+  
+  // Function to handle rating submission
+    // Function to handle rating submission
+    async function handleRatingSubmission() {
+      const ratingInput = document.getElementById("rating");
+      const rating = ratingInput.value;
+      const feedbackMessageInput = document.getElementById("feedbackMessage");
+      const feedbackMessage = feedbackMessageInput.value;
+      const chatId = localStorage.getItem('chatId');
+
+      try {
+        const response = await fetch("/save-rating", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ratingValue: rating,
+            feedbackMessage: feedbackMessage,
+            chatId: chatId
+          })
+        });
+
+        if (response.ok) {
+          // Show thank you message for feedback
+          const responseDiv = document.getElementById("response");
+          const thankYouDiv = document.createElement("div");
+          thankYouDiv.classList.add("alert", "alert-success", "alert-dismissible", "fade", "show");
+          thankYouDiv.setAttribute("role", "alert");
+          thankYouDiv.textContent = "Thank you for your feedback!";
+          responseDiv.appendChild(thankYouDiv);
+          thankYouDiv.scrollIntoView({ behavior: "smooth" });
+        }
+      } catch (error) {
+        console.error("Error submitting rating:", error);
+        // Handle error
+      }
+    }
+
+    // Add event listeners for the rating icons
+    const ratingIcons = messageDiv.querySelectorAll('.rating-icon');
+    ratingIcons.forEach((icon, index) => {
+      icon.addEventListener('click', () => {
+        // Set the rating value based on the index of the clicked star icon
+        const ratingInput = document.getElementById("rating");
+        ratingInput.value = index + 1;
+
+        // Highlight the selected star and unhighlight the rest
+        ratingIcons.forEach((star, i) => {
+          if (i <= index) {
+            star.classList.add('bi-star-fill');
+            star.classList.remove('bi-star');
+          } else {
+            star.classList.remove('bi-star-fill');
+            star.classList.add('bi-star');
+          }
+        });
+      });
+    });
   </script>
 </body>
 
 </html>
-
-
-
-<!-- // If it's a list, format it as an unordered list
-      /*if (isList) {
-        const listItems = content.split('\n').map(item => {
-          return `<li style="margin-bottom: 10px !important;">${item}</li>`;
-        }).join('');
-        messageDiv.innerHTML = `<div><ul style="list-style: none; padding: 0px !important">${listItems}</ul></div>`;
-      } else {
-        messageDiv.innerHTML = `<div>${content}</div>`;
-      }
-      if (content.includes("I'm sorry.. no information documents found for data retrieval.")) {
-        messageDiv.innerHTML = `
-        <button id="retryButton" class="liveagentBtn">Chat with live agent</button>
-      <div>${content}</div>
-      
-    `;
-      } else {
-        messageDiv.innerHTML = `<div>${content}</div>`;
-      }
-      messageDiv.prepend(image);
-
-      responseDiv.appendChild(messageDiv);
-      // Scroll down to the latest message
-      responseDiv.scrollTop = responseDiv.scrollHeight;*/
-       // If it's a list, format it as an unordered list -->
