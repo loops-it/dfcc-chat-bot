@@ -31,6 +31,12 @@ export const switchToAgent = async (req: Request, res: Response, next: NextFunct
     try {
         const onlineUser = await User.findOne({ where: { online_status: 'online',status: 'active',user_role: 2 } });
         if(onlineUser){
+            const queued_chats  = await ChatHeader.count({
+                where: {
+                    "agent" : "unassigned",
+                    "status" : "live",
+                },
+            });
             const chat_main = await BotChats.findOne({
                 where: {
                   message_id: chatId
@@ -64,7 +70,7 @@ export const switchToAgent = async (req: Request, res: Response, next: NextFunct
                   message_id: chatId
                 }
             })
-            res.json({ status: "success" }) 
+            res.json({ status: "success",queued_chats }) 
         }
        else{
         res.json({ status: "fail"}) 
@@ -79,12 +85,7 @@ export const switchToAgent = async (req: Request, res: Response, next: NextFunct
 export const liveChat = async (req: Request, res: Response, next: NextFunction) => {
 const {chatId} = req.body
 try {
-    const queued_chats  = await ChatHeader.count({
-        where: {
-            "agent" : "unassigned",
-            "status" : "live",
-        },
-    });
+    
     const chat_header_result  = await ChatHeader.findOne({
         where: {
             "message_id" : chatId
@@ -129,7 +130,7 @@ try {
           let agent_id = chat_header_result.agent;
           let chat_status = chat_header_result.status;
           let is_time_out = chat_header_result.is_time_out;
-          res.json({ agent_id, chat_status, agent_message, agent_name, profile_picture, is_time_out,queued_chats });
+          res.json({ agent_id, chat_status, agent_message, agent_name, profile_picture, is_time_out });
     }
     else{
         let agent_id = null;
@@ -139,7 +140,7 @@ try {
         let profile_picture = null;
         let is_time_out = null;
 
-          res.json({ agent_id: agent_id, chat_status, agent_message, agent_name, profile_picture, is_time_out,queued_chats });
+          res.json({ agent_id: agent_id, chat_status, agent_message, agent_name, profile_picture, is_time_out });
     }
 }
 catch (error) {
