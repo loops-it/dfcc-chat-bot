@@ -31,48 +31,53 @@ export const switchToAgent = async (req: Request, res: Response, next: NextFunct
     try {
         const onlineUser = await User.findOne({ where: { online_status: 'online',status: 'active',user_role: 2 } });
         if(onlineUser){
+            const chat_header_exist = await ChatHeader.findOne({ where: { message_id: chatId } });
             const queued_chats  = await ChatHeader.count({
                 where: {
                     "agent" : "unassigned",
                     "status" : "live",
                 },
             });
-            const chat_main = await BotChats.findOne({
-                where: {
-                  message_id: chatId
+            if(chat_header_exist){
+                res.json({ status: "success",queued_chats }) 
+            }else{
+                const chat_main = await BotChats.findOne({
+                    where: {
+                      message_id: chatId
+                    }
+                });
+                const chats = await BotChats.findAll({
+                    where: {
+                      message_id: chatId
+                    },
+                    order: [['id', 'ASC']]
+                });
+                if(chat_main){
+                    await ChatHeader.create({
+                    message_id: chatId,
+                    language: chat_main.language,
+                    status: "live",
+                    agent: "unassigned",
+                });
                 }
-            });
-            const chats = await BotChats.findAll({
-                where: {
-                  message_id: chatId
-                },
-                order: [['id', 'ASC']]
-            });
-            if(chat_main){
-                await ChatHeader.create({
-                message_id: chatId,
-                language: chat_main.language,
-                status: "live",
-                agent: "unassigned",
-            });
-            }
-            if(chats){
-            for (var c = 0; c < chats.length; c++) {
     
-                await LiveChat.create({
-                  message_id: chatId,
-                  sent_by: chats[c].message_sent_by,
-                  message: chats[c].message,
-          
-                })
-            }
-            }
-            await BotChats.destroy({
-                where: {
-                  message_id: chatId
+                for (var c = 0; c < chats.length; c++) {
+        
+                    await LiveChat.create({
+                      message_id: chatId,
+                      sent_by: chats[c].message_sent_by,
+                      message: chats[c].message,
+              
+                    })
                 }
-            })
-            res.json({ status: "success",queued_chats }) 
+    
+                await BotChats.destroy({
+                    where: {
+                      message_id: chatId
+                    }
+                })
+                res.json({ status: "success",queued_chats }) 
+            }   
         }
        else{
         res.json({ status: "fail"}) 
