@@ -157,6 +157,41 @@ catch (error) {
 };
 
 
+export const liveChatUser = async (req: Request, res: Response, next: NextFunction) => {
+    const {chatId,user_message, language} = req.body
+    try {
+        
+        const chat_header_exist = await ChatHeader.findOne({ where: { message_id: chatId } });
+        if(chat_header_exist){
+            await LiveChat.create({
+                message_id: chatId,
+                sent_by: 'customer',
+                message: user_message,
+                viewed_by_agent : 'no'
+              })
+        }
+        else{
+            await ChatHeader.create({
+                message_id: chatId,
+                language: language,
+                status: "live",
+                agent: "unassigned",
+            });
+            await LiveChat.create({
+                message_id: chatId,
+                sent_by: 'customer',
+                message: user_message,
+                viewed_by_agent : 'no'
+              })
+        }
+        res.json({ status : "success" });
+    }
+    catch (error) {
+        console.error("Error processing question:", error);
+        res.status(500).json({ error: "An error occurred." });
+    }
+    };
+
 export const saveRating = async (req: Request, res: Response, next: NextFunction) => {
     const {ratingValue,feedbackMessage,chatId} = req.body
     try {
