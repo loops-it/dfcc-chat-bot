@@ -37,6 +37,9 @@ import ChatTimer from '../models/ChatTimer';
 import { loadLiveChatHistory } from './controllers/loadLiveChatHistory';
 import { Op } from 'sequelize';
 import { getFlowPage } from './controllers/flowController';
+import { getBotFlowPage } from './controllers/botFlowChatView';
+import { chatFlowResponse } from './controllers/botFlowChatController';
+import { chatFlowData } from './controllers/botFlowData';
 const app = express();
 app.use(cookieParser());
 // Set up view engine
@@ -65,6 +68,10 @@ app.use(session({
 app.use(flash());
 // Routes
 app.use('/', indexRouter);
+
+app.use('/bot-flow-test', getBotFlowPage);
+app.post('/api/chat-response-flow', chatFlowResponse);
+app.post('/api/products-data', chatFlowData);
 
 app.post('/api/chat-response', chatResponse);
 app.post('/live-chat-agent', liveChat);

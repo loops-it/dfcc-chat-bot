@@ -22,7 +22,7 @@ interface ChatEntry {
 
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
 
-export const chatResponse = async (req: RequestWithChatId, res: Response) => {
+export const chatFlowResponse = async (req: RequestWithChatId, res: Response) => {
 
     // console.log("req : ", req.body.chatId) 
     const index = pc.index("dfccchatbot");
@@ -82,6 +82,16 @@ export const chatResponse = async (req: RequestWithChatId, res: Response) => {
         else {
             translatedQuestion = userQuestion;
         }
+
+        const productOrServiceQuestion = await openai.completions.create({
+            model: "gpt-3.5-turbo-instruct",
+            prompt: `State the name of the service or product that mentioned in this question "${userQuestion}", If it is not service or product, just say "sorry".`,
+            max_tokens: 50,
+            temperature: 0,
+        });
+
+        console.log("productOrServiceQuestion Question :", productOrServiceQuestion.choices[0].text)
+        const stateProduct = productOrServiceQuestion.choices[0].text;
 
         // console.log("userQuestion",userQuestion);
         // console.log("translatedQuestion",translatedQuestion);
@@ -183,7 +193,7 @@ Standalone question:`
                 }
             });
             let context = results.join('\n');
-            console.log("CONTEXT : ", context);
+            // console.log("CONTEXT : ", context);
 
 
 
@@ -258,7 +268,7 @@ Standalone question:`
             );
             console.log("botResponse",botResponse);
             // console.log("translatedResponse",translatedResponse);
-            res.json({ answer: translatedResponse, chatHistory: chatHistory, chatId: userChatId });
+            res.json({ answer: translatedResponse, chatHistory: chatHistory, chatId: userChatId, productOrService: stateProduct });
         // }
 
         
