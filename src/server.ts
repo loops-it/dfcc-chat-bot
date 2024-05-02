@@ -4,7 +4,7 @@ import axios from 'axios';
 import path from 'path';
 import indexRouter from './routes/index';
 import { chatResponse } from './controllers/chatController';
-import { liveChat,offlineFormSubmissions, saveRating } from './controllers/liveChatController';
+import { liveChat,offlineFormSubmissions, saveRating,switchToAgent } from './controllers/liveChatController';
 import { facebookChat } from './controllers/facebookChat';
 import { chatControllerFacebook } from './controllers/chatControllerFacebook';
 import "dotenv/config";
@@ -75,6 +75,7 @@ app.post('/api/products-data', chatFlowData);
 
 app.post('/api/chat-response', chatResponse);
 app.post('/live-chat-agent', liveChat);
+app.post('/switch-to-live-agent', liveChat);
 app.post('/save-rating', saveRating);
 app.get('/live-chat-offline-form', offlineFormSubmissions);
 app.get('/view-documents', adminLogged, viewDocuments);

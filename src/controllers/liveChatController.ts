@@ -16,7 +16,7 @@ interface UserDecodedToken extends JwtPayload {
   id: string;
   
 }
-
+ 
 var transport = nodemailer.createTransport({
     host: "sandbox.smtp.mailtrap.io",
     port: 2525,
