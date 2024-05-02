@@ -140,7 +140,7 @@ try {
         let profile_picture = null;
         let is_time_out = null;
 
-          res.json({ agent_id: agent_id, chat_status, agent_message, agent_name, profile_picture, is_time_out });
+          res.json({ agent_id, chat_status, agent_message, agent_name, profile_picture, is_time_out });
     }
 }
 catch (error) {
