@@ -76,7 +76,7 @@ export const switchToAgent = async (req: Request, res: Response, next: NextFunct
                       message_id: chatId
                     }
                 })
-                res.json({ status: "success",queued_chats }) 
+                res.json({ status: "success",queued_chats:queued_chats }) 
             }   
         }
        else{
