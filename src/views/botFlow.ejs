@@ -372,6 +372,13 @@
     let chatHistory = [];
     let messageDiv;
 
+
+   // Clear localStorage items on browser refresh
+   window.addEventListener('beforeunload', function(event) {
+    localStorage.removeItem('selectedLanguage');
+    localStorage.removeItem('chatId');
+});
+
     // Function to append a typing animation message
     function showTypingAnimation() {
       const responseDiv = document.getElementById("response");
@@ -491,81 +498,6 @@
     `;
         const liveAgentButton = messageDiv.querySelector("#LiveAgentButton");
 
-        // liveAgentButton.addEventListener("click", async function () {
-
-
-
-        //   let responseCame = false;
-        //   let intervalId;
-        //   let attemptCount = 0;
-
-        //   async function checkResponse() {
-        //     attemptCount++;
-        //     console.log(`Sending API call to check for agent... Attempt ${attemptCount}`);
-
-        //     if (responseCame) {
-        //       clearInterval(intervalId);
-        //       console.log('API call stopped. Response received.');
-        //       return;
-        //     }
-
-        //     try {
-        //       const response = await fetch("/live-chat-agent", {
-        //         method: "POST",
-        //         headers: {
-        //           "Content-Type": "application/json"
-        //         },
-        //         body: JSON.stringify({ chatId: data.chatId })
-        //       });
-
-
-
-        //       if (response.ok) {
-        //         const responseData = await response.json();
-        //         console.log("live chat data : ", responseData);
-        //         // Check if agent ID is present in responseData
-        //         if (responseData.agent_id !== null) {
-        //           responseCame = true;
-        //           clearInterval(intervalId); // Stop checking if agent found
-        //           showAlert("Now you are chatting with agent ID: " + responseData.agent_id);
-        //         } else {
-        //           // Continue checking until 30 seconds
-        //         }
-        //       }
-        //     } catch (error) {
-        //       console.error("Error fetching products data:", error);
-        //       // Handle error
-        //       showAlert("Error connecting to live chat. Please try again later.");
-        //     }
-        //   }
-
-        //   function showAlert(message) {
-        //     const responseDiv = document.getElementById("response");
-        //     const alertDiv = document.createElement("div");
-        //     alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
-        //     alertDiv.setAttribute("role", "alert");
-        //     alertDiv.innerHTML = `
-        //         ${message}
-        //         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        //     `;
-        //     responseDiv.appendChild(alertDiv);
-        //     alertDiv.scrollIntoView({ behavior: "smooth" });
-        //   }
-
-        //   // Start checking for response every 5 seconds
-        //   intervalId = setInterval(checkResponse, 5000);
-
-        //   // Stop checking after 30 seconds
-        //   setTimeout(() => {
-        //     clearInterval(intervalId);
-        //     if (!responseCame) {
-        //       showAlert("All agents are busy. Please try again later.");
-        //       console.log('No agents available. API call stopped.');
-        //     }
-        //   }, 30000);
-
-        // });
-
         let intervalId;
         liveAgentButton.addEventListener("click", async function () {
 
@@ -585,7 +517,7 @@
 
               showAlert("One of our agents will join you soon. Please stay tuned.");
 
-console.log("waiting messages : ",switchResponse.queued_chats)
+              console.log("waiting messages : ", switchResponse.queued_chats)
               // Start checking for response from live chat agent every 5 seconds
               intervalId = setInterval(checkResponse, 5000);
 
@@ -921,13 +853,90 @@ console.log("waiting messages : ",switchResponse.queued_chats)
         });
       });
     });
+
+
+
+
   </script>
 </body>
 
 </html>
 
 
+<!-- // liveAgentButton.addEventListener("click", async function () {
 
+
+
+  //   let responseCame = false;
+  //   let intervalId;
+  //   let attemptCount = 0;
+
+  //   async function checkResponse() {
+  //     attemptCount++;
+  //     console.log(`Sending API call to check for agent... Attempt ${attemptCount}`);
+
+  //     if (responseCame) {
+  //       clearInterval(intervalId);
+  //       console.log('API call stopped. Response received.');
+  //       return;
+  //     }
+
+  //     try {
+  //       const response = await fetch("/live-chat-agent", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json"
+  //         },
+  //         body: JSON.stringify({ chatId: data.chatId })
+  //       });
+
+
+
+  //       if (response.ok) {
+  //         const responseData = await response.json();
+  //         console.log("live chat data : ", responseData);
+  //         // Check if agent ID is present in responseData
+  //         if (responseData.agent_id !== null) {
+  //           responseCame = true;
+  //           clearInterval(intervalId); // Stop checking if agent found
+  //           showAlert("Now you are chatting with agent ID: " + responseData.agent_id);
+  //         } else {
+  //           // Continue checking until 30 seconds
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching products data:", error);
+  //       // Handle error
+  //       showAlert("Error connecting to live chat. Please try again later.");
+  //     }
+  //   }
+
+  //   function showAlert(message) {
+  //     const responseDiv = document.getElementById("response");
+  //     const alertDiv = document.createElement("div");
+  //     alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
+  //     alertDiv.setAttribute("role", "alert");
+  //     alertDiv.innerHTML = `
+  //         ${message}
+  //         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  //     `;
+  //     responseDiv.appendChild(alertDiv);
+  //     alertDiv.scrollIntoView({ behavior: "smooth" });
+  //   }
+
+  //   // Start checking for response every 5 seconds
+  //   intervalId = setInterval(checkResponse, 5000);
+
+  //   // Stop checking after 30 seconds
+  //   setTimeout(() => {
+  //     clearInterval(intervalId);
+  //     if (!responseCame) {
+  //       showAlert("All agents are busy. Please try again later.");
+  //       console.log('No agents available. API call stopped.');
+  //     }
+  //   }, 30000);
+
+  // }); -->
 
 
 <!-- //   let responseCame = false; // Variable to track if response came
