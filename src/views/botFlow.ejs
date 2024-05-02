@@ -420,7 +420,7 @@
 
     // Function to start the chat timeout
     function startChatTimeout() {
-      chatTimeoutId = setTimeout(showEndChatAlert, 60000); // Set timeout for 30 seconds
+      chatTimeoutId = setTimeout(showEndChatAlert, 150000); // Set timeout for 30 seconds
     }
 
     // Function to reset the chat timeout
@@ -499,6 +499,7 @@
         const liveAgentButton = messageDiv.querySelector("#LiveAgentButton");
 
         let intervalId;
+        let agentJoined = false;
         liveAgentButton.addEventListener("click", async function () {
 
           // Send API call to switch to live agent
@@ -519,78 +520,121 @@
 
               console.log("waiting messages : ", switchResponse.queued_chats)
               // Start checking for response from live chat agent every 5 seconds
-              intervalId = setInterval(checkResponse, 5000);
+              intervalId = setInterval(checkForAgent, 5000);
 
               // Stop checking after 30 seconds
               setTimeout(() => {
                 clearInterval(intervalId);
-                if (!responseCame) {
-                  showAlert("All agents are busy. Please try again later.");
-                  console.log('No agents available. API call stopped.');
+                if (!agentJoined) {
+                    showAlert("All agents are busy. Please try again later.");
+                    console.log('No agents available. API call stopped.');
                 }
-              }, 120000);
+            }, 120000);
             } else {
-              showAlert("Failed to switch to live agent. Please try again later.");
+              // showAlert("Failed to switch to live agent. Please try again later.");
+              console.error("Failed to switch to live agent. Please try again later.", error);
             }
           } catch (error) {
             console.error("Error switching to live agent:", error);
-            showAlert("Error connecting to live chat. Please try again later.");
+            // showAlert("Error connecting to live chat. Please try again later.");
           }
+        });
+          // let responseCame = false;
+          // let attemptCount = 0;
 
-          let responseCame = false;
-          let attemptCount = 0;
+          // async function checkResponse() {
+          //   attemptCount++;
+          //   console.log(`Sending API call to check for agent... Attempt ${attemptCount}`);
 
-          async function checkResponse() {
-            attemptCount++;
-            console.log(`Sending API call to check for agent... Attempt ${attemptCount}`);
+          //   if (responseCame) {
+          //     console.log('API call stopped. Response received.');
+          //     return;
+          //   }
 
-            if (responseCame) {
-              console.log('API call stopped. Response received.');
-              return;
-            }
+          //   try {
+          //     const response = await fetch("/live-chat-agent", {
+          //       method: "POST",
+          //       headers: {
+          //         "Content-Type": "application/json"
+          //       },
+          //       body: JSON.stringify({ chatId: data.chatId })
+          //     });
 
-            try {
-              const response = await fetch("/live-chat-agent", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ chatId: data.chatId }) // Assuming data.chatId is defined
-              });
+          //     if (response.ok) {
+          //       const responseData = await response.json();
+                
+          //       // Check if agent ID is present in responseData
+          //       if (responseData.agent_id !== 'unassigned') {
+          //         showAlert("Now you are chatting with agent ID: " + responseData.agent_name);
+          //         console.log("live chat data not null : ", responseData);
+          //         appendMessageToResponse('bot', responseData.agent_message, data);
+          //       } else {
+          //         console.log("if null : ", responseData);
+          //         // clearInterval(intervalId);
+          //       }
+          //     }
+          //   } catch (error) {
+          //     console.error("Error fetching products data:", error);
+          //     // Handle error
+          //     showAlert("Error connecting to live chat. Please try again later.");
+          //   }
+          // }
 
-              if (response.ok) {
-                const responseData = await response.json();
-                console.log("live chat data : ", responseData);
-                // Check if agent ID is present in responseData
-                if (responseData.agent_id !== null) {
-                  responseCame = true;
-                  clearInterval(intervalId); // Stop checking if agent found
-                  showAlert("Now you are chatting with agent ID: " + responseData.agent_id);
-                } else {
-                  // Continue checking until 30 seconds
+    //       function showAlert(message) {
+    //         const responseDiv = document.getElementById("response");
+    //         const alertDiv = document.createElement("div");
+    //         alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
+    //         alertDiv.setAttribute("role", "alert");
+    //         alertDiv.innerHTML = `
+    //     ${message}
+    //     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    // `;
+    //         responseDiv.appendChild(alertDiv);
+    //         alertDiv.scrollIntoView({ behavior: "smooth" });
+    //       }
+
+    //     });
+
+    async function checkForAgent() {
+    try {
+        const response = await fetch("/live-chat-agent", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ chatId: data.chatId })
+        });
+
+        if (response.ok) {
+            const responseData = await response.json();
+            if (responseData.agent_id !== 'unassigned') {
+                // If agent joined for the first time, show alert and set flag to true
+                if (!agentJoined) {
+                    showAlert("Now you are chatting with agent ID: " + responseData.agent_name);
+                    agentJoined = true;
                 }
-              }
-            } catch (error) {
-              console.error("Error fetching products data:", error);
-              // Handle error
-              showAlert("Error connecting to live chat. Please try again later.");
+                appendMessageToResponse('liveagent', responseData.agent_message, data);
             }
-          }
+        }
+    } catch (error) {
+        console.error("Error fetching products data:", error);
+        // Handle error
+        // showAlert("Error connecting to live chat. Please try again later.");
+    }
+}
 
-          function showAlert(message) {
-            const responseDiv = document.getElementById("response");
-            const alertDiv = document.createElement("div");
-            alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
-            alertDiv.setAttribute("role", "alert");
-            alertDiv.innerHTML = `
+function showAlert(message) {
+    const responseDiv = document.getElementById("response");
+    const alertDiv = document.createElement("div");
+    alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
+    alertDiv.setAttribute("role", "alert");
+    alertDiv.innerHTML = `
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
-            responseDiv.appendChild(alertDiv);
-            alertDiv.scrollIntoView({ behavior: "smooth" });
-          }
-
-        });
+    responseDiv.appendChild(alertDiv);
+    alertDiv.scrollIntoView({ behavior: "smooth" });
+}
 
 
 
