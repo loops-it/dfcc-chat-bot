@@ -504,7 +504,7 @@
             console.log(`Sending API call to check for agent... Attempt ${attemptCount}`);
 
             if (responseCame) {
-              clearInterval(intervalId); // Stop checking once response comes
+              clearInterval(intervalId);
               console.log('API call stopped. Response received.');
               return;
             }
@@ -517,6 +517,8 @@
                 },
                 body: JSON.stringify({ chatId: data.chatId })
               });
+
+              
 
               if (response.ok) {
                 const responseData = await response.json();
