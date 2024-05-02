@@ -371,13 +371,14 @@
     // Initialize the chat history variasble
     let chatHistory = [];
     let messageDiv;
+    let chatWithAgent = false;
 
 
-   // Clear localStorage items on browser refresh
-   window.addEventListener('beforeunload', function(event) {
-    localStorage.removeItem('selectedLanguage');
-    localStorage.removeItem('chatId');
-});
+    // Clear localStorage items on browser refresh
+    window.addEventListener('beforeunload', function (event) {
+      localStorage.removeItem('selectedLanguage');
+      localStorage.removeItem('chatId');
+    });
 
     // Function to append a typing animation message
     function showTypingAnimation() {
@@ -526,10 +527,10 @@
               setTimeout(() => {
                 clearInterval(intervalId);
                 if (!agentJoined) {
-                    showAlert("All agents are busy. Please try again later.");
-                    console.log('No agents available. API call stopped.');
+                  showAlert("All agents are busy. Please try again later.");
+                  console.log('No agents available. API call stopped.');
                 }
-            }, 120000);
+              }, 120000);
             } else {
               // showAlert("Failed to switch to live agent. Please try again later.");
               console.error("Failed to switch to live agent. Please try again later.", error);
@@ -539,106 +540,50 @@
             // showAlert("Error connecting to live chat. Please try again later.");
           }
         });
-          // let responseCame = false;
-          // let attemptCount = 0;
 
-          // async function checkResponse() {
-          //   attemptCount++;
-          //   console.log(`Sending API call to check for agent... Attempt ${attemptCount}`);
 
-          //   if (responseCame) {
-          //     console.log('API call stopped. Response received.');
-          //     return;
-          //   }
-
-          //   try {
-          //     const response = await fetch("/live-chat-agent", {
-          //       method: "POST",
-          //       headers: {
-          //         "Content-Type": "application/json"
-          //       },
-          //       body: JSON.stringify({ chatId: data.chatId })
-          //     });
-
-          //     if (response.ok) {
-          //       const responseData = await response.json();
-                
-          //       // Check if agent ID is present in responseData
-          //       if (responseData.agent_id !== 'unassigned') {
-          //         showAlert("Now you are chatting with agent ID: " + responseData.agent_name);
-          //         console.log("live chat data not null : ", responseData);
-          //         appendMessageToResponse('bot', responseData.agent_message, data);
-          //       } else {
-          //         console.log("if null : ", responseData);
-          //         // clearInterval(intervalId);
-          //       }
-          //     }
-          //   } catch (error) {
-          //     console.error("Error fetching products data:", error);
-          //     // Handle error
-          //     showAlert("Error connecting to live chat. Please try again later.");
-          //   }
-          // }
-
-    //       function showAlert(message) {
-    //         const responseDiv = document.getElementById("response");
-    //         const alertDiv = document.createElement("div");
-    //         alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
-    //         alertDiv.setAttribute("role", "alert");
-    //         alertDiv.innerHTML = `
-    //     ${message}
-    //     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    // `;
-    //         responseDiv.appendChild(alertDiv);
-    //         alertDiv.scrollIntoView({ behavior: "smooth" });
-    //       }
-
-    //     });
-
-    async function checkForAgent() {
-    try {
-        const response = await fetch("/live-chat-agent", {
-            method: "POST",
-            headers: {
+        async function checkForAgent() {
+          try {
+            const response = await fetch("/live-chat-agent", {
+              method: "POST",
+              headers: {
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ chatId: data.chatId })
-        });
+              },
+              body: JSON.stringify({ chatId: data.chatId })
+            });
 
-        if (response.ok) {
-            const responseData = await response.json();
-            if (responseData.agent_id !== 'unassigned') {
-                // If agent joined for the first time, show alert and set flag to true
+            if (response.ok) {
+              const responseData = await response.json();
+              if (responseData.agent_id !== 'unassigned') {
+                // If agent joined for the first time, show alert and set flag to true, and clear the interval
                 if (!agentJoined) {
-                    showAlert("Now you are chatting with agent ID: " + responseData.agent_name);
-                    agentJoined = true;
+                  showAlert("Now you are chatting with agent ID: " + responseData.agent_name);
+                  agentJoined = true;
+                  chatWithAgent = true;
                 }
+                // clearInterval(intervalId);
                 appendMessageToResponse('liveagent', responseData.agent_message, data);
+              }
             }
+          } catch (error) {
+            console.error("Error fetching products data:", error);
+            // Handle error
+            // showAlert("Error connecting to live chat. Please try again later.");
+          }
         }
-    } catch (error) {
-        console.error("Error fetching products data:", error);
-        // Handle error
-        // showAlert("Error connecting to live chat. Please try again later.");
-    }
-}
 
-function showAlert(message) {
-    const responseDiv = document.getElementById("response");
-    const alertDiv = document.createElement("div");
-    alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
-    alertDiv.setAttribute("role", "alert");
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
-    responseDiv.appendChild(alertDiv);
-    alertDiv.scrollIntoView({ behavior: "smooth" });
-}
-
-
-
-
+        function showAlert(message) {
+          const responseDiv = document.getElementById("response");
+          const alertDiv = document.createElement("div");
+          alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
+          alertDiv.setAttribute("role", "alert");
+          alertDiv.innerHTML = `
+                                  ${message}
+                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              `;
+          responseDiv.appendChild(alertDiv);
+          alertDiv.scrollIntoView({ behavior: "smooth" });
+        }
 
       }
       else if (data && !data.productOrService.includes("sorry")) {
@@ -670,20 +615,20 @@ function showAlert(message) {
       if (isRatingForm) {
         // Show star rating form message
         const ratingFormHTML = `
-      <div class="star-rating-form d-flex flex-column" style="margin-bottom: 10px;">
-        <label for="rating">Rate your experience:</label>
-        <div class="rating-icons" style="border: none !important;">
-          <i class="bi bi-star rating-icon"></i>
-          <i class="bi bi-star rating-icon"></i>
-          <i class="bi bi-star rating-icon"></i>
-          <i class="bi bi-star rating-icon"></i>
-          <i class="bi bi-star rating-icon"></i>
-        </div>
-        <input type="hidden" id="rating" name="rating" value="0">
-        <textarea type="text" id="feedbackMessage" name="feedbackMessage" class="feedbackMessage"></textarea>
-        <button id="submitRatingButton" class="btnNotoClose">Submit</button>
-      </div>
-    `;
+          <div class="star-rating-form d-flex flex-column" style="margin-bottom: 10px;">
+            <label for="rating">Rate your experience:</label>
+            <div class="rating-icons" style="border: none !important;">
+              <i class="bi bi-star rating-icon"></i>
+              <i class="bi bi-star rating-icon"></i>
+              <i class="bi bi-star rating-icon"></i>
+              <i class="bi bi-star rating-icon"></i>
+              <i class="bi bi-star rating-icon"></i>
+            </div>
+            <input type="hidden" id="rating" name="rating" value="0">
+            <textarea type="text" id="feedbackMessage" name="feedbackMessage" class="feedbackMessage"></textarea>
+            <button id="submitRatingButton" class="btnNotoClose">Submit</button>
+          </div>
+        `;
         messageDiv.innerHTML += ratingFormHTML;
 
         // Add event listener for the submit rating button
@@ -728,79 +673,116 @@ function showAlert(message) {
       event.preventDefault();
       const questionInput = document.getElementById("question");
       const question = questionInput.value;
+
+
       document.getElementById("question").value = "";
 
       const selectedLanguage = localStorage.getItem('selectedLanguage');
+      // Add the user's question to the chat history
+      chatHistory.push({ role: 'user', content: question });
 
-      try {
-        // Add the user's question to the chat history
-        chatHistory.push({ role: 'user', content: question });
 
+      appendMessageToResponse('user', question);
+
+
+      let chatId = localStorage.getItem('chatId');
+      console.log("generated chat id : ", chatId)
+      const requestBody = {
+        chatId: chatId,
+        messages: chatHistory,
+        language: selectedLanguage || 'English'
+      };
+      const requestBodyAgent = {
+        chatId: chatId,
+        user_message: question,
+        language: selectedLanguage || 'English'
+      };
+
+      console.log("requestBody : ", requestBody)
+
+      if (chatWithAgent === false) {
         // Display the user's message immediately
-        appendMessageToResponse('user', question);
-
-        // Disable input field
-        questionInput.disabled = true;
-        // Show typing animation
-        showTypingAnimation();
-
         // Change button icon to three dots
         const submitButton = document.querySelector('.chat-submit-button');
         submitButton.innerHTML = '<i class="bi bi-three-dots loading"></i>';
         submitButton.disabled = true;
 
-        let chatId = localStorage.getItem('chatId');
-        console.log("generated chat id : ", chatId)
-        const requestBody = {
-          messages: chatHistory,
-          chatId: chatId,
-          language: selectedLanguage || 'English'
-        };
+        // Disable input field
+        questionInput.disabled = true;
+        // Show typing animation
+        showTypingAnimation();
+        try {
 
-        console.log("requestBody : ", requestBody)
-        const response = await fetch("/api/chat-response-flow", {
+          const response = await fetch("/api/chat-response-flow", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          });
+
+          const data = await response.json();
+
+          // Update the chat history for future interactions
+          chatHistory = data.chatHistory || [];
+          console.log("chatId : ", data.chatId);
+
+          if (!localStorage.getItem('chatId')) {
+            localStorage.setItem('chatId', data.chatId);
+          }
+
+          console.log("product status : ", data.productOrService)
+
+          // Display the bot's response in HTML format
+          // appendMessageToResponse('bot', data.answer);
+          appendMessageToResponse('bot', data.answer, data);
+
+          // Hide typing animation
+          hideTypingAnimation();
+          // Clear the question input
+          questionInput.value = '';
+          submitButton.innerHTML = '<i class="bi bi-send"></i>';
+          submitButton.disabled = false;
+
+        } catch (error) {
+          console.error("Error submitting question:", error);
+          // Handle specific error message
+          handleErrorMessage(error);
+        } finally {
+          // Enable input field
+          questionInput.disabled = false;
+
+        }
+      }
+      else {
+        const responseLiveAgent = await fetch("/live-chat-user", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(requestBodyAgent),
         });
 
-        const data = await response.json();
+        const liveAgentData = await responseLiveAgent.json();
+        chatHistory = liveAgentData.chatHistory || []; // Update chat history
 
-        // Update the chat history for future interactions
-        chatHistory = data.chatHistory || [];
-        console.log("chatId : ", data.chatId);
+        // Append the response to the response div
 
-        if (!localStorage.getItem('chatId')) {
-          localStorage.setItem('chatId', data.chatId);
-        }
-
-        console.log("product status : ", data.productOrService)
-
-        // Display the bot's response in HTML format
-        // appendMessageToResponse('bot', data.answer);
-        appendMessageToResponse('bot', data.answer, data);
-
+        checkForAgent()
         // Hide typing animation
-        hideTypingAnimation();
+        // hideTypingAnimation();
+
         // Clear the question input
         questionInput.value = '';
-        submitButton.innerHTML = '<i class="bi bi-send"></i>';
-        submitButton.disabled = false;
-
-      } catch (error) {
-        console.error("Error submitting question:", error);
-        // Handle specific error message
-        handleErrorMessage(error);
-      } finally {
-        // Enable input field
-        questionInput.disabled = false;
 
         // Change button icon back to send icon
-        // const submitButton = document.querySelector('.chat-submit-button');
         // submitButton.innerHTML = '<i class="bi bi-send"></i>';
+
+        // Enable the submit button
+        // submitButton.disabled = false;
       }
+
+
     });
 
 
@@ -827,7 +809,7 @@ function showAlert(message) {
       // Create an image element for the message
       const image = document.createElement("img");
       image.classList.add("message-image");
-      image.src = "/chat-header.webp"; // Replace with actual bot image URL
+      image.src = "/chat-header.webp";
 
       // Use innerHTML to allow HTML formatting in the message
       messageDiv.innerHTML = `<div>${content}</div>`;
@@ -839,7 +821,6 @@ function showAlert(message) {
     }
 
 
-    // Function to handle rating submission
     // Function to handle rating submission
     async function handleRatingSubmission() {
       const ratingInput = document.getElementById("rating");
@@ -905,6 +886,64 @@ function showAlert(message) {
 </body>
 
 </html>
+
+
+
+<!-- // let responseCame = false;
+        // let attemptCount = 0;
+
+        // async function checkResponse() {
+        //   attemptCount++;
+        //   console.log(`Sending API call to check for agent... Attempt ${attemptCount}`);
+
+        //   if (responseCame) {
+        //     console.log('API call stopped. Response received.');
+        //     return;
+        //   }
+
+        //   try {
+        //     const response = await fetch("/live-chat-agent", {
+        //       method: "POST",
+        //       headers: {
+        //         "Content-Type": "application/json"
+        //       },
+        //       body: JSON.stringify({ chatId: data.chatId })
+        //     });
+
+        //     if (response.ok) {
+        //       const responseData = await response.json();
+
+        //       // Check if agent ID is present in responseData
+        //       if (responseData.agent_id !== 'unassigned') {
+        //         showAlert("Now you are chatting with agent ID: " + responseData.agent_name);
+        //         console.log("live chat data not null : ", responseData);
+        //         appendMessageToResponse('bot', responseData.agent_message, data);
+        //       } else {
+        //         console.log("if null : ", responseData);
+        //         // clearInterval(intervalId);
+        //       }
+        //     }
+        //   } catch (error) {
+        //     console.error("Error fetching products data:", error);
+        //     // Handle error
+        //     showAlert("Error connecting to live chat. Please try again later.");
+        //   }
+        // }
+
+        //       function showAlert(message) {
+        //         const responseDiv = document.getElementById("response");
+        //         const alertDiv = document.createElement("div");
+        //         alertDiv.classList.add("alert", "alert-warning", "alert-dismissible", "fade", "show");
+        //         alertDiv.setAttribute("role", "alert");
+        //         alertDiv.innerHTML = `
+        //     ${message}
+        //     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        // `;
+        //         responseDiv.appendChild(alertDiv);
+        //         alertDiv.scrollIntoView({ behavior: "smooth" });
+        //       }
+
+        //     }); -->
 
 
 <!-- // liveAgentButton.addEventListener("click", async function () {
