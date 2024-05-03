@@ -380,12 +380,6 @@ function showAlert(message) {
 
 
 
-
-// Function to handle rating submission
-async function handleRatingSubmission() {
-    // Implementation...
-}
-
 function appendLanguageMessage(content) {
     const responseDiv = document.getElementById("response");
     const messageDiv = document.createElement("div");
