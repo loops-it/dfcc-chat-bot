@@ -586,10 +586,32 @@
         }
 
       }
-      else if (data && !data.productOrService.includes("sorry")) {
+      // else if (data && !data.productOrService.includes("sorry")) {
+      //   messageDiv.innerHTML = `
+      //   <button id="ProductButton" class="viewProductsBtn">View product & services</button>
+      //   <div>${content}</div>`;
+      //   const productButton = messageDiv.querySelector("#ProductButton");
+      //   productButton.addEventListener("click", async function () {
+      //     try {
+      //       const response = await fetch("/api/products-data", {
+      //         method: "POST",
+      //         headers: {
+      //           "Content-Type": "application/json"
+      //         },
+      //         body: JSON.stringify({ chatId: data.chatId })
+      //       });
+      //       const responseData = await response.json();
+      //       console.log("product data : ", responseData.productData)
+      //     } catch (error) {
+      //       console.error("Error fetching products data:", error);
+      //       // Handle the error, e.g., display an error message to the user
+      //     }
+      //   });
+      // }
+      else if (!chatWithAgent && data && data.productOrService && !data.productOrService.includes("sorry")) {
         messageDiv.innerHTML = `
-        <button id="ProductButton" class="viewProductsBtn">View product & services</button>
-        <div>${content}</div>`;
+    <button id="ProductButton" class="viewProductsBtn">View product & services</button>
+    <div>${content}</div>`;
         const productButton = messageDiv.querySelector("#ProductButton");
         productButton.addEventListener("click", async function () {
           try {
@@ -608,6 +630,7 @@
           }
         });
       }
+
       else {
         messageDiv.innerHTML = `<div>${content}</div>`;
       }
