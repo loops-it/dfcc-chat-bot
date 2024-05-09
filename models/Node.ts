@@ -6,8 +6,8 @@ class Node extends Model {
   public node_id!: string;
   public dragging!: string;
   public height!: string;
-  public position!: string;
-  public positionAbsolute!: string;
+  public position!: JSON;
+  public positionAbsolute!: JSON;
   public selected!: string;
   public type!: string;
   public width!: string;
@@ -37,11 +37,11 @@ Node.init(
       allowNull: true,
     },
     position: {
-        type: new DataTypes.STRING(),
+        type: new DataTypes.JSON(),
         allowNull: true,
     },
     positionAbsolute: {
-        type: new DataTypes.STRING(),
+        type: new DataTypes.JSON(),
         allowNull: true,
     },
     selected: {
