@@ -79,6 +79,7 @@ app.post('/live-chat-agent', liveChat);
 app.post('/live-chat-user', liveChatUser);
 app.post('/switch-to-live-agent', switchToAgent);
 app.post('/save-rating', saveRating);
+app.post('/live-chat-offline-form', offlineFormSubmissions);
 app.get('/live-chat-offline-form', offlineFormSubmissions);
 app.get('/view-documents', adminLogged, viewDocuments);
 app.get('/view-flow-page', getFlowPage);
