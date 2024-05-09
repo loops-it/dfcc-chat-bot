@@ -1,11 +1,8 @@
 import { Request, Response } from 'express';
 const bodyParser = require('body-parser');
 const pdfParse = require('pdf-parse');
-import multer from 'multer';
-import OpenAI from "openai";
-import { Pinecone } from '@pinecone-database/pinecone'
 import "dotenv/config";
-import User from '../../models/User';
+import Node from '../../models/Node';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
@@ -15,7 +12,23 @@ interface UserDecodedToken extends JwtPayload {
 }
 export const insertNode = async (req: Request, res: Response, next: Function) => {
    console.log("insertNode",req.body);
-   res.json({ status: "success"}) 
+   try {
+    await Node.create({
+    node_id: req.body.id,
+    dragging: req.body.dragging,
+    height: req.body.height,
+    position: req.body.position,
+    positionAbsolute: req.body.positionAbsolute,
+    selected: req.body.selected,
+    type: req.body.type,
+    width: req.body.width,
+    extent: req.body.extent,
+    parentId: req.body.parentId,
+    });
+    res.json({ status: "success"}) 
+    } catch (error) {
+    console.error('Error inserting data:', error);
+    }
   };
   
 
