@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const pdfParse = require('pdf-parse');
 import "dotenv/config";
 import Node from '../../models/Node';
+import Edge from '../../models/Edge';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
@@ -34,7 +35,19 @@ export const insertNode = async (req: Request, res: Response, next: Function) =>
 
 export const insertEdge = async (req: Request, res: Response, next: Function) => {
     console.log("insertEdge",req.body);
-    res.json({ status: "success"}) 
+    try {
+        await Edge.create({
+        edge_id: req.body.id,
+        source: req.body.source,
+        sourceHandle: req.body.sourceHandle,
+        target: req.body.target,
+        targetHandle: req.body.targetHandle,
+        type: req.body.type
+        });
+        res.json({ status: "success"}) 
+        } catch (error) {
+        console.error('Error inserting data:', error);
+    }
 };
   
   
