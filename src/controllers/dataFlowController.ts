@@ -64,7 +64,7 @@ export const updateNode = async (req: Request, res: Response, next: Function) =>
 };
   
 export const updateEdge = async (req: Request, res: Response, next: Function) => {
-    console.log("updateEdge",req.body);
+    //console.log("updateEdge",req.body);
     try {
     await Edge.update(
         { 
@@ -76,6 +76,34 @@ export const updateEdge = async (req: Request, res: Response, next: Function) =>
         },
         { where: { edge_id: req.body.id } }
     );
+     res.json({ status: "success"}) 
+     } catch (error) {
+     console.error('Error inserting data:', error);
+     }
+};
+
+export const deleteNode = async (req: Request, res: Response, next: Function) => {
+    //console.log("deleteNode",req.body);
+    try {
+    await Node.destroy({
+        where: {
+            node_id: req.body.id
+        }
+    });
+     res.json({ status: "success"}) 
+     } catch (error) {
+     console.error('Error inserting data:', error);
+     }
+};
+
+export const deleteEdge = async (req: Request, res: Response, next: Function) => {
+    //console.log("deleteNode",req.body);
+    try {
+    await Edge.destroy({
+        where: {
+            edge_id: req.body.id
+        }
+    });
      res.json({ status: "success"}) 
      } catch (error) {
      console.error('Error inserting data:', error);
