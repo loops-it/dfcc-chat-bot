@@ -28,7 +28,7 @@ import { adminAccountCreate,adminUpdate,matchPassword,adminUpdateWithPassword } 
 import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword } from './controllers/AgentAccount';
 import { botChatsOnload,botChatsGetMessages,botChatsRefresh,botChatsRefreshMessage} from './controllers/botChats';
 import { LiveChatHistoryOnload,LiveChatHistoryMessages,LiveChatHistoryRefresh,LiveChatHistoryRefreshMessages} from './controllers/LiveChatHistory';
-import { insertNode,insertEdge } from './controllers/dataFlowController';
+import { insertNode,insertEdge,updateNode } from './controllers/dataFlowController';
 import Admin from '../models/Admin';
 import User from '../models/User';
 import BotChats from '../models/BotChats';
@@ -434,7 +434,7 @@ app.get('/go-online',agentLogged, async (req: Request, res: Response) => {
 
 app.post("/data-flow-insert-node", insertNode);
 app.post("/data-flow-insert-edge", insertEdge);
-
+app.post("/data-flow-update-node", updateNode);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

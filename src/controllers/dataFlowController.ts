@@ -12,7 +12,7 @@ interface UserDecodedToken extends JwtPayload {
   // Add other properties if needed
 }
 export const insertNode = async (req: Request, res: Response, next: Function) => {
-   console.log("insertNode",req.body);
+   //console.log("insertNode",req.body);
    try {
     await Node.create({
     node_id: req.body.id,
@@ -34,7 +34,7 @@ export const insertNode = async (req: Request, res: Response, next: Function) =>
   
 
 export const insertEdge = async (req: Request, res: Response, next: Function) => {
-    console.log("insertEdge",req.body);
+    //console.log("insertEdge",req.body);
     try {
         await Edge.create({
         edge_id: req.body.id,
@@ -48,6 +48,19 @@ export const insertEdge = async (req: Request, res: Response, next: Function) =>
         } catch (error) {
         console.error('Error inserting data:', error);
     }
+};
+
+export const updateNode = async (req: Request, res: Response, next: Function) => {
+    console.log("updateNode",req.body);
+    try {
+    await Node.update(
+        { position: req.body.position },
+        { where: { node_id: req.body.id } }
+    );
+     res.json({ status: "success"}) 
+     } catch (error) {
+     console.error('Error inserting data:', error);
+     }
 };
   
   
