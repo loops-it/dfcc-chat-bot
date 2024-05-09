@@ -109,4 +109,17 @@ export const deleteEdge = async (req: Request, res: Response, next: Function) =>
      console.error('Error inserting data:', error);
      }
 };
+
+export const retrieveData = async (req: Request, res: Response, next: Function) => {
+    //console.log("deleteNode",req.body);
+    try {
+        const nodes = await Node.findAll({});
+        const edges = await Edge.findAll({});
+
+     res.json({ status: "success", nodes: nodes, edges: edges}) 
+
+     } catch (error) {
+     console.error('Error inserting data:', error);
+     }
+};
   
