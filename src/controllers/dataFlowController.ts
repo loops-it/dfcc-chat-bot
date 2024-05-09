@@ -51,7 +51,7 @@ export const insertEdge = async (req: Request, res: Response, next: Function) =>
 };
 
 export const updateNode = async (req: Request, res: Response, next: Function) => {
-    console.log("updateNode",req.body);
+    //console.log("updateNode",req.body);
     try {
     await Node.update(
         { position: req.body.position },
@@ -63,4 +63,22 @@ export const updateNode = async (req: Request, res: Response, next: Function) =>
      }
 };
   
+export const updateEdge = async (req: Request, res: Response, next: Function) => {
+    console.log("updateEdge",req.body);
+    try {
+    await Edge.update(
+        { 
+        source: req.body.source,
+        sourceHandle: req.body.sourceHandle,
+        target: req.body.target,
+        targetHandle: req.body.targetHandle,
+        type: req.body.type 
+        },
+        { where: { edge_id: req.body.id } }
+    );
+     res.json({ status: "success"}) 
+     } catch (error) {
+     console.error('Error inserting data:', error);
+     }
+};
   
