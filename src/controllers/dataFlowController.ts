@@ -96,6 +96,7 @@ export const deleteNode = async (req: Request, res: Response, next: Function) =>
                 parentId: req.body.id
             }
         });
+
     }
     else{
     await Node.destroy({
@@ -103,7 +104,22 @@ export const deleteNode = async (req: Request, res: Response, next: Function) =>
             node_id: req.body.id
         }
     });
+
+    
     }
+
+    await Edge.destroy({
+        where: {
+            source: req.body.id
+        }
+    });
+
+    await Edge.destroy({
+        where: {
+            target: req.body.id
+        }
+    });
+
      res.json({ status: "success"}) 
      } catch (error) {
      console.error('Error inserting data:', error);
