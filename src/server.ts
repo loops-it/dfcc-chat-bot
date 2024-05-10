@@ -440,8 +440,8 @@ app.post("/data-flow-delete-node", deleteNode);
 app.post("/data-flow-delete-edge", deleteEdge);
 app.get("/data-flow-retrieve-data", retrieveData);
 
-app.get("/data-flow-text", textOnlyData);
-app.get("/data-flow-text-box", textBoxData);
+app.post("/data-flow-text", textOnlyData);
+app.post("/data-flow-text-box", textBoxData);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
