@@ -6,6 +6,7 @@ import Node from '../../models/Node';
 import Edge from '../../models/Edge';
 import FlowTextOnly from '../../models/FlowTextOnly';
 import FlowTextBox from '../../models/FlowTextBox';
+import FlowButtonData from '../../models/FlowButtonData';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
@@ -206,6 +207,37 @@ export const textBoxData = async (req: Request, res: Response, next: Function) =
                 node_id: req.body.id,
                 title: req.body.title,
                 description: req.body.description,
+            });
+        }
+        
+        res.json({ status: "success"}) 
+    } catch (error) {
+    console.error('Error inserting data:', error);
+    }
+};
+
+export const ButtonData = async (req: Request, res: Response, next: Function) => {
+    //console.log("insertEdge",req.body);
+    try {
+        const data_exist = await FlowButtonData.findOne({
+            where: {
+              "node_id" : req.body.id,
+            },
+          });
+        if (data_exist) {
+            await FlowButtonData.update(
+                { 
+                text: req.body.text,
+                link: req.body.link,
+                },
+                { where: { node_id: req.body.id } }
+            );
+        }
+        else{
+            await FlowButtonData.create({
+                node_id: req.body.id,
+                text: req.body.text,
+                link: req.body.link,
             });
         }
         
