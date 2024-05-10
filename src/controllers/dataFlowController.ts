@@ -161,7 +161,7 @@ export const textOnlyData = async (req: Request, res: Response, next: Function) 
     try {
         const data_exist = await FlowTextOnly.findOne({
             where: {
-              "edge_id" : req.body.id,
+              "node_id" : req.body.id,
             },
           });
         if (data_exist) {
@@ -169,12 +169,12 @@ export const textOnlyData = async (req: Request, res: Response, next: Function) 
                 { 
                 text: req.body.text,
                 },
-                { where: { edge_id: req.body.id } }
+                { where: { node_id: req.body.id } }
             );
         }
         else{
             await FlowTextOnly.create({
-                edge_id: req.body.id,
+                node_id: req.body.id,
                 text: req.body.text,
             });
         }
@@ -189,7 +189,7 @@ export const textBoxData = async (req: Request, res: Response, next: Function) =
     try {
         const data_exist = await FlowTextBox.findOne({
             where: {
-              "edge_id" : req.body.id,
+              "node_id" : req.body.id,
             },
           });
         if (data_exist) {
@@ -198,12 +198,12 @@ export const textBoxData = async (req: Request, res: Response, next: Function) =
                 title: req.body.title,
                 description: req.body.description,
                 },
-                { where: { edge_id: req.body.id } }
+                { where: { node_id: req.body.id } }
             );
         }
         else{
             await FlowTextBox.create({
-                edge_id: req.body.id,
+                node_id: req.body.id,
                 title: req.body.title,
                 description: req.body.description,
             });
