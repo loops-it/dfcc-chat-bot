@@ -89,7 +89,112 @@ export const updateEdge = async (req: Request, res: Response, next: Function) =>
 export const deleteNode = async (req: Request, res: Response, next: Function) => {
     //console.log("deleteNode",req.body);
     try {
-    if(req.body.type == "cardGroup" || req.body.type == "buttonGroup"){
+    if(req.body.type == "start"){
+        await Node.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+        await Edge.destroy({
+            where: {
+                source: req.body.id
+            }
+        });
+    
+        await Edge.destroy({
+            where: {
+                target: req.body.id
+            }
+        });
+    }
+    if(req.body.type == "end"){
+        await Node.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+        await Edge.destroy({
+            where: {
+                source: req.body.id
+            }
+        });
+    
+        await Edge.destroy({
+            where: {
+                target: req.body.id
+            }
+        });
+    }
+    if(req.body.type == "textOnly"){
+        await Node.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+        await Edge.destroy({
+            where: {
+                source: req.body.id
+            }
+        });
+        
+        await Edge.destroy({
+            where: {
+                target: req.body.id
+            }
+        });
+        await FlowTextOnly.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+    }
+    if(req.body.type == "textinput"){
+        await Node.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+        await Edge.destroy({
+            where: {
+                source: req.body.id
+            }
+        });
+        
+        await Edge.destroy({
+            where: {
+                target: req.body.id
+            }
+        });
+        await FlowTextBox.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+    }
+    if(req.body.type == "button"){
+        await Node.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+        await Edge.destroy({
+            where: {
+                source: req.body.id
+            }
+        });
+        
+        await Edge.destroy({
+            where: {
+                target: req.body.id
+            }
+        });
+        await FlowButtonData.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+    }
+    if(req.body.type == "cardGroup"){
         await Node.destroy({
             where: {
                 node_id: req.body.id
@@ -100,29 +205,52 @@ export const deleteNode = async (req: Request, res: Response, next: Function) =>
                 parentId: req.body.id
             }
         });
-
+        await Edge.destroy({
+            where: {
+                source: req.body.id
+            }
+        });
+        
+        await Edge.destroy({
+            where: {
+                target: req.body.id
+            }
+        });
+        await FlowCardData.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
     }
-    else{
-    await Node.destroy({
-        where: {
-            node_id: req.body.id
-        }
-    });
-
-    
+    if(req.body.type == "buttonGroup"){
+        await Node.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+        await Node.destroy({
+            where: {
+                parentId: req.body.id
+            }
+        });
+        await Edge.destroy({
+            where: {
+                source: req.body.id
+            }
+        });
+        
+        await Edge.destroy({
+            where: {
+                target: req.body.id
+            }
+        });
+        await FlowCardData.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
     }
 
-    await Edge.destroy({
-        where: {
-            source: req.body.id
-        }
-    });
-
-    await Edge.destroy({
-        where: {
-            target: req.body.id
-        }
-    });
 
      res.json({ status: "success"}) 
      } catch (error) {
