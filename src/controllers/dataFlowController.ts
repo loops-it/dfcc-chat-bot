@@ -85,11 +85,25 @@ export const updateEdge = async (req: Request, res: Response, next: Function) =>
 export const deleteNode = async (req: Request, res: Response, next: Function) => {
     //console.log("deleteNode",req.body);
     try {
+    if(req.body.type == "cardGroup" || req.body.type == "buttonGroup"){
+        await Node.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+        await Node.destroy({
+            where: {
+                parentId: req.body.id
+            }
+        });
+    }
+    else{
     await Node.destroy({
         where: {
             node_id: req.body.id
         }
     });
+    }
      res.json({ status: "success"}) 
      } catch (error) {
      console.error('Error inserting data:', error);
