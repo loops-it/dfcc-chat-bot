@@ -7,6 +7,7 @@ import Edge from '../../models/Edge';
 import FlowTextOnly from '../../models/FlowTextOnly';
 import FlowTextBox from '../../models/FlowTextBox';
 import FlowButtonData from '../../models/FlowButtonData';
+import FlowCardData from '../../models/FlowCardData';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
@@ -238,6 +239,39 @@ export const ButtonData = async (req: Request, res: Response, next: Function) =>
                 node_id: req.body.id,
                 text: req.body.text,
                 link: req.body.link,
+            });
+        }
+        
+        res.json({ status: "success"}) 
+    } catch (error) {
+    console.error('Error inserting data:', error);
+    }
+};
+
+export const CardData = async (req: Request, res: Response, next: Function) => {
+    //console.log("insertEdge",req.body);
+    try {
+        const data_exist = await FlowCardData.findOne({
+            where: {
+              "node_id" : req.body.id,
+            },
+          });
+        if (data_exist) {
+            await FlowCardData.update(
+                { 
+                title: req.body.title,
+                description: req.body.description,
+                image: "card-test-image.png",
+                },
+                { where: { node_id: req.body.id } }
+            );
+        }
+        else{
+            await FlowCardData.create({
+                node_id: req.body.id,
+                title: req.body.title,
+                description: req.body.description,
+                image: "card-test-image.png",
             });
         }
         
