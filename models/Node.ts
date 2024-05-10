@@ -77,7 +77,7 @@ Node.init(
   },
   {
     sequelize,
-    tableName: 'nodes',
+    tableName: 'flow_nodes',
     modelName: 'Node',
   }
 );

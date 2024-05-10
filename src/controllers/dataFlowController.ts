@@ -4,6 +4,8 @@ const pdfParse = require('pdf-parse');
 import "dotenv/config";
 import Node from '../../models/Node';
 import Edge from '../../models/Edge';
+import FlowTextOnly from '../../models/FlowTextOnly';
+import FlowTextBox from '../../models/FlowTextBox';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
@@ -152,4 +154,63 @@ export const retrieveData = async (req: Request, res: Response, next: Function) 
      console.error('Error inserting data:', error);
      }
 };
-  
+
+
+export const textOnlyData = async (req: Request, res: Response, next: Function) => {
+    //console.log("insertEdge",req.body);
+    try {
+        const data_exist = await FlowTextOnly.findOne({
+            where: {
+              "edge_id" : req.body.id,
+            },
+          });
+        if (data_exist) {
+            await FlowTextOnly.update(
+                { 
+                text: req.body.text,
+                },
+                { where: { edge_id: req.body.id } }
+            );
+        }
+        else{
+            await FlowTextOnly.create({
+                edge_id: req.body.id,
+                text: req.body.text,
+            });
+        }
+        
+        res.json({ status: "success"}) 
+    } catch (error) {
+    console.error('Error inserting data:', error);
+    }
+};
+export const textBoxData = async (req: Request, res: Response, next: Function) => {
+    //console.log("insertEdge",req.body);
+    try {
+        const data_exist = await FlowTextBox.findOne({
+            where: {
+              "edge_id" : req.body.id,
+            },
+          });
+        if (data_exist) {
+            await FlowTextBox.update(
+                { 
+                title: req.body.title,
+                description: req.body.description,
+                },
+                { where: { edge_id: req.body.id } }
+            );
+        }
+        else{
+            await FlowTextBox.create({
+                edge_id: req.body.id,
+                title: req.body.title,
+                description: req.body.description,
+            });
+        }
+        
+        res.json({ status: "success"}) 
+    } catch (error) {
+    console.error('Error inserting data:', error);
+    }
+};

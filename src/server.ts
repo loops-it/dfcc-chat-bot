@@ -28,7 +28,7 @@ import { adminAccountCreate,adminUpdate,matchPassword,adminUpdateWithPassword } 
 import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword } from './controllers/AgentAccount';
 import { botChatsOnload,botChatsGetMessages,botChatsRefresh,botChatsRefreshMessage} from './controllers/botChats';
 import { LiveChatHistoryOnload,LiveChatHistoryMessages,LiveChatHistoryRefresh,LiveChatHistoryRefreshMessages} from './controllers/LiveChatHistory';
-import { insertNode,insertEdge,updateNode,updateEdge,deleteNode,deleteEdge,retrieveData } from './controllers/dataFlowController';
+import { insertNode,insertEdge,updateNode,updateEdge,deleteNode,deleteEdge,retrieveData,textOnlyData,textBoxData } from './controllers/dataFlowController';
 import Admin from '../models/Admin';
 import User from '../models/User';
 import BotChats from '../models/BotChats';
@@ -438,8 +438,10 @@ app.post("/data-flow-update-node", updateNode);
 app.post("/data-flow-insert-edge", insertEdge);
 app.post("/data-flow-delete-node", deleteNode);
 app.post("/data-flow-delete-edge", deleteEdge);
-
 app.get("/data-flow-retrieve-data", retrieveData);
+
+app.get("/data-flow-text", textOnlyData);
+app.get("/data-flow-text-box", textBoxData);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

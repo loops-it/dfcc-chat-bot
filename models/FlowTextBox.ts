@@ -1,46 +1,31 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../database/sequelize';
 
-class Edge extends Model {
+class FlowTextBox extends Model {
   public id!: string;
-  public edge_id!: string;
-  public source!: string;
-  public sourceHandle!: string;
-  public target!: string;
-  public targetHandle!: string;
-  public type!: string;
+  public node_id!: string;
+  public title!: string;
+  public description!: string;
   public createdAt!: Date;
   public updatedAt!: Date;
 }
 
-Edge.init(
+FlowTextBox.init(
   {
     id: {
       type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true,
     },
-    edge_id: {
+    node_id: {
         type: new DataTypes.STRING(),
         allowNull: true,
       },
-    source: {
+    title: {
       type: new DataTypes.STRING(),
       allowNull: true,
     },
-    sourceHandle: {
-      type: new DataTypes.STRING(),
-      allowNull: true,
-    },
-    target: {
-        type: new DataTypes.STRING(),
-        allowNull: true,
-    },
-    targetHandle: {
-        type: new DataTypes.STRING(),
-        allowNull: true,
-    },
-    type: {
+    description: {
         type: new DataTypes.STRING(),
         allowNull: true,
     },
@@ -57,9 +42,9 @@ Edge.init(
   },
   {
     sequelize,
-    tableName: 'flow_edges',
-    modelName: 'Edge',
+    tableName: 'flow_text_box',
+    modelName: 'FlowTextBox',
   }
 );
 
-export default Edge;
+export default FlowTextBox;
