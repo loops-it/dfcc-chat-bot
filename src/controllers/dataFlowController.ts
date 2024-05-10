@@ -249,7 +249,7 @@ export const ButtonData = async (req: Request, res: Response, next: Function) =>
 };
 
 export const CardData = async (req: Request, res: Response, next: Function) => {
-    console.log("CardData",req.body);
+    console.log("CardData",req);
     try {
         const data_exist = await FlowCardData.findOne({
             where: {
