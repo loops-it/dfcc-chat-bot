@@ -277,8 +277,12 @@ export const retrieveData = async (req: Request, res: Response, next: Function) 
     try {
         const nodes = await Node.findAll({});
         const edges = await Edge.findAll({});
+        const textOnly = await FlowTextOnly.findAll({});
+        const textBox = await FlowTextBox.findAll({});
+        const buttonData = await FlowButtonData.findAll({});
+        const cardData = await FlowCardData.findAll({});
 
-     res.json({ status: "success", nodes: nodes, edges: edges}) 
+     res.json({ status: "success", nodes: nodes, edges: edges, textOnly: textOnly, textBox: textBox, buttonData: buttonData, cardData: cardData}) 
 
      } catch (error) {
      console.error('Error inserting data:', error);
