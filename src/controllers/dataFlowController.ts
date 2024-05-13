@@ -413,7 +413,7 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
     }
 };
 export const getProducts = async (req: Request, res: Response, next: Function) => {
-    //console.log("CardData",req.body);
+    console.log("getProducts",req.body);
     try {
         let products: Product[] = [];
         let type: any;
