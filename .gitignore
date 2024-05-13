@@ -2,5 +2,10 @@
 .env
 
 /test.html
-/src/views/flow-test.ejs
+
+
 /src/views/flow-test-new.ejs
+
+/src/public/scripts/chatFlowGenerate.js
+
+/src/views/flow-test.ejs

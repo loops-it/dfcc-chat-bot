@@ -313,7 +313,7 @@ function handleProductButtonClick(data) {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ chatId: data.chatId }),
+                body: JSON.stringify({ node_id: "node_daa32f71-a521-417e-ad41-507abb849bdc" }),
             });
             const responseData = await response.json();
             console.log("product data : ", responseData.productData);
