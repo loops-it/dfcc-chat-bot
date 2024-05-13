@@ -251,6 +251,34 @@ export const deleteNode = async (req: Request, res: Response, next: Function) =>
         });
     }
 
+    if(req.body.type == "cardStyleOne"){
+        await Node.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+        await Node.destroy({
+            where: {
+                parentId: req.body.id
+            }
+        });
+        await Edge.destroy({
+            where: {
+                source: req.body.id
+            }
+        });
+        
+        await Edge.destroy({
+            where: {
+                target: req.body.id
+            }
+        });
+        await FlowCardData.destroy({
+            where: {
+                node_id: req.body.id
+            }
+        });
+    }
 
      res.json({ status: "success"}) 
      } catch (error) {
@@ -457,7 +485,7 @@ export const getProducts = async (req: Request, res: Response, next: Function) =
                 });
                 nodeData = node_data;
             }
-            if(type == 'FlowCardData'){
+            if(type == 'cardGroup'){
                 const node_data = await FlowCardData.findOne({
                     where: {
                       "node_id" : parent_nodes[c].target,
@@ -473,7 +501,14 @@ export const getProducts = async (req: Request, res: Response, next: Function) =
                 });
                 nodeData = node_data;
             }
-           
+            if(type == 'cardStyleOne'){
+                const node_data = await FlowCardData.findOne({
+                    where: {
+                      "node_id" : parent_nodes[c].target,
+                    },
+                });
+                nodeData = node_data;
+            }
             products.push({type: type, node_data: nodeData});
         } 
         
