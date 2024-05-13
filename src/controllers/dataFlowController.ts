@@ -11,9 +11,9 @@ import FlowCardData from '../../models/FlowCardData';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-interface UserDecodedToken extends JwtPayload {
-  id: string;
-  // Add other properties if needed
+interface Product {
+    type: string;
+    node_data: any; // Adjust the type as per your actual data structure
 }
 export const insertNode = async (req: Request, res: Response, next: Function) => {
    //console.log("insertNode",req.body);
@@ -381,7 +381,7 @@ export const ButtonData = async (req: Request, res: Response, next: Function) =>
 };
 
 export const CardData = async (req: Request, res: Response, next: Function) => {
-    console.log("CardData",req.body);
+    //console.log("CardData",req.body);
     try {
         const data_exist = await FlowCardData.findOne({
             where: {
@@ -408,6 +408,76 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
         }
         
         res.json({ status: "success"}) 
+    } catch (error) {
+    console.error('Error inserting data:', error);
+    }
+};
+export const getProducts = async (req: Request, res: Response, next: Function) => {
+    //console.log("CardData",req.body);
+    try {
+        let products: Product[] = [];
+        let type: any;
+        let nodeData: any;
+        const parent_nodes = await Edge.findAll({
+            where: {
+              "source" : req.body.node_id,
+            },
+          });
+        
+        for (var c = 0; c < parent_nodes.length; c++){
+            const node_details = await Node.findOne({
+                where: {
+                  "node_id" : parent_nodes[c].target,
+                },
+            });
+            if(node_details){
+                type = node_details[0].type;
+            }
+            if(type == 'textOnly'){
+                const node_data = await FlowTextOnly.findOne({
+                    where: {
+                      "node_id" : parent_nodes[c].target,
+                    },
+                });
+                nodeData = node_data;
+            }
+            if(type == 'textinput'){
+                const node_data = await FlowTextBox.findOne({
+                    where: {
+                      "node_id" : parent_nodes[c].target,
+                    },
+                });
+                nodeData = node_data;
+            }
+            if(type == 'button'){
+                const node_data = await FlowButtonData.findOne({
+                    where: {
+                      "node_id" : parent_nodes[c].target,
+                    },
+                });
+                nodeData = node_data;
+            }
+            if(type == 'FlowCardData'){
+                const node_data = await FlowCardData.findOne({
+                    where: {
+                      "node_id" : parent_nodes[c].target,
+                    },
+                });
+                nodeData = node_data;
+            }
+            if(type == 'buttonGroup'){
+                const node_data = await FlowCardData.findOne({
+                    where: {
+                      "node_id" : parent_nodes[c].target,
+                    },
+                });
+                nodeData = node_data;
+            }
+           
+            products.push({type: type, node_data: nodeData});
+        } 
+        
+        res.json({ status: "success", products:products}) 
     } catch (error) {
     console.error('Error inserting data:', error);
     }
