@@ -431,7 +431,7 @@ export const getProducts = async (req: Request, res: Response, next: Function) =
                 },
             });
             if(node_details){
-                type = node_details[0].type;
+                type = node_details.type;
             }
             if(type == 'textOnly'){
                 const node_data = await FlowTextOnly.findOne({
