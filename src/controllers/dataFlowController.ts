@@ -477,7 +477,18 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
                 image: "card-test-image.png",
             });
         }
-        
+        if(req.body.type=="group"){
+            await Node.update(
+                { intent: req.body.intent },
+                { where: { node_id: req.body.parent_id } }
+            );
+        }
+        else{
+            await Node.update(
+                { intent: req.body.intent },
+                { where: { node_id: req.body.id } }
+            );
+        }
         res.json({ status: "success"}) 
     } catch (error) {
     console.error('Error inserting data:', error);
