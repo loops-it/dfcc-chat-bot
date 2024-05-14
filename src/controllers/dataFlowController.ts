@@ -228,6 +228,18 @@ export const deleteNode = async (req: Request, res: Response, next: Function) =>
                 node_id: req.body.id
             }
         });
+        const child_buttons = await Node.findAll({
+            where: {
+              "parentId" : req.body.id,
+            },
+        });
+        for (var c = 0; c < child_buttons.length; c++){
+            await FlowButtonData.destroy({
+                where: {
+                    node_id: child_buttons[c].node_id
+                }
+            });
+        }
         await Node.destroy({
             where: {
                 parentId: req.body.id
@@ -244,11 +256,7 @@ export const deleteNode = async (req: Request, res: Response, next: Function) =>
                 target: req.body.id
             }
         });
-        await FlowCardData.destroy({
-            where: {
-                node_id: req.body.id
-            }
-        });
+        
     }
 
     if(req.body.type == "cardStyleOne"){
