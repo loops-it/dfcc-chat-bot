@@ -438,6 +438,18 @@ export const ButtonData = async (req: Request, res: Response, next: Function) =>
     console.error('Error inserting data:', error);
     }
 };
+export const ButtonGroup = async (req: Request, res: Response, next: Function) => {
+    //console.log("insertEdge",req.body);
+    try {
+        await Node.update(
+            { intent: req.body.intent },
+            { where: { node_id: req.body.id } }
+        );
+        res.json({ status: "success"}) 
+    } catch (error) {
+    console.error('Error inserting data:', error);
+    }
+};
 
 export const CardData = async (req: Request, res: Response, next: Function) => {
     //console.log("CardData",req.body);

@@ -28,7 +28,7 @@ import { adminAccountCreate,adminUpdate,matchPassword,adminUpdateWithPassword } 
 import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword } from './controllers/AgentAccount';
 import { botChatsOnload,botChatsGetMessages,botChatsRefresh,botChatsRefreshMessage} from './controllers/botChats';
 import { LiveChatHistoryOnload,LiveChatHistoryMessages,LiveChatHistoryRefresh,LiveChatHistoryRefreshMessages} from './controllers/LiveChatHistory';
-import { insertNode,insertEdge,updateNode,updateEdge,deleteNode,deleteEdge,retrieveData,textOnlyData,textBoxData
+import { insertNode,insertEdge,updateNode,updateEdge,deleteNode,deleteEdge,retrieveData,textOnlyData,textBoxData,ButtonGroup
   ,ButtonData,CardData,getProducts} from './controllers/dataFlowController';
 import Admin from '../models/Admin';
 import User from '../models/User';
@@ -444,6 +444,8 @@ app.get("/data-flow-retrieve-data", retrieveData);
 app.post("/data-flow-text", textOnlyData);
 app.post("/data-flow-text-box", textBoxData);
 app.post("/data-flow-button-data", ButtonData);
+app.post("/data-flow-button-group", ButtonGroup);
+
 app.post("/data-flow-card-data", CardData);
 
 app.post("/chat-bot-get-products", getProducts);
