@@ -480,7 +480,7 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
         if(req.body.type=="group"){
             await Node.update(
                 { intent: req.body.intent },
-                { where: { node_id: req.body.parent_id } }
+                { where: { node_id: req.body.parentID } }
             );
         }
         else{
