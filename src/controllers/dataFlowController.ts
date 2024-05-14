@@ -29,6 +29,7 @@ export const insertNode = async (req: Request, res: Response, next: Function) =>
     width: req.body.width,
     extent: req.body.extent,
     parentId: req.body.parentId,
+    intent: req.body.intent,
     });
     res.json({ status: "success"}) 
     } catch (error) {
@@ -58,7 +59,7 @@ export const updateNode = async (req: Request, res: Response, next: Function) =>
     //console.log("updateNode",req.body);
     try {
     await Node.update(
-        { position: req.body.position },
+        { position: req.body.position, intent: req.body.intent, },
         { where: { node_id: req.body.id } }
     );
      res.json({ status: "success"}) 
