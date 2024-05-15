@@ -43,16 +43,13 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
         group: ['intent'],
     });
 
-    // Filter out null values and log the remaining intent values
+    // Filter out null values and get remaining intent values
     cachedIntentsList = intentsList
             .filter(intent => intent.intent !== null)
             .map(intent => intent.intent);
 
 
-    console.log("Cached Intents List:", cachedIntentsList);
-
-    
-
+    // console.log("Cached Intents List:", cachedIntentsList);
     // console.log(req.body.language)
 
     try {
@@ -104,15 +101,30 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
             translatedQuestion = userQuestion;
         }
 
+        // const productOrServiceQuestion = await openai.completions.create({
+        //     model: "gpt-3.5-turbo-instruct",
+        //     prompt: `State the name of the service or product that mentioned in this question "${userQuestion}", If it is not service or product, just say "sorry".`,
+        //     max_tokens: 50,
+        //     temperature: 0,
+        // });
+
+//         null
+// cards
+// credit card
+// loan types
+// Loans
+// saving accounts
         const productOrServiceQuestion = await openai.completions.create({
             model: "gpt-3.5-turbo-instruct",
-            prompt: `State the name of the service or product that mentioned in this question "${userQuestion}", If it is not service or product, just say "sorry".`,
+            prompt: `If the given question : "${userQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, and check if mentioned service or product is in the intent list as it is, if yes state only it's name. If it is not in the intent list, just provide this word "not product".`,
             max_tokens: 50,
             temperature: 0,
         });
 
+        console.log("--------------------------------------")
         console.log("productOrServiceQuestion Question :", productOrServiceQuestion.choices[0].text)
         const stateProduct = productOrServiceQuestion.choices[0].text;
+        console.log("--------------------------------------")
 
         // console.log("userQuestion",userQuestion);
         // console.log("translatedQuestion",translatedQuestion);

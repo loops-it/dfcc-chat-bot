@@ -117,7 +117,7 @@ function appendMessageToResponse(role, content, data, isRatingForm = false) {
         appendListContent(messageDiv, content);
     } else if (content.includes("I'm sorry.. no information documents found for data retrieval.")) {
         appendLiveAgentContent(messageDiv, content, data);
-    } else if (!chatWithAgent && data && data.productOrService && !data.productOrService.includes("sorry")) {
+    } else if (!chatWithAgent && data && data.productOrService && !data.productOrService.toLowerCase().includes("not product")) {
         appendProductContent(messageDiv, content, data);
     } else {
         appendPlainTextContent(messageDiv, content);
