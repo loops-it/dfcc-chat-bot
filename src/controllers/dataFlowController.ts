@@ -15,6 +15,7 @@ interface intentData {
     type: string;
     node_data: any;
 }
+
 export const insertNode = async (req: Request, res: Response, next: Function) => {
    //console.log("insertNode",req.body);
    try {
@@ -516,6 +517,8 @@ export const getIntentData = async (req: Request, res: Response, next: Function)
                     },
                     });
                 nodeData = node_data;
+
+                intentData.push({type: type, node_data: nodeData});
             }
             if(type == 'textinput'){
                 const node_data = await FlowTextBox.findOne({
@@ -524,6 +527,8 @@ export const getIntentData = async (req: Request, res: Response, next: Function)
                     },
                     });
                 nodeData = node_data;
+
+                intentData.push({type: type, node_data: nodeData});
             }
             if(type == 'cardStyleOne'){
                 const node_data = await FlowCardData.findOne({
@@ -532,11 +537,66 @@ export const getIntentData = async (req: Request, res: Response, next: Function)
                     },
                     });
                 nodeData = node_data;
+                intentData.push({type: type, node_data: nodeData});
+            }
+            if (type == 'buttonGroup') {
+                const buttons = await Node.findAll({
+                    where: {
+                        "parentId": node_details[c].node_id,
+                    },
+                });
+            
+                let buttonData: any[] = [];
+            
+                for (var x = 0; x < buttons.length; x++) {
+                    const node_data = await FlowButtonData.findOne({
+                        where: {
+                            "node_id": buttons[x].node_id,
+                        },
+                    });
+                    if (node_data) { 
+                        buttonData.push({ button: node_data }); 
+                    }
+                }
+                intentData.push({ type: type, node_data: buttonData });
             }
 
-            intentData.push({type: type, node_data: nodeData});
-        }
+            if (type == 'cardGroup') {
+                const childs = await Node.findAll({
+                    where: {
+                        "parentId": node_details[c].node_id,
+                    },
+                });
+            
+                let buttonData: any[] = [];
+            
+                for (var x = 0; x < childs.length; x++) {
+                    if(childs[x].type == 'cardHeader'){
+                        const node_data = await FlowCardData.findOne({
+                            where: {
+                                "node_id" : node_details[c].node_id,
+                            },
+                        });
+                        if (node_data) { 
+                            buttonData.push({ card: node_data }); 
+                        }
+                    }
+                    else{
+                        const node_data = await FlowButtonData.findOne({
+                            where: {
+                                "node_id": childs[x].node_id,
+                            },
+                        });
+                        if (node_data) { 
+                            buttonData.push({ button: node_data }); 
+                        }
+                    }
+                }
 
+                intentData.push({ type: type, node_data: buttonData });
+            }
+            
+        }
         res.json({ status: "success", intentData:intentData}) 
 
         // const parent_nodes = await Edge.findAll({
