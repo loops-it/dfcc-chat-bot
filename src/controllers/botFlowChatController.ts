@@ -21,12 +21,12 @@ interface ChatEntry {
 }
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
 
+
+
+
 export const chatFlowResponse = async (req: RequestWithChatId, res: Response) => {
 
-    const intentsList = await Node.findAll({
-        attributes: ['intent'], 
-        group: ['intent'],
-    });
+    
     
     // console.log("req : ", req.body.chatId) 
     const index = pc.index("dfccchatbot");
@@ -35,18 +35,22 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
 
     let userChatId = req.body.chatId || "";
     let language = req.body.language;
+    let cachedIntentsList: string[] = [];
 
-    // console.log("intentsList : ", intentsList)
-    let intentValues: any[];
-    // intentsList.then(nodes => {
-    //     intentValues = nodes.map(node => node.dataValues.intent).filter(intent => intent !== null);
-    // return intentValues;
-    // }).then(() => {
-    //     console.log(intentValues); 
-    // }).catch(error => {
-    //     console.error("Error occurred: ", error);
-    // });
-    // console.log("intentValues : ",intentValues);
+    // Fetch intents from the database
+    const intentsList = await Node.findAll({
+        attributes: ['intent'], 
+        group: ['intent'],
+    });
+
+    // Filter out null values and log the remaining intent values
+    cachedIntentsList = intentsList
+            .filter(intent => intent.intent !== null)
+            .map(intent => intent.intent);
+
+
+    console.log("Cached Intents List:", cachedIntentsList);
+
     
 
     // console.log(req.body.language)
