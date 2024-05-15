@@ -125,11 +125,13 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
         const stateProduct = productOrServiceQuestion.choices[0].text;
         console.log("--------------------------------------")
 
-        if (stateProduct && stateProduct.toLowerCase().includes("not product")) {
+        if (stateProduct && stateProduct.toLowerCase().includes("not a product")) {
             console.log("It is not a product.");
+            ("--------------------------------------")
         }
         else{
             console.log("It is a product.");
+            console.log("--------------------------------------")
         }
         
 
