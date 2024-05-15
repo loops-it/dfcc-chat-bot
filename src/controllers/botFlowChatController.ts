@@ -126,10 +126,12 @@ export const chatFlowResponse = async (
 
         let kValue = 2;
 
+        // If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, and check if mentioned service or product is in the intent list as it is, if yes State only its name. If it is not in the intent list, just say this word "not product".
+
         console.log("translatedQuestion : ", translatedQuestion);
         const productOrServiceQuestion = await openai.completions.create({
             model: "gpt-3.5-turbo-instruct",
-            prompt: `If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, and check if mentioned service or product is in the intent list as it is, if yes State only its name. If it is not in the intent list, just say this word "not product".`,
+            prompt: `If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, if it is in the intent list state Only matching intent name from the list. Do not add any other words. If it is not just say this word "not a product".`,
             max_tokens: 20,
             temperature: 0,
         });
@@ -297,13 +299,37 @@ Standalone question:`;
         } else {
             console.log("It is a product. go to flow builder function");
             console.log("--------------------------------------");
-            // run flow
-            res.json({
-                answer: "Check our products and services:",
-                chatHistory: chatHistory,
-                chatId: userChatId,
-                productOrService: stateProduct,
-            });
+
+            try {
+                console.log("stateProduct intent: ", stateProduct);
+                const response = await fetch("https://dfcc-chat-bot.vercel.app/chat-bot-get-intent-data", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ intent: stateProduct }),
+                });
+            
+                if (!response.ok) {
+                    throw new Error("Network response was not ok.");
+                }
+            
+                const responseData = await response.json();
+            
+                console.log("gpt intent: ", responseData);
+                // run flow
+                res.json({
+                    answer: "Check our products and services:",
+                    chatHistory: chatHistory,
+                    chatId: userChatId,
+                    productOrService: stateProduct,
+                });
+            } catch (error) {
+                console.error("Error fetching intent data:", error);
+                res.status(500).json({ error: "Internal Server Error" });
+            }
+            
+            
         }
 
 

@@ -308,12 +308,12 @@ function appendProductContent(messageDiv, content, data) {
 function handleProductButtonClick(data) {
     return async function () {
         try {
-            const response = await fetch("/chat-bot-get-products", {
+            const response = await fetch("/chat-bot-get-intent-data", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ node_id: "node_daa32f71-a521-417e-ad41-507abb849bdc" }),
+                body: JSON.stringify({ intent: "saving accounts" }),
             });
             const responseData = await response.json();
             // console.log("product data : ", responseData.products);
