@@ -11,9 +11,9 @@ import FlowCardData from '../../models/FlowCardData';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-interface Product {
+interface intentData {
     type: string;
-    node_data: any; // Adjust the type as per your actual data structure
+    node_data: any;
 }
 export const insertNode = async (req: Request, res: Response, next: Function) => {
    //console.log("insertNode",req.body);
@@ -497,15 +497,47 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
 export const getIntentData = async (req: Request, res: Response, next: Function) => {
     console.log("getProducts",req.body);
     try {
-        let products: Product[] = [];
+        let intentData: intentData[] = [];
         let type: any;
         let nodeData: any;
 
         const node_details = await Node.findAll({
             where: {
-              "node_id" : 1,
+              "intent" : req.body.intent,
             },
         });
+        for (var c = 0; c < node_details.length; c++){
+            
+            type = node_details[c].type;
+            if(type == 'textOnly'){
+                const node_data = await FlowTextOnly.findOne({
+                    where: {
+                        "node_id" : node_details[c].node_id,
+                    },
+                    });
+                nodeData = node_data;
+            }
+            if(type == 'textinput'){
+                const node_data = await FlowTextBox.findOne({
+                    where: {
+                        "node_id" : node_details[c].node_id,
+                    },
+                    });
+                nodeData = node_data;
+            }
+            if(type == 'cardStyleOne'){
+                const node_data = await FlowCardData.findOne({
+                    where: {
+                        "node_id" : node_details[c].node_id,
+                    },
+                    });
+                nodeData = node_data;
+            }
+
+            intentData.push({type: type, node_data: nodeData});
+        }
+
+        res.json({ status: "success", intentData:intentData}) 
 
         // const parent_nodes = await Edge.findAll({
         //     where: {
@@ -573,7 +605,7 @@ export const getIntentData = async (req: Request, res: Response, next: Function)
         //     products.push({type: type, node_data: nodeData});
         // } 
         
-        res.json({ status: "success", products:products}) 
+        
     } catch (error) {
     console.error('Error inserting data:', error);
     }
