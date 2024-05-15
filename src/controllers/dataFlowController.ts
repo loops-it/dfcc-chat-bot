@@ -11,9 +11,9 @@ import FlowCardData from '../../models/FlowCardData';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-interface Product {
+interface intentData {
     type: string;
-    node_data: any; // Adjust the type as per your actual data structure
+    node_data: any;
 }
 export const insertNode = async (req: Request, res: Response, next: Function) => {
    //console.log("insertNode",req.body);
@@ -494,79 +494,118 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
     console.error('Error inserting data:', error);
     }
 };
-export const getProducts = async (req: Request, res: Response, next: Function) => {
+export const getIntentData = async (req: Request, res: Response, next: Function) => {
     console.log("getProducts",req.body);
     try {
-        let products: Product[] = [];
+        let intentData: intentData[] = [];
         let type: any;
         let nodeData: any;
-        const parent_nodes = await Edge.findAll({
+
+        const node_details = await Node.findAll({
             where: {
-              "source" : req.body.node_id,
+              "intent" : req.body.intent,
             },
-          });
-        
-        for (var c = 0; c < parent_nodes.length; c++){
-            const node_details = await Node.findOne({
-                where: {
-                  "node_id" : parent_nodes[c].target,
-                },
-            });
-            if(node_details){
-                type = node_details.type;
-            }
+        });
+        for (var c = 0; c < node_details.length; c++){
+            
+            type = node_details[c].type;
             if(type == 'textOnly'){
                 const node_data = await FlowTextOnly.findOne({
                     where: {
-                      "node_id" : parent_nodes[c].target,
+                        "node_id" : node_details[c].node_id,
                     },
-                });
+                    });
                 nodeData = node_data;
             }
             if(type == 'textinput'){
                 const node_data = await FlowTextBox.findOne({
                     where: {
-                      "node_id" : parent_nodes[c].target,
+                        "node_id" : node_details[c].node_id,
                     },
-                });
-                nodeData = node_data;
-            }
-            if(type == 'button'){
-                const node_data = await FlowButtonData.findOne({
-                    where: {
-                      "node_id" : parent_nodes[c].target,
-                    },
-                });
-                nodeData = node_data;
-            }
-            if(type == 'cardGroup'){
-                const node_data = await FlowCardData.findOne({
-                    where: {
-                      "node_id" : parent_nodes[c].target,
-                    },
-                });
-                nodeData = node_data;
-            }
-            if(type == 'buttonGroup'){
-                const node_data = await FlowCardData.findOne({
-                    where: {
-                      "node_id" : parent_nodes[c].target,
-                    },
-                });
+                    });
                 nodeData = node_data;
             }
             if(type == 'cardStyleOne'){
                 const node_data = await FlowCardData.findOne({
                     where: {
-                      "node_id" : parent_nodes[c].target,
+                        "node_id" : node_details[c].node_id,
                     },
-                });
+                    });
                 nodeData = node_data;
             }
-            products.push({type: type, node_data: nodeData});
-        } 
+
+            intentData.push({type: type, node_data: nodeData});
+        }
+
+        res.json({ status: "success", intentData:intentData}) 
+
+        // const parent_nodes = await Edge.findAll({
+        //     where: {
+        //       "source" : req.body.node_id,
+        //     },
+        //   });
         
-        res.json({ status: "success", products:products}) 
+        // for (var c = 0; c < parent_nodes.length; c++){
+        //     const node_details = await Node.findOne({
+        //         where: {
+        //           "node_id" : parent_nodes[c].target,
+        //         },
+        //     });
+        //     if(node_details){
+        //         type = node_details.type;
+        //     }
+        //     if(type == 'textOnly'){
+        //         const node_data = await FlowTextOnly.findOne({
+        //             where: {
+        //               "node_id" : parent_nodes[c].target,
+        //             },
+        //         });
+        //         nodeData = node_data;
+        //     }
+        //     if(type == 'textinput'){
+        //         const node_data = await FlowTextBox.findOne({
+        //             where: {
+        //               "node_id" : parent_nodes[c].target,
+        //             },
+        //         });
+        //         nodeData = node_data;
+        //     }
+        //     if(type == 'button'){
+        //         const node_data = await FlowButtonData.findOne({
+        //             where: {
+        //               "node_id" : parent_nodes[c].target,
+        //             },
+        //         });
+        //         nodeData = node_data;
+        //     }
+        //     if(type == 'cardGroup'){
+        //         const node_data = await FlowCardData.findOne({
+        //             where: {
+        //               "node_id" : parent_nodes[c].target,
+        //             },
+        //         });
+        //         nodeData = node_data;
+        //     }
+        //     if(type == 'buttonGroup'){
+        //         const node_data = await FlowCardData.findOne({
+        //             where: {
+        //               "node_id" : parent_nodes[c].target,
+        //             },
+        //         });
+        //         nodeData = node_data;
+        //     }
+        //     if(type == 'cardStyleOne'){
+        //         const node_data = await FlowCardData.findOne({
+        //             where: {
+        //               "node_id" : parent_nodes[c].target,
+        //             },
+        //         });
+        //         nodeData = node_data;
+        //     }
+        //     products.push({type: type, node_data: nodeData});
+        // } 
+        
+        
     } catch (error) {
     console.error('Error inserting data:', error);
     }

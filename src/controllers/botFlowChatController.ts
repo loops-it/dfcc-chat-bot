@@ -19,14 +19,15 @@ interface ChatEntry {
     role: string;
     content: string;
 }
-const intentsList = Node.findAll({
-    attributes: ['intent'], 
-    group: ['intent'],
-});
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
 
 export const chatFlowResponse = async (req: RequestWithChatId, res: Response) => {
 
+    const intentsList = await Node.findAll({
+        attributes: ['intent'], 
+        group: ['intent'],
+    });
+    
     // console.log("req : ", req.body.chatId) 
     const index = pc.index("dfccchatbot");
     const namespace = index.namespace('pinecone-gpt-test')
@@ -45,7 +46,7 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
     }).catch(error => {
         console.error("Error occurred: ", error);
     });
-    console.log("intentValues : ",intentValues);
+    // console.log("intentValues : ",intentValues);
     
 
     // console.log(req.body.language)
