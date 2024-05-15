@@ -20,8 +20,8 @@ interface ChatEntry {
     content: string;
 }
 const intentsList = Node.findAll({
-    attributes: ['extent'], 
-    group: ['extent'],
+    attributes: ['intent'], 
+    group: ['intent'],
 });
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
 
@@ -36,6 +36,12 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
     let language = req.body.language;
 
     console.log("intentsList : ", intentsList)
+    intentsList.then(nodes => {
+        nodes.forEach(node => {
+            console.log("dataValues: ", node.dataValues);
+        });
+    });
+    
 
     // console.log(req.body.language)
 
