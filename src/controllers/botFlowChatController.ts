@@ -35,6 +35,8 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
     let userChatId = req.body.chatId || "";
     let language = req.body.language;
 
+    console.log("intentsList : ", intentsList)
+
     // console.log(req.body.language)
 
     try {
@@ -269,7 +271,7 @@ Standalone question:`
                 viewed_by_admin: 'no',
                 },
             );
-            console.log("botResponse",botResponse);
+            console.log("botResponse ---- > ",botResponse);
             // console.log("translatedResponse",translatedResponse);
             res.json({ answer: translatedResponse, chatHistory: chatHistory, chatId: userChatId, productOrService: stateProduct });
         // }
