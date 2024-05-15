@@ -574,7 +574,7 @@ export const getIntentData = async (req: Request, res: Response, next: Function)
                     if(childs[x].type == 'cardHeader'){
                         const node_data = await FlowCardData.findOne({
                             where: {
-                                "node_id" : node_details[c].node_id,
+                                "node_id" : childs[x].node_id,
                             },
                         });
                         if (node_data) { 
