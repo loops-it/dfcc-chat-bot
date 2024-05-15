@@ -20,16 +20,18 @@ interface ChatEntry {
     role: string;
     content: string;
 }
-const intentsList = await Node.findAll({
-    attributes: ['intent'], 
-    group: ['intent'],
-});
+
 
 
 
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
 
 export const chatResponse = async (req: RequestWithChatId, res: Response) => {
+
+    const intentsList = await Node.findAll({
+        attributes: ['intent'], 
+        group: ['intent'],
+    });
 
     // console.log("req : ", req.body.chatId) 
     const index = pc.index("dfccchatbot");
