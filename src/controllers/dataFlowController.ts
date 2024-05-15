@@ -546,7 +546,7 @@ export const getIntentData = async (req: Request, res: Response, next: Function)
                     },
                 });
             
-                let buttonData: FlowButtonData[] = []; 
+                let buttonData: any[] = [];
             
                 for (var x = 0; x < buttons.length; x++) {
                     const node_data = await FlowButtonData.findOne({
@@ -555,7 +555,7 @@ export const getIntentData = async (req: Request, res: Response, next: Function)
                         },
                     });
                     if (node_data) { 
-                        buttonData.push(node_data);
+                        buttonData.push({ buttons: node_data }); 
                     }
                 }
                 intentData.push({ type: 'button', node_data: buttonData });
