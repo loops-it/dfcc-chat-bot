@@ -20,7 +20,7 @@ interface ChatEntry {
     role: string;
     content: string;
 }
-const intentsList = await Node.findAll({
+const intentsList = Node.findAll({
     attributes: ['extent'], 
     group: ['extent'],
 });
