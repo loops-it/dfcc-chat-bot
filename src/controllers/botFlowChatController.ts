@@ -107,10 +107,11 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
         //     max_tokens: 50,
         //     temperature: 0,
         // });
+        console.log("translatedQuestion : ",translatedQuestion)
         const productOrServiceQuestion = await openai.completions.create({
             model: "gpt-3.5-turbo-instruct",
-            prompt: `If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, and check if mentioned service or product is in the intent list as it is, if yes state only it's name. If it is not in the intent list, just say this word "not product".`,
-            max_tokens: 50,
+            prompt: `If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, and check if mentioned service or product is in the intent list as it is, if yes State only its name. If it is not in the intent list, just say this word "not product".`,
+            max_tokens: 20,
             temperature: 0,
         });
 
@@ -124,6 +125,13 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
         const stateProduct = productOrServiceQuestion.choices[0].text;
         console.log("--------------------------------------")
 
+        if (stateProduct && stateProduct.toLowerCase().includes("not product")) {
+            console.log("It is not a product.");
+        }
+        else{
+            console.log("It is a product.");
+        }
+        
 
 
 
