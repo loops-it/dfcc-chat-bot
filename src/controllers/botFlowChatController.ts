@@ -19,7 +19,7 @@ interface ChatEntry {
     role: string;
     content: string;
 }
-const intentsList = await Node.findAll({
+const intentsList = Node.findAll({
     attributes: ['intent'], 
     group: ['intent'],
 });
@@ -34,6 +34,14 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
 
     let userChatId = req.body.chatId || "";
     let language = req.body.language;
+
+    console.log("intentsList : ", intentsList)
+    intentsList.then(nodes => {
+        nodes.forEach(node => {
+            console.log("dataValues: ", node.dataValues);
+        });
+    });
+    
 
     // console.log(req.body.language)
 
@@ -269,7 +277,7 @@ Standalone question:`
                 viewed_by_admin: 'no',
                 },
             );
-            console.log("botResponse",botResponse);
+            console.log("botResponse ---- > ",botResponse);
             // console.log("translatedResponse",translatedResponse);
             res.json({ answer: translatedResponse, chatHistory: chatHistory, chatId: userChatId, productOrService: stateProduct });
         // }
