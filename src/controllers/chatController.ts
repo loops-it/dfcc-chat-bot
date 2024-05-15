@@ -23,7 +23,6 @@ interface ChatEntry {
 
 
 
-
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
 
 export const chatResponse = async (req: RequestWithChatId, res: Response) => {

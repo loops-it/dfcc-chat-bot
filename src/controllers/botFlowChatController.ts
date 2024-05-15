@@ -19,15 +19,14 @@ interface ChatEntry {
     role: string;
     content: string;
 }
-
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
+
+
+
 
 export const chatFlowResponse = async (req: RequestWithChatId, res: Response) => {
 
-    const intentsList = await Node.findAll({
-        attributes: ['intent'], 
-        group: ['intent'],
-    });
+    
     
     // console.log("req : ", req.body.chatId) 
     const index = pc.index("dfccchatbot");
@@ -36,13 +35,22 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
 
     let userChatId = req.body.chatId || "";
     let language = req.body.language;
+    let cachedIntentsList: string[] = [];
 
-    console.log("intentsList : ", intentsList)
-    intentsList.then(nodes => {
-        nodes.forEach(node => {
-            console.log("dataValues: ", node.dataValues);
-        });
+    // Fetch intents from the database
+    const intentsList = await Node.findAll({
+        attributes: ['intent'], 
+        group: ['intent'],
     });
+
+    // Filter out null values and log the remaining intent values
+    cachedIntentsList = intentsList
+            .filter(intent => intent.intent !== null)
+            .map(intent => intent.intent);
+
+
+    console.log("Cached Intents List:", cachedIntentsList);
+
     
 
     // console.log(req.body.language)
