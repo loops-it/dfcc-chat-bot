@@ -5,6 +5,7 @@ import { Request as ExpressRequest, Response } from 'express';
 import File from '../../models/File';
 import BotChats from '../../models/BotChats';
 import {Translate} from '@google-cloud/translate/build/src/v2';
+import Node from '../../models/Node';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 if (!process.env.PINECONE_API_KEY || typeof process.env.PINECONE_API_KEY !== 'string') {
@@ -19,6 +20,12 @@ interface ChatEntry {
     role: string;
     content: string;
 }
+const intentsList = await Node.findAll({
+    attributes: ['extent'], 
+    group: ['extent'],
+});
+
+
 
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
 
