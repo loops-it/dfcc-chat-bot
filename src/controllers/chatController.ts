@@ -21,8 +21,8 @@ interface ChatEntry {
     content: string;
 }
 const intentsList = await Node.findAll({
-    attributes: ['extent'], 
-    group: ['extent'],
+    attributes: ['intent'], 
+    group: ['intent'],
 });
 
 

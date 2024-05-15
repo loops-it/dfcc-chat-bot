@@ -20,8 +20,8 @@ interface ChatEntry {
     content: string;
 }
 const intentsList = await Node.findAll({
-    attributes: ['extent'], 
-    group: ['extent'],
+    attributes: ['intent'], 
+    group: ['intent'],
 });
 const translate = new Translate({ key: process.env.GOOGLE_APPLICATION_CREDENTIALS }); 
 
