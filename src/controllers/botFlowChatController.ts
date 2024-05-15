@@ -38,14 +38,14 @@ export const chatFlowResponse = async (req: RequestWithChatId, res: Response) =>
 
     // console.log("intentsList : ", intentsList)
     let intentValues: any[];
-    intentsList.then(nodes => {
-        intentValues = nodes.map(node => node.dataValues.intent).filter(intent => intent !== null);
-    return intentValues;
-    }).then(() => {
-        console.log(intentValues); 
-    }).catch(error => {
-        console.error("Error occurred: ", error);
-    });
+    // intentsList.then(nodes => {
+    //     intentValues = nodes.map(node => node.dataValues.intent).filter(intent => intent !== null);
+    // return intentValues;
+    // }).then(() => {
+    //     console.log(intentValues); 
+    // }).catch(error => {
+    //     console.error("Error occurred: ", error);
+    // });
     // console.log("intentValues : ",intentValues);
     
 
