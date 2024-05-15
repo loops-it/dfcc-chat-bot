@@ -175,7 +175,7 @@ function handleLiveAgentButtonClick(data) {
                 },
                 body: JSON.stringify({ chatId: data.chatId }),
             });
-            console.log("switch : ",switchResponse)
+            console.log("switch : ", switchResponse)
             if (switchResponse.ok) {
                 showAlert("One of our agents will join you soon. Please stay tuned.");
                 startCheckingForAgent(data);
@@ -308,7 +308,7 @@ function appendProductContent(messageDiv, content, data) {
 function handleProductButtonClick(data) {
     return async function () {
         try {
-            const response = await fetch("/api/products-data", {
+            const response = await fetch("/chat-bot-get-products", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -316,7 +316,81 @@ function handleProductButtonClick(data) {
                 body: JSON.stringify({ node_id: "node_daa32f71-a521-417e-ad41-507abb849bdc" }),
             });
             const responseData = await response.json();
-            console.log("product data : ", responseData.productData);
+            // console.log("product data : ", responseData.products);
+
+            // Iterate over responseData.products and log the type of each item
+            // responseData.products.forEach(item => {
+            //     if (item.type == "textOnly") {
+            //         console.log("text only :", item.node_data);
+            //     }
+            //     else if (item.type == "textinput") {
+            //         console.log("text input:", item.node_data);
+            //     }
+            //     else if (item.type == "cardStyleOne") {
+            //         console.log("text input:", item.node_data);
+            //     }
+            //     else if (item.type == "cardGroup") {
+            //         console.log("text input:", item.node_data);
+            //     }
+            //     else{
+            //         console.log("no data found");
+            //     }
+            // });
+
+            const textOnlyItems = [];
+            const textInputItems = [];
+            const cardStyleOneItems = [];
+            const cardGroupItems = [];
+            responseData.products.forEach(item => {
+                switch (item.type) {
+                    case "textOnly":
+                        textOnlyItems.push(item.node_data);
+                        break;
+                    case "textinput":
+                        textInputItems.push(item.node_data);
+                        break;
+                    case "cardStyleOne":
+                        cardStyleOneItems.push(item.node_data);
+                        break;
+                    case "cardGroup":
+                        cardGroupItems.push(item.node_data);
+                        break;
+                    default:
+                        console.log("no data found");
+                }
+            });
+
+            // Generate HTML for each type of item
+            const textOnlyHTML = textOnlyItems.map(item => `<p>text: ${item.text}<br>id: ${item.node_id}</p>`).join("");
+            const textInputHTML = textInputItems.map(item => `<p>title: ${item.title || 'N/A'}<br>description: ${item.description || 'N/A'}<br>id: ${item.node_id}</p>`).join("");
+            const cardStyleOneHTML = cardStyleOneItems.map(item => `
+            <p>title: ${item.title || 'N/A'}<br>
+            description: ${item.description || 'N/A'}<br>
+            id: ${item.node_id} <br>
+            image: ${item.image || 'N/A'} </p>
+
+            <div class="product-card">
+            <img src="" alt="" />
+            </div>
+
+            `).join("");
+            
+            // Add HTML generation for cardStyleOne and cardGroup if needed
+
+            // Append HTML for each type of item to the messageDiv
+            if (textOnlyHTML) {
+                appendMessageToResponse("bot", `<p>Text Only Items:</p>${textOnlyHTML}`);
+            }
+            if (textInputHTML) {
+                appendMessageToResponse("bot", `<p>Text Input Items:</p>${textInputHTML}`);
+            }
+            if (cardStyleOneHTML) {
+                appendMessageToResponse("bot", `<p>Card Style One Items:</p>${cardStyleOneHTML}`);
+            }
+
+
+
+
         } catch (error) {
             console.error("Error fetching products data:", error);
         }
