@@ -21,8 +21,8 @@ interface ChatEntry {
     content: string;
 }
 const intentsList = Node.findAll({
-    attributes: ['extent'], 
-    group: ['extent'],
+    attributes: ['intent'], 
+    group: ['intent'],
 });
 
 
