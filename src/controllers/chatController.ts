@@ -20,14 +20,6 @@ interface ChatEntry {
     role: string;
     content: string;
 }
-<<<<<<< HEAD
-const intentsList = Node.findAll({
-    attributes: ['intent'], 
-    group: ['intent'],
-});
-=======
-
->>>>>>> 4c5f7267f453964026fb0cdfca90d93c9379bc9d
 
 
 
