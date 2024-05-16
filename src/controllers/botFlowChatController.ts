@@ -22,6 +22,12 @@ interface ChatEntry {
     role: string;
     content: string;
 }
+
+interface ResponseData {
+    intentData: any[];
+}
+
+
 const translate = new Translate({
     key: process.env.GOOGLE_APPLICATION_CREDENTIALS,
 });
@@ -300,36 +306,41 @@ Standalone question:`;
             console.log("It is a product. go to flow builder function");
             console.log("--------------------------------------");
 
-            try {
-                console.log("stateProduct intent: ", stateProduct);
-                const response = await fetch("https://dfcc-chat-bot.vercel.app/chat-bot-get-intent-data", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ intent: stateProduct }),
-                });
-            
-                if (!response.ok) {
-                    throw new Error("Network response was not ok.");
+            let allIntentData = [
+                {
+                    "type": "textOnly",
+                    "node_data": {
+                        "id": 9,
+                        "node_id": "node_d48f7cf3-543e-43d2-831f-c87a1816fa12",
+                        "text": "abcd",
+                        "createdAt": "2024-05-14T04:50:24.000Z",
+                        "updatedAt": "2024-05-14T08:47:48.000Z"
+                    }
+                },
+                {
+                    "type": "textOnly",
+                    "node_data": {
+                        "id": 8,
+                        "node_id": "node_d48f7cf3-543e-43d2-831f-c87a1816fa12",
+                        "text": "abcd",
+                        "createdAt": "2024-05-14T04:50:24.000Z",
+                        "updatedAt": "2024-05-14T08:47:48.000Z"
+                    }
                 }
-            
-                const responseData = await response.json();
-            
-                console.log("gpt intent: ", responseData);
-                // run flow
-                res.json({
-                    answer: "Check our products and services:",
-                    chatHistory: chatHistory,
-                    chatId: userChatId,
-                    productOrService: stateProduct,
-                });
-            } catch (error) {
-                console.error("Error fetching intent data:", error);
-                res.status(500).json({ error: "Internal Server Error" });
-            }
-            
-            
+            ]
+            // sent intent and get intent data
+            fetchData(stateProduct);
+
+            // run flow
+            res.json({
+                answer: "Check our products and services:",
+                chatHistory: chatHistory,
+                chatId: userChatId,
+                productOrService: allIntentData,
+            });
+
+
+
         }
 
 
@@ -338,6 +349,50 @@ Standalone question:`;
         res.status(500).json({ error: "An error occurred." });
     }
 };
+
+
+async function fetchData(stateProduct: string) {
+    try {
+        console.log("stateProduct intent: ", stateProduct);
+        const response = await fetch("https://dfcc-chat-bot.vercel.app/chat-bot-get-intent-data", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ intent: stateProduct }),
+        });
+
+        if (!response.ok) {
+            throw new Error("Network response was not ok.");
+        }
+
+        const responseData = await response.json();
+
+        console.log("gpt intent: ", responseData);
+        console.log("gpt intent: ", (responseData as ResponseData).intentData);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        // Handle the error appropriately
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Call the async function
+
+
 
 // const questionRephrasePrompt = `Follow these steps to answer the user queries.
 

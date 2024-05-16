@@ -316,7 +316,7 @@ function handleProductButtonClick(data) {
                 body: JSON.stringify({ intent: "saving accounts" }),
             });
             const responseData = await response.json();
-            // console.log("product data : ", responseData.products);
+            console.log("product data : ", responseData.products);
 
             // Iterate over responseData.products and log the type of each item
             // responseData.products.forEach(item => {
@@ -374,7 +374,7 @@ function handleProductButtonClick(data) {
             </div>
 
             `).join("");
-            
+
             // Add HTML generation for cardStyleOne and cardGroup if needed
 
             // Append HTML for each type of item to the messageDiv
@@ -534,12 +534,21 @@ document
                     localStorage.setItem("chatId", data.chatId);
                 }
 
-                console.log("product status : ", data.productOrService);
-
-                // Display the bot's response in HTML format
-                // appendMessageToResponse('bot', data.answer);
+                if (data.productOrService !== null) {
+                    console.log("intent data : ", data.productOrService);
+                    const textOnlyItems = data.productOrService;
+                
+                    // Map each item to a string containing node_id and text, then join them together
+                    const textOnlyHTML = textOnlyItems.map(item => `<p>node_id: ${item.node_data.node_id}, text: ${item.node_data.text}</p>`).join("");
+                
+                    // Append the generated HTML to the response
+                    appendMessageToResponse("bot", `<p>Text Only Items:</p>${textOnlyHTML}`);
+                } else {
+                    console.log("if not a product")
+                }
+                
                 appendMessageToResponse("bot", data.answer, data);
-
+                
                 // Hide typing animation
                 hideTypingAnimation();
                 // Clear the question input
