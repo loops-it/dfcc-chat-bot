@@ -453,7 +453,7 @@ export const ButtonGroup = async (req: Request, res: Response, next: Function) =
 };
 
 export const CardData = async (req: Request, res: Response, next: Function) => {
-    console.log("CARD REQ DATA",req);
+    console.log("CARD REQ DATA",req.body);
     try {
         const data_exist = await FlowCardData.findOne({
             where: {
