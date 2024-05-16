@@ -453,7 +453,7 @@ export const ButtonGroup = async (req: Request, res: Response, next: Function) =
 };
 
 export const CardData = async (req: Request, res: Response, next: Function) => {
-    //console.log("CardData",req.body);
+    console.log("CARD REQ DATA",req);
     try {
         const data_exist = await FlowCardData.findOne({
             where: {
@@ -496,7 +496,7 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
     }
 };
 export const getIntentData = async (req: Request, res: Response, next: Function) => {
-    console.log("getProducts",req.body);
+   // console.log("getProducts",req.body);
     try {
         let intentData: intentData[] = [];
         let type: any;
