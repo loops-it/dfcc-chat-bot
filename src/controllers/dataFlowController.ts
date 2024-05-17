@@ -599,72 +599,7 @@ export const getIntentData = async (req: Request, res: Response, next: Function)
         }
         res.json({ status: "success", intentData:intentData}) 
 
-        // const parent_nodes = await Edge.findAll({
-        //     where: {
-        //       "source" : req.body.node_id,
-        //     },
-        //   });
-        
-        // for (var c = 0; c < parent_nodes.length; c++){
-        //     const node_details = await Node.findOne({
-        //         where: {
-        //           "node_id" : parent_nodes[c].target,
-        //         },
-        //     });
-        //     if(node_details){
-        //         type = node_details.type;
-        //     }
-        //     if(type == 'textOnly'){
-        //         const node_data = await FlowTextOnly.findOne({
-        //             where: {
-        //               "node_id" : parent_nodes[c].target,
-        //             },
-        //         });
-        //         nodeData = node_data;
-        //     }
-        //     if(type == 'textinput'){
-        //         const node_data = await FlowTextBox.findOne({
-        //             where: {
-        //               "node_id" : parent_nodes[c].target,
-        //             },
-        //         });
-        //         nodeData = node_data;
-        //     }
-        //     if(type == 'button'){
-        //         const node_data = await FlowButtonData.findOne({
-        //             where: {
-        //               "node_id" : parent_nodes[c].target,
-        //             },
-        //         });
-        //         nodeData = node_data;
-        //     }
-        //     if(type == 'cardGroup'){
-        //         const node_data = await FlowCardData.findOne({
-        //             where: {
-        //               "node_id" : parent_nodes[c].target,
-        //             },
-        //         });
-        //         nodeData = node_data;
-        //     }
-        //     if(type == 'buttonGroup'){
-        //         const node_data = await FlowCardData.findOne({
-        //             where: {
-        //               "node_id" : parent_nodes[c].target,
-        //             },
-        //         });
-        //         nodeData = node_data;
-        //     }
-        //     if(type == 'cardStyleOne'){
-        //         const node_data = await FlowCardData.findOne({
-        //             where: {
-        //               "node_id" : parent_nodes[c].target,
-        //             },
-        //         });
-        //         nodeData = node_data;
-        //     }
-        //     products.push({type: type, node_data: nodeData});
-        // } 
-        
+        console.log("intentData",intentData);
         
     } catch (error) {
     console.error('Error inserting data:', error);
