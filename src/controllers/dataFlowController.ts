@@ -597,9 +597,10 @@ export const getIntentData = async (req: Request, res: Response, next: Function)
             }
             
         }
+        console.log("intentData",intentData);
         res.json({ status: "success", intentData:intentData}) 
 
-        console.log("intentData",intentData);
+        
         
     } catch (error) {
     console.error('Error inserting data:', error);
