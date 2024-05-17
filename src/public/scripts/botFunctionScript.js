@@ -747,11 +747,11 @@ document
                                     ${carouselDataHTML}
                                     </div>
                                     <button class="carousel-control-prev" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="prev">
-                                        <i class="bi bi-caret-left-fill text-dark"></i>
+                                        <i class="bi bi-caret-left-fill text-danger"></i>
                                         <span class="visually-hidden">Previous</span>
                                     </button>
                                     <button class="carousel-control-next" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="next">
-                                        <i class="bi bi-caret-right-fill text-dark"></i>
+                                        <i class="bi bi-caret-right-fill text-danger"></i>
                                         <span class="visually-hidden">Next</span>
                                     </button>
                                 </div>
@@ -784,11 +784,11 @@ document
                                 ${carouselItemsHTML}
                                 </div>
                                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                                    <i class="bi bi-caret-left-fill text-dark"></i>
+                                    <i class="bi bi-caret-left-fill text-danger"></i>
                                     <span class="visually-hidden">Previous</span>
                                 </button>
                                 <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                                    <i class="bi bi-caret-right-fill text-dark"></i>
+                                    <i class="bi bi-caret-right-fill text-danger"></i>
                                     <span class="visually-hidden">Next</span>
                                 </button>
                             </div>
