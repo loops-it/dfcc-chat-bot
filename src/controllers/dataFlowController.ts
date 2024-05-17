@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 const bodyParser = require('body-parser');
 const pdfParse = require('pdf-parse');
 import "dotenv/config";
@@ -495,114 +495,62 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
     console.error('Error inserting data:', error);
     }
 };
-export const getIntentData = async (req: Request, res: Response, next: Function) => {
-   // console.log("getProducts",req.body);
+export const getIntentData = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let intentData: intentData[] = [];
-        let type: any;
-        let nodeData: any;
-
+        let intentData: any[] = [];
         const node_details = await Node.findAll({
             where: {
-              "intent" : req.body.intent,
+                intent: req.body.intent,
             },
         });
-        for (var c = 0; c < node_details.length; c++){
-            
-            type = node_details[c].type;
-            if(type == 'textOnly'){
-                const node_data = await FlowTextOnly.findOne({
-                    where: {
-                        "node_id" : node_details[c].node_id,
-                    },
-                    });
-                nodeData = node_data;
 
-                intentData.push({type: type, node_data: nodeData});
-            }
-            if(type == 'textinput'){
-                const node_data = await FlowTextBox.findOne({
-                    where: {
-                        "node_id" : node_details[c].node_id,
-                    },
-                    });
-                nodeData = node_data;
+        for (const node of node_details) {
+            const { type, node_id } = node;
+            let nodeData;
 
-                intentData.push({type: type, node_data: nodeData});
-            }
-            if(type == 'cardStyleOne'){
-                const node_data = await FlowCardData.findOne({
-                    where: {
-                        "node_id" : node_details[c].node_id,
-                    },
-                    });
-                nodeData = node_data;
-                intentData.push({type: type, node_data: nodeData});
-            }
-            if (type == 'buttonGroup') {
-                const buttons = await Node.findAll({
-                    where: {
-                        "parentId": node_details[c].node_id,
-                    },
-                });
-            
-                let buttonData: any[] = [];
-            
-                for (var x = 0; x < buttons.length; x++) {
-                    const node_data = await FlowButtonData.findOne({
-                        where: {
-                            "node_id": buttons[x].node_id,
-                        },
-                    });
-                    if (node_data) { 
-                        buttonData.push({ button: node_data }); 
-                    }
+            switch (type) {
+                case 'textOnly':
+                    nodeData = await FlowTextOnly.findOne({ where: { node_id } });
+                    break;
+                case 'textinput':
+                    nodeData = await FlowTextBox.findOne({ where: { node_id } });
+                    break;
+                case 'cardStyleOne':
+                    nodeData = await FlowCardData.findOne({ where: { node_id } });
+                    break;
+                case 'buttonGroup': {
+                    const buttons = await Node.findAll({ where: { parentId: node_id } });
+                    let buttonData = await Promise.all(buttons.map(async button => ({
+                        button: await FlowButtonData.findOne({ where: { node_id: button.node_id } }),
+                    })));
+                    nodeData = buttonData;
+                    break;
                 }
-                intentData.push({ type: type, node_data: buttonData });
-            }
-
-            if (type == 'cardGroup') {
-                const childs = await Node.findAll({
-                    where: {
-                        "parentId": node_details[c].node_id,
-                    },
-                });
-            
-                let buttonData: any[] = [];
-            
-                for (var x = 0; x < childs.length; x++) {
-                    if(childs[x].type == 'cardHeader'){
-                        const node_data = await FlowCardData.findOne({
-                            where: {
-                                "node_id" : childs[x].node_id,
-                            },
-                        });
-                        if (node_data) { 
-                            buttonData.push({ card: node_data }); 
+                case 'cardGroup': {
+                    const childs = await Node.findAll({ where: { parentId: node_id } });
+                    let childData = await Promise.all(childs.map(async child => {
+                        if (child.type === 'cardHeader') {
+                            return { card: await FlowCardData.findOne({ where: { node_id: child.node_id } }) };
+                        } else {
+                            return { button: await FlowButtonData.findOne({ where: { node_id: child.node_id } }) };
                         }
-                    }
-                    else{
-                        const node_data = await FlowButtonData.findOne({
-                            where: {
-                                "node_id": childs[x].node_id,
-                            },
-                        });
-                        if (node_data) { 
-                            buttonData.push({ button: node_data }); 
-                        }
-                    }
+                    }));
+                    nodeData = childData;
+                    break;
                 }
-
-                intentData.push({ type: type, node_data: buttonData });
+                default:
+                    continue;
             }
-            
+
+            if (nodeData) {
+                intentData.push({ type, node_data: nodeData });
+            }
         }
-        console.log("intentData",intentData);
-        res.json({ status: "success", intentData:intentData}) 
 
-        
-        
+        res.json({ status: "success", intentData });
+
     } catch (error) {
-    console.error('Error inserting data:', error);
+        console.error('Error retrieving intent data:', error);
+        res.status(500).json({ status: "error", message: "Internal server error" });
     }
 };
