@@ -554,3 +554,116 @@ export const getIntentData = async (req: Request, res: Response, next: NextFunct
         res.status(500).json({ status: "error", message: "Internal server error" });
     }
 };
+
+
+// export const getIntentData = async (req: Request, res: Response, next: Function) => {
+//     // console.log("getProducts",req.body);
+//      try {
+//          let intentData: intentData[] = [];
+//          let type: any;
+//          let nodeData: any;
+ 
+//          const node_details = await Node.findAll({
+//              where: {
+//                "intent" : req.body.intent,
+//              },
+//          });
+//          for (var c = 0; c < node_details.length; c++){
+             
+//              type = node_details[c].type;
+//              if(type == 'textOnly'){
+//                  const node_data = await FlowTextOnly.findOne({
+//                      where: {
+//                          "node_id" : node_details[c].node_id,
+//                      },
+//                      });
+//                  nodeData = node_data;
+ 
+//                  intentData.push({type: type, node_data: nodeData});
+//              }
+//              if(type == 'textinput'){
+//                  const node_data = await FlowTextBox.findOne({
+//                      where: {
+//                          "node_id" : node_details[c].node_id,
+//                      },
+//                      });
+//                  nodeData = node_data;
+ 
+//                  intentData.push({type: type, node_data: nodeData});
+//              }
+//              if(type == 'cardStyleOne'){
+//                  const node_data = await FlowCardData.findOne({
+//                      where: {
+//                          "node_id" : node_details[c].node_id,
+//                      },
+//                      });
+//                  nodeData = node_data;
+//                  intentData.push({type: type, node_data: nodeData});
+//              }
+//              if (type == 'buttonGroup') {
+//                  const buttons = await Node.findAll({
+//                      where: {
+//                          "parentId": node_details[c].node_id,
+//                      },
+//                  });
+             
+//                  let buttonData: any[] = [];
+             
+//                  for (var x = 0; x < buttons.length; x++) {
+//                      const node_data = await FlowButtonData.findOne({
+//                          where: {
+//                              "node_id": buttons[x].node_id,
+//                          },
+//                      });
+//                      if (node_data) { 
+//                          buttonData.push({ button: node_data }); 
+//                      }
+//                  }
+//                  intentData.push({ type: type, node_data: buttonData });
+//              }
+ 
+//              if (type == 'cardGroup') {
+//                  const childs = await Node.findAll({
+//                      where: {
+//                          "parentId": node_details[c].node_id,
+//                      },
+//                  });
+             
+//                  let buttonData: any[] = [];
+             
+//                  for (var x = 0; x < childs.length; x++) {
+//                      if(childs[x].type == 'cardHeader'){
+//                          const node_data = await FlowCardData.findOne({
+//                              where: {
+//                                  "node_id" : childs[x].node_id,
+//                              },
+//                          });
+//                          if (node_data) { 
+//                              buttonData.push({ card: node_data }); 
+//                          }
+//                      }
+//                      else{
+//                          const node_data = await FlowButtonData.findOne({
+//                              where: {
+//                                  "node_id": childs[x].node_id,
+//                              },
+//                          });
+//                          if (node_data) { 
+//                              buttonData.push({ button: node_data }); 
+//                          }
+//                      }
+//                  }
+ 
+//                  intentData.push({ type: type, node_data: buttonData });
+//              }
+             
+//          }
+//          console.log("intentData",intentData);
+//          res.json({ status: "success", intentData:intentData}) 
+ 
+         
+         
+//      } catch (error) {
+//      console.error('Error inserting data:', error);
+//      }
+//  };
