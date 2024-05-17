@@ -306,40 +306,42 @@ Standalone question:`;
             console.log("It is a product. go to flow builder function");
             console.log("--------------------------------------");
 
-            let allIntentData = [
-                {
-                    "type": "textOnly",
-                    "node_data": {
-                        "id": 9,
-                        "node_id": "node_d48f7cf3-543e-43d2-831f-c87a1816fa12",
-                        "text": "Saving Accounts",
-                        "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.",
-                        "createdAt": "2024-05-14T04:50:24.000Z",
-                        "updatedAt": "2024-05-14T08:47:48.000Z"
-                    }
-                },
-                {
-                    "type": "textOnly",
-                    "node_data": {
-                        "id": 8,
-                        "node_id": "node_d48f7cf3-543e-43d2-831f-c87a1816fa12",
-                        "text": "Test Item",
-                        "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.",
-                        "createdAt": "2024-05-14T04:50:24.000Z",
-                        "updatedAt": "2024-05-14T08:47:48.000Z"
-                    }
-                }
-            ]
-            // sent intent and get intent data
-            fetchData(stateProduct);
+           
+            try {
+                
+                // const intentToSend = stateProduct.toLocaleLowerCase()
+                const intentToSend = stateProduct.trim().toLowerCase(); // Remove unnecessary spaces and convert to lowercase
+    console.log("intentToSend (processed): ", intentToSend);
 
-            // run flow
-            res.json({
-                answer: "Check our products and services:",
-                chatHistory: chatHistory,
-                chatId: userChatId,
-                productOrService: allIntentData,
-            });
+                const response = await fetch("https://dfcc-chat-bot.vercel.app/chat-bot-get-intent-data", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ intent: intentToSend }),
+                });
+        
+                if (!response.ok) {
+                    throw new Error("Network response was not ok.");
+                }
+        
+                const responseData = await response.json();
+                const intentData = (responseData as ResponseData).intentData;
+                console.log("gpt intentData: ", intentData);
+
+                res.json({
+                    answer: null,
+                    chatHistory: chatHistory,
+                    chatId: userChatId,
+                    productOrService: intentData.length > 0 ? intentData : null,
+                });
+
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                // Handle the error appropriately
+            }
+
 
 
 
@@ -353,30 +355,6 @@ Standalone question:`;
 };
 
 
-async function fetchData(stateProduct: string) {
-    try {
-        console.log("stateProduct intent: ", stateProduct);
-        const response = await fetch("https://dfcc-chat-bot.vercel.app/chat-bot-get-intent-data", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ intent: stateProduct }),
-        });
-
-        if (!response.ok) {
-            throw new Error("Network response was not ok.");
-        }
-
-        const responseData = await response.json();
-
-        console.log("gpt intent: ", responseData);
-        console.log("gpt intent: ", (responseData as ResponseData).intentData);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        // Handle the error appropriately
-    }
-}
 
 
 
