@@ -134,11 +134,29 @@ function appendMessageToResponse(role, content, data, isRatingForm = false) {
     responseDiv.scrollTop = responseDiv.scrollHeight;
 }
 
+// function createMessageDiv(role, content) {
+//     const messageDiv = document.createElement("div");
+//     messageDiv.classList.add(role === "user" ? "user-message" : "bot-message");
+//     return messageDiv;
+// }
 function createMessageDiv(role, content) {
     const messageDiv = document.createElement("div");
-    messageDiv.classList.add(role === "user" ? "user-message" : "bot-message");
+
+    // Add class based on the role
+    if (role === "user") {
+        messageDiv.classList.add("user-message");
+    } else if (role === "bot") {
+        messageDiv.classList.add("bot-message");
+    } else if (role === "product") {
+        messageDiv.classList.add("product-message");
+    }
+
+    // Optionally, add the content to the messageDiv
+    messageDiv.textContent = content;
+
     return messageDiv;
 }
+
 
 function createMessageImage(role) {
     const image = document.createElement("img");
@@ -542,25 +560,25 @@ document
                     const textOnlyHTML = textOnlyItems.map((item, index) => `
                     
                     <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}">
-                        <div style="width: 200px; height: 150px; background-color: #aaa">
-                        <img src="../chat-logo.webp" alt="" class="px-3 py-2 mb-3">
-                        <p>${item.node_data.text}</p>
-                        <p>${item.node_data.desc}</p>
+                        <div class="slideInnerConteiner p-0">
+                            <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                            <p class="px-2">${item.node_data.text}</p>
+                            <p class="px-2">${item.node_data.desc}</p>
                         </div>
                     </div>`).join("");
 
                     // Append the generated HTML to the response
-                    appendMessageToResponse("bot", `
-                    <div style="background-color: #eee" id="carouselExampleControls" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
+                    appendMessageToResponse("product", `
+                    <div style="background-color: #fff; padding: 0px !important" id="carouselExampleControls" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
                         <div class="carousel-inner p-0">
                         ${textOnlyHTML}
                         </div>
                         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <i class="bi bi-caret-left-fill text-dark"></i>
                             <span class="visually-hidden">Previous</span>
                         </button>
                         <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <i class="bi bi-caret-right-fill text-dark"></i>
                             <span class="visually-hidden">Next</span>
                         </button>
                         </div>
