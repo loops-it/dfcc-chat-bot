@@ -312,7 +312,8 @@ Standalone question:`;
                     "node_data": {
                         "id": 9,
                         "node_id": "node_d48f7cf3-543e-43d2-831f-c87a1816fa12",
-                        "text": "abcd",
+                        "text": "Saving Accounts",
+                        "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.",
                         "createdAt": "2024-05-14T04:50:24.000Z",
                         "updatedAt": "2024-05-14T08:47:48.000Z"
                     }
@@ -322,7 +323,8 @@ Standalone question:`;
                     "node_data": {
                         "id": 8,
                         "node_id": "node_d48f7cf3-543e-43d2-831f-c87a1816fa12",
-                        "text": "abcd",
+                        "text": "Test Item",
+                        "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.",
                         "createdAt": "2024-05-14T04:50:24.000Z",
                         "updatedAt": "2024-05-14T08:47:48.000Z"
                     }

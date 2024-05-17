@@ -537,18 +537,40 @@ document
                 if (data.productOrService !== null) {
                     console.log("intent data : ", data.productOrService);
                     const textOnlyItems = data.productOrService;
-                
+
                     // Map each item to a string containing node_id and text, then join them together
-                    const textOnlyHTML = textOnlyItems.map(item => `<p>node_id: ${item.node_data.node_id}, text: ${item.node_data.text}</p>`).join("");
-                
+                    const textOnlyHTML = textOnlyItems.map((item, index) => `
+                    
+                    <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}">
+                        <div style="width: 200px; height: 150px; background-color: #aaa">
+                        <img src="../chat-logo.webp" alt="" class="px-3 py-2 mb-3">
+                        <p>${item.node_data.text}</p>
+                        <p>${item.node_data.desc}</p>
+                        </div>
+                    </div>`).join("");
+
                     // Append the generated HTML to the response
-                    appendMessageToResponse("bot", `<p>Text Only Items:</p>${textOnlyHTML}`);
+                    appendMessageToResponse("bot", `
+                    <div style="background-color: #eee" id="carouselExampleControls" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
+                        <div class="carousel-inner p-0">
+                        ${textOnlyHTML}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                        </div>
+                    `);
                 } else {
                     console.log("if not a product")
                 }
-                
+
                 appendMessageToResponse("bot", data.answer, data);
-                
+
                 // Hide typing animation
                 hideTypingAnimation();
                 // Clear the question input
