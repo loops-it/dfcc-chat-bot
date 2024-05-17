@@ -721,7 +721,7 @@ export const getTargetData = async (req: Request, res: Response, next: NextFunct
                 sourceData.push({ type, source_data: data });
             }
         } 
-
+        res.json({ status: "success", sourceData });
     } catch (error) {
         console.error('Error retrieving intent data:', error);
         res.status(500).json({ status: "error", message: "Internal server error" });
