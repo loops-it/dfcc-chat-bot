@@ -30,7 +30,7 @@ import { agentCreateAccount,agentUpdateAccount,agentUpdateWithPassword } from '.
 import { botChatsOnload,botChatsGetMessages,botChatsRefresh,botChatsRefreshMessage} from './controllers/botChats';
 import { LiveChatHistoryOnload,LiveChatHistoryMessages,LiveChatHistoryRefresh,LiveChatHistoryRefreshMessages} from './controllers/LiveChatHistory';
 import { insertNode,insertEdge,updateNode,updateEdge,deleteNode,deleteEdge,retrieveData,textOnlyData,textBoxData,ButtonGroup
-  ,ButtonData,CardData,getIntentData} from './controllers/dataFlowController';
+  ,ButtonData,CardData,getIntentData,getTargetData} from './controllers/dataFlowController';
 import Admin from '../models/Admin';
 import User from '../models/User';
 import BotChats from '../models/BotChats';
@@ -451,6 +451,7 @@ app.post("/data-flow-button-group", ButtonGroup);
 app.post("/data-flow-card-data", CardData);
 
 app.post("/chat-bot-get-intent-data", getIntentData);
+app.post("/chat-bot-get-target-data", getTargetData);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
