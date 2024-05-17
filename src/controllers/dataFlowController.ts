@@ -667,3 +667,63 @@ export const getIntentData = async (req: Request, res: Response, next: NextFunct
 //      console.error('Error inserting data:', error);
 //      }
 //  };
+
+export const getTargetData = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        let sourceData: any[] = [];
+        const targets = await Edge.findAll({
+            where: {
+                source: req.body.source,
+            },
+        });
+
+        for (const singleTarget of targets) {
+            const { target} = singleTarget;
+            const target_node = await Node.findOne({ where: { node_id:target } });
+            const type = target_node?.type;
+            let data;
+
+            switch (type) {
+                case 'textOnly':
+                    data = await FlowTextOnly.findOne({ where: { node_id:target_node?.node_id } });
+                    break;
+                case 'textinput':
+                    data = await FlowTextBox.findOne({ where: { node_id:target_node?.node_id } });
+                    break;
+                case 'cardStyleOne':
+                    data = await FlowCardData.findOne({ where: { node_id:target_node?.node_id } });
+                    break;
+                case 'buttonGroup': {
+                    const buttons = await Node.findAll({ where: { parentId: target_node?.node_id } });
+                    let buttonData = await Promise.all(buttons.map(async button => ({
+                        button: await FlowButtonData.findOne({ where: { node_id: button.node_id } }),
+                    })));
+                    data = buttonData;
+                    break;
+                }
+                case 'cardGroup': {
+                    const childs = await Node.findAll({ where: { parentId: target_node?.node_id } });
+                    let childData = await Promise.all(childs.map(async child => {
+                        if (child.type === 'cardHeader') {
+                            return { card: await FlowCardData.findOne({ where: { node_id: child.node_id } }) };
+                        } else {
+                            return { button: await FlowButtonData.findOne({ where: { node_id: child.node_id } }) };
+                        }
+                    }));
+                    data = childData;
+                    break;
+                }
+                default:
+                    continue;
+            }
+
+            if (data) {
+                sourceData.push({ type, source_data: data });
+            }
+        } 
+
+    } catch (error) {
+        console.error('Error retrieving intent data:', error);
+        res.status(500).json({ status: "error", message: "Internal server error" });
+    }
+};
