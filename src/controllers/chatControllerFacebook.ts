@@ -327,6 +327,7 @@ try {
                     recipient: {
                         id: message_body.sender.id
                     },
+                    messaging_type: "RESPONSE",
                     message: {
                         attachment: {
                             type: "template",
