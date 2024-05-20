@@ -307,11 +307,11 @@ try {
     for (const node of node_details) {
         const { type, node_id } = node;
         let nodeData;
-        let message_data;
+        let data;
         switch (type) {
             case 'textOnly':
                 nodeData = await FlowTextOnly.findOne({ where: { node_id } });
-                message_data = {
+                data = {
                     recipient: {
                         id: message_body.sender.id
                     },
@@ -323,7 +323,7 @@ try {
                 break;
             case 'textinput':
                 nodeData = await FlowTextBox.findOne({ where: { node_id } });
-                message_data = {
+                data = {
                     recipient: {
                         id: message_body.sender.id
                     },
@@ -346,7 +346,7 @@ try {
                 break;
             case 'cardStyleOne':
                 nodeData = await FlowCardData.findOne({ where: { node_id } });
-                message_data = {
+                data = {
                     recipient: {
                         id: message_body.sender.id
                     },
@@ -374,7 +374,7 @@ try {
                     title: button.text,
                     payload: button.link
                 }));
-                message_data = {
+                data = {
                     recipient: {
                         id: message_body.sender.id
                     },
@@ -418,7 +418,7 @@ try {
                         }
                     }
                 }));
-                message_data = {
+                data = {
                     recipient: {
                         id: message_body.sender.id,
                     },
@@ -441,7 +441,7 @@ try {
             default:
                 continue;
         }
-        data.push(message_data);  // Add each message_data to intentData array
+         // Add each message_data to intentData array
     }
         console.log("template data :",data);
         await axios.post(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, data, {
@@ -458,7 +458,6 @@ try {
 }
 
         }
-        
 
     } catch (error) {
         console.error("Error processing question:", error);
