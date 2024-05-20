@@ -7,6 +7,10 @@ import FacebookChats from '../../models/FacebookChats';
 import {Translate} from '@google-cloud/translate/build/src/v2';
 import axios from 'axios';
 import Node from "../../models/Node";
+import FlowTextOnly from "../../models/FlowTextOnly";
+import FlowTextBox from "../../models/FlowTextBox";
+import FlowCardData from "../../models/FlowCardData";
+import FlowButtonData from "../../models/FlowButtonData";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 if (!process.env.PINECONE_API_KEY || typeof process.env.PINECONE_API_KEY !== 'string') {
@@ -108,6 +112,7 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
 
         const stateProduct = productOrServiceQuestion.choices[0].text;
         console.log("stateProduct :",stateProduct);
+
         if (stateProduct && stateProduct.toLowerCase().includes("not a product")) {
             const lastUserIndex = chatHistory.map((entry: ChatEntry) => entry.role).lastIndexOf('user');
             if (lastUserIndex !== -1) {
@@ -276,42 +281,6 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
                     },
                   };
     
-                ///////// Button Template ////////
-                // const data = {
-                //     recipient: {
-                //       id: message_body.sender.id
-                //     },
-                //     messaging_type: "RESPONSE",
-                //     message:{
-                //         "attachment":{
-                //           "type":"template",
-                //           "payload":{
-                //             "template_type":"button",
-                //             "text":"Test buttons!",
-                //             "buttons":[
-                //               {
-                //                 "type":"postback",
-                //                 "title":"Postback Button 1",
-                //                 "payload":"1"
-                //               },
-                //               {
-                //                 "type":"postback",
-                //                 "title":"Postback Button 21",
-                //                 "payload":"2"
-                //               },
-                //               {
-                //                 "type":"postback",
-                //                 "title":"Postback Button 3",
-                //                 "payload":"3"
-                //               }
-                //             ]
-                //           }
-                //         }
-                //       }
-                //   };
-    
-    
-    
                 const response = await axios.post(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, data, {
                       headers: {
                         'Content-Type': 'application/json'
@@ -324,23 +293,174 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
     
         }
         else{
-            const data = {
-                recipient: {
-                  id: message_body.sender.id
-                },
-                messaging_type: "RESPONSE",
-                message: {
-                  text: "PRODUCT OR SERVICE",
-                },
-              };
 
-            const response = await axios.post(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, data, {
-                      headers: {
-                        'Content-Type': 'application/json'
-                      }
-                    });
-   
-                res.json({ status: "success", });
+            const intentToSend = stateProduct.trim().toLowerCase();
+
+try {
+    let intentData: any[] = [];
+    const node_details = await Node.findAll({
+        where: {
+            intent: intentToSend,
+        },
+    });
+
+    for (const node of node_details) {
+        const { type, node_id } = node;
+        let nodeData;
+        let message_data;
+        switch (type) {
+            case 'textOnly':
+                nodeData = await FlowTextOnly.findOne({ where: { node_id } });
+                message_data = {
+                    recipient: {
+                        id: message_body.sender.id
+                    },
+                    messaging_type: "RESPONSE",
+                    message: {
+                        text: nodeData.text,
+                    },
+                };
+                break;
+            case 'textinput':
+                nodeData = await FlowTextBox.findOne({ where: { node_id } });
+                message_data = {
+                    recipient: {
+                        id: message_body.sender.id
+                    },
+                    messaging_type: "RESPONSE",
+                    message: {
+                        attachment: {
+                            type: "template",
+                            payload: {
+                                template_type: "generic",
+                                elements: [
+                                    {
+                                        title: nodeData.text,
+                                        subtitle: nodeData.description,
+                                    }
+                                ],
+                            },
+                        },
+                    },
+                };
+                break;
+            case 'cardStyleOne':
+                nodeData = await FlowCardData.findOne({ where: { node_id } });
+                message_data = {
+                    recipient: {
+                        id: message_body.sender.id
+                    },
+                    messaging_type: "RESPONSE",
+                    message: {
+                        attachment: {
+                            type: "template",
+                            payload: {
+                                template_type: "generic",
+                                elements: [
+                                    {
+                                        title: nodeData.text,
+                                        subtitle: nodeData.description,
+                                        image_url: 'https://flow-builder-chi.vercel.app/images/Slide%2006.png'
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                };
+                break;
+            case 'buttonGroup': {
+                const buttonsFromDb = await Node.findAll({ where: { parentId: node_id } });
+                const buttons = buttonsFromDb.map((button: any) => ({
+                    type: "postback",
+                    title: button.text,
+                    payload: button.link
+                }));
+                message_data = {
+                    recipient: {
+                        id: message_body.sender.id
+                    },
+                    messaging_type: "RESPONSE",
+                    message: {
+                        attachment: {
+                            type: "template",
+                            payload: {
+                                template_type: "button",
+                                text: intentToSend,
+                                buttons: buttons
+                            }
+                        }
+                    }
+                };
+                break;
+            }
+            case 'cardGroup': {
+                const childs = await Node.findAll({ where: { parentId: node_id } });
+                let cardElements: any[] = [];
+                let buttons: any[] = [];
+
+                await Promise.all(childs.map(async child => {
+                    if (child.type === 'cardHeader') {
+                        const cardData = await FlowCardData.findOne({ where: { node_id: child.node_id } });
+                        if (cardData) {
+                            cardElements.push({
+                                title: cardData.title,
+                                subtitle: cardData.description,
+                                image_url: 'https://flow-builder-chi.vercel.app/images/Slide%2006.png'
+                            });
+                        }
+                    } else {
+                        const buttonData = await FlowButtonData.findOne({ where: { node_id: child.node_id } });
+                        if (buttonData) {
+                            buttons.push({
+                                type: "postback",
+                                title: buttonData.text,
+                                payload: buttonData.link
+                            });
+                        }
+                    }
+                }));
+                message_data = {
+                    recipient: {
+                        id: message_body.sender.id,
+                    },
+                    messaging_type: "RESPONSE",
+                    message: {
+                        attachment: {
+                            type: "template",
+                            payload: {
+                                template_type: "generic",
+                                elements: cardElements,
+                                buttons: [
+                                    ...buttons,
+                                ]
+                            },
+                        },
+                    },
+                };
+                break;
+            }
+            default:
+                continue;
+        }
+        intentData.push(message_data);  // Add each message_data to intentData array
+    }
+
+    // Send all collected messages
+    for (const data of intentData) {
+        await axios.post(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
+    res.json({ status: "success" });
+
+} catch (error) {
+    console.error('Error retrieving intent data:', error);
+    res.status(500).json({ status: "error", message: "Internal server error" });
+}
+
         }
         
 

@@ -537,7 +537,7 @@ export const getIntentData = async (req: Request, res: Response, next: NextFunct
                     }));
                     nodeData = childData;
                     break;
-                }
+                } 
                 default:
                     continue;
             }
