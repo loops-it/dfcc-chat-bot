@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { Pinecone } from "@pinecone-database/pinecone";
-import "dotenv/config";
+import "dotenv/config"; 
 import { Request as ExpressRequest, Response } from "express";
 import File from "../../models/File";
 import BotChats from "../../models/BotChats";
