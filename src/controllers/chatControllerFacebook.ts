@@ -107,8 +107,8 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
         });
 
         const stateProduct = productOrServiceQuestion.choices[0].text;
-        console.log("stateProduct",stateProduct);
-        if (stateProduct || stateProduct.toLowerCase().includes("not a product")) {
+        console.log("stateProduct :",stateProduct);
+        if (stateProduct && stateProduct.toLowerCase().includes("not a product")) {
             const lastUserIndex = chatHistory.map((entry: ChatEntry) => entry.role).lastIndexOf('user');
             if (lastUserIndex !== -1) {
                 chatHistory[lastUserIndex].content = translatedQuestion;
