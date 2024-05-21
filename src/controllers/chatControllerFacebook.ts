@@ -373,21 +373,31 @@ try {
                     title: button.text,
                     payload: button.link
                 }));
+                // message_data = {
+                //     recipient: {
+                //         id: message_body.sender.id
+                //     },
+                //     messaging_type: "RESPONSE",
+                //     message: {
+                //         attachment: {
+                //             type: "template",
+                //             payload: {
+                //                 template_type: "button",
+                //                 text:"Please select a option?",
+                //                 buttons: buttons
+                //             }
+                //         }
+                //     }
+                // };
+                console.log(buttons);
                 message_data = {
                     recipient: {
                         id: message_body.sender.id
                     },
                     messaging_type: "RESPONSE",
                     message: {
-                        attachment: {
-                            type: "template",
-                            payload: {
-                                template_type: "button",
-                                text: intentToSend,
-                                buttons: buttons
-                            }
-                        }
-                    }
+                        text: nodeData.text,
+                    },
                 };
                 break;
             }
@@ -445,7 +455,7 @@ try {
 
     // Send all collected messages
     for (const data of intentData) {
-        console.log(data);
+       
         await axios.post(`https://graph.facebook.com/v19.0/me/messages?access_token=EAAF348C6zRwBOygEAVOQDjd3QK5YhIHbGGmdDDca0HDaDEbS0sdlEqPycuP7satY9GPf6QPhYTVdUawRe7XTZBAQkaAT6rPrqNVICUNjcYxuZApRs6YjzUYpqxzUtbW1lUSyN2z4VhLhMAeMmiCzYtawEStMYtZCNIZBcOeEIB0glhiTRkT0qaXuB9I0m3Dd`, data, {
             headers: {
                 'Content-Type': 'application/json'
