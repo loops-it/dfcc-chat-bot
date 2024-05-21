@@ -368,11 +368,19 @@ try {
                 break;
             case 'buttonGroup': {
                 const buttonsFromDb = await Node.findAll({ where: { parentId: node_id } });
-                const buttons = buttonsFromDb.map((button: any) => ({
-                    type: "postback",
-                    title: button.text,
-                    payload: button.link
-                }));
+
+                const buttons = await Promise.all(
+                    buttonsFromDb.map(async (button: any) => {
+                        const button_data = await FlowButtonData.findOne({ where: { node_id: button.node_id } });
+                        if(button_data){
+                        return {
+                        type: "postback",
+                        title: button_data.text,
+                        payload: button_data.link
+                        };
+                        }
+                    })
+                    );
                 // message_data = {
                 //     recipient: {
                 //         id: message_body.sender.id
@@ -389,7 +397,7 @@ try {
                 //         }
                 //     }
                 // };
-                console.log(buttons);
+                console.log("buttons DATA",buttons);
                 message_data = {
                     recipient: {
                         id: message_body.sender.id
