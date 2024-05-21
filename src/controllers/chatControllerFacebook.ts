@@ -327,7 +327,6 @@ try {
                     recipient: {
                         id: message_body.sender.id
                     },
-                    messaging_type: "RESPONSE",
                     message: {
                         attachment: {
                             type: "template",
@@ -337,6 +336,18 @@ try {
                                     {
                                         title: nodeData.text,
                                         subtitle: nodeData.description,
+                                        default_action: {
+                                            type: "web_url",
+                                            url: "https://www.originalcoastclothing.com/",
+                                            webview_height_ratio: "tall"
+                                        },
+                                        buttons:[
+                                            {
+                                              type:"web_url",
+                                              url:"https://www.originalcoastclothing.com/",
+                                              title:"View Website"
+                                            }             
+                                          ]      
                                     }
                                 ],
                             },
