@@ -385,18 +385,18 @@ try {
                     recipient: {
                         id: message_body.sender.id
                     },
-                    messaging_type: "RESPONSE",
                     message: {
                         attachment: {
                             type: "template",
                             payload: {
                                 template_type: "button",
                                 text:"Please select a option?",
-                                buttons: buttons
+                                buttons: [{"type":"postback","title":"View our Products & Services","payload":""}]
                             }
                         }
                     }
                 };
+                console.log("message DATA",message_data);
                 // console.log("buttons DATA",buttons);
                 // message_data = {
                 //     recipient: {
