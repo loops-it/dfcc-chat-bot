@@ -349,7 +349,6 @@ try {
                     recipient: {
                         id: message_body.sender.id
                     },
-                    messaging_type: "RESPONSE",
                     message: {
                         attachment: {
                             type: "template",
@@ -357,7 +356,7 @@ try {
                                 template_type: "generic",
                                 elements: [
                                     {
-                                        title: nodeData.text,
+                                        title: nodeData.title,
                                         subtitle: nodeData.description,
                                         image_url: 'https://flow-builder-chi.vercel.app/images/Slide%2006.png'
                                     },
