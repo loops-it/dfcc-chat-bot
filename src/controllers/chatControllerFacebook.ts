@@ -376,7 +376,7 @@ try {
                         return {
                         type: "postback",
                         title: button_data.text,
-                        payload: button_data.link
+                        payload:button_data.link ? button_data.link : "#"
                         };
                         }
                     })
