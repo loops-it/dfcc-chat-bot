@@ -413,16 +413,22 @@ try {
                 const childs = await Node.findAll({ where: { parentId: node_id } });
                 let cardElements: any[] = [];
                 let buttons: any[] = [];
-
+                let title = "-";
+                let subtitle = "-";
+                let image_url = "-";
                 await Promise.all(childs.map(async child => {
                     if (child.type === 'cardHeader') {
                         const cardData = await FlowCardData.findOne({ where: { node_id: child.node_id } });
+                       
                         if (cardData) {
-                            cardElements.push({
-                                title: cardData.title,
-                                subtitle: cardData.description,
-                                image_url: 'https://flow-builder-chi.vercel.app/images/Slide%2006.png'
-                            });
+                            title = cardData.title;
+                            subtitle = cardData.description;
+                            image_url = 'https://flow-builder-chi.vercel.app/images/Slide%2006.png';
+                            // cardElements.push({
+                            //     title: cardData.title,
+                            //     subtitle: cardData.description,
+                            //     image_url: 'https://flow-builder-chi.vercel.app/images/Slide%2006.png'
+                            // });
                         }
                     } else {
                         const buttonData = await FlowButtonData.findOne({ where: { node_id: child.node_id } });
@@ -447,7 +453,9 @@ try {
                                 template_type: "generic",
                                 elements: [
                                     {
-                                        cardElements,
+                                        title:title,
+                                        image_url:image_url,
+                                        subtitle:subtitle,
                                         buttons : buttons
                                     },
                                 ],
