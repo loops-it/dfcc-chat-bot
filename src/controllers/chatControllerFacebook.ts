@@ -334,20 +334,13 @@ try {
                                 template_type: "generic",
                                 elements: [
                                     {
-                                        title: nodeData.text,
+                                        title: nodeData.title,
                                         subtitle: nodeData.description,
                                         default_action: {
                                             type: "web_url",
                                             url: "https://www.originalcoastclothing.com/",
                                             webview_height_ratio: "tall"
-                                        },
-                                        buttons:[
-                                            {
-                                              type:"web_url",
-                                              url:"https://www.originalcoastclothing.com/",
-                                              title:"View Website"
-                                            }             
-                                          ]      
+                                        }
                                     }
                                 ],
                             },
