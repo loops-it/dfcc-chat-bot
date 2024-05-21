@@ -391,7 +391,7 @@ try {
                             payload: {
                                 template_type: "button",
                                 text:"Please select a option?",
-                                buttons: [{"type":"postback","title":"View our Products & Services","payload":""}]
+                                buttons: buttons
                             }
                         }
                     }
