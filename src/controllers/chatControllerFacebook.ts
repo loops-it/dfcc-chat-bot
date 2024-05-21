@@ -396,7 +396,7 @@ try {
                     },
                     messaging_type: "RESPONSE",
                     message: {
-                        text: nodeData.text,
+                        text: "BUTTON GROUP",
                     },
                 };
                 break;
