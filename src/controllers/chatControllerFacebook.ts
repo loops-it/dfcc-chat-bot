@@ -335,12 +335,7 @@ try {
                                 elements: [
                                     {
                                         title: nodeData.title,
-                                        subtitle: nodeData.description,
-                                        default_action: {
-                                            type: "web_url",
-                                            url: "https://www.originalcoastclothing.com/",
-                                            webview_height_ratio: "tall"
-                                        }
+                                        subtitle: nodeData.description
                                     }
                                 ],
                             },
