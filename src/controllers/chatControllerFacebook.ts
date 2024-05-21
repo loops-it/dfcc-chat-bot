@@ -430,7 +430,7 @@ try {
                             buttons.push({
                                 type: "postback",
                                 title: buttonData.text,
-                                payload: buttonData.link
+                                payload: buttonData.link ? buttonData.link : "#"
                             });
                         }
                     }
