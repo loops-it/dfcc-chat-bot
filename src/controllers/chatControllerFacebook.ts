@@ -435,34 +435,34 @@ try {
                         }
                     }
                 }));
-                // message_data = {
-                //     recipient: {
-                //         id: message_body.sender.id,
-                //     },
-                //     message: {
-                //         attachment: {
-                //             type: "template",
-                //             payload: {
-                //                 template_type: "generic",
-                //                 elements: cardElements,
-                //                 buttons: [
-                //                     ...buttons,
-                //                 ]
-                //             },
-                //         },
-                //     },
-                // };
-                console.log("buttons DATA",buttons);
-                console.log("cardElements DATA",cardElements);
                 message_data = {
                     recipient: {
-                        id: message_body.sender.id
+                        id: message_body.sender.id,
                     },
-                    messaging_type: "RESPONSE",
                     message: {
-                        text: "CARD GROUP",
+                        attachment: {
+                            type: "template",
+                            payload: {
+                                template_type: "generic",
+                                elements: cardElements,
+                                buttons: [
+                                    ...buttons,
+                                ]
+                            },
+                        },
                     },
                 };
+                // console.log("buttons DATA",buttons);
+                // console.log("cardElements DATA",cardElements);
+                // message_data = {
+                //     recipient: {
+                //         id: message_body.sender.id
+                //     },
+                //     messaging_type: "RESPONSE",
+                //     message: {
+                //         text: "CARD GROUP",
+                //     },
+                // };
                 break;
             }
             default:
