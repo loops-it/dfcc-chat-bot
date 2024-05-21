@@ -435,19 +435,22 @@ try {
                         }
                     }
                 }));
+                
                 message_data = {
                     recipient: {
-                        id: message_body.sender.id,
+                        id: message_body.sender.id
                     },
                     message: {
                         attachment: {
                             type: "template",
                             payload: {
                                 template_type: "generic",
-                                elements: cardElements,
-                                buttons: [
-                                    ...buttons,
-                                ]
+                                elements: [
+                                    {
+                                        cardElements,
+                                        buttons : buttons
+                                    },
+                                ],
                             },
                         },
                     },
