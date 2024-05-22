@@ -41,14 +41,18 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
         
     const body = req.body;
     //let message_body; 
-    let message_body: { message: { text: any }; sender: { id: any } } = { message: { text: '' }, sender: { id: '' } };  
+    let message_body: { message?: { text: any }; postback?: { payload: any }; sender: { id: any } } = { sender: { id: '' } };
     
     let chatHistory = req.body.messages || [];
     
     if (body.object === 'page') {
         body.entry.forEach(async (entry: any) => {
-        console.log("ENTRY.....",entry.messaging[0]);
         message_body = entry.messaging[0];
+        if (message_body.postback) {
+            console.log("Postback Data:", message_body.postback);
+        } else {
+            console.log("Message Data:", message_body.message);
+        }
         });
         
     } else {
@@ -65,7 +69,11 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
     for (var i = 0; i < old_chats.length; i++) {
         chatHistory.push({ role: old_chats[i].message_sent_by, content:  old_chats[i].message });
     }
-    chatHistory.push({ role: 'user', content:  message_body.message.text });
+    if (message_body.message && message_body.message.text) {
+        chatHistory.push({ role: 'user', content: message_body.message.text });
+    } else if (message_body.postback && message_body.postback.payload) {
+        chatHistory.push({ role: 'user', content: message_body.postback.payload });
+    }
     // console.log("req : ", req.body.chatId) 
     const index = pc.index("dfccchatbot");
     const namespace = index.namespace('pinecone-gpt-test');
