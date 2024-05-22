@@ -11,6 +11,7 @@ import FlowTextOnly from "../../models/FlowTextOnly";
 import FlowTextBox from "../../models/FlowTextBox";
 import FlowCardData from "../../models/FlowCardData";
 import FlowButtonData from "../../models/FlowButtonData";
+import Edge from "../../models/Edge";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 if (!process.env.PINECONE_API_KEY || typeof process.env.PINECONE_API_KEY !== 'string') {
@@ -368,17 +369,29 @@ try {
                 break;
             case 'buttonGroup': {
                 const buttonsFromDb = await Node.findAll({ where: { parentId: node_id } });
-
                 const buttons = await Promise.all(
                     buttonsFromDb.map(async (button: any) => {
                         const button_data = await FlowButtonData.findOne({ where: { node_id: button.node_id } });
+                        const button_edge = await Edge.findOne({ where: { source: button.node_id } });
                         if(button_data){
-                        return {
-                        type: "postback",
-                        title: button_data.text,
-                        payload:button_data.link ? button_data.link : "#"
-                        };
+                        if(button_edge){
+                            return {
+                            
+                                type: "postback",
+                                title: button_data.text,
+                                payload:button.node_id
+                            };
                         }
+                        else{
+                            return {
+                            
+                                type: "web_url",
+                                title: button_data.text,
+                                url:button_data.link ? button_data.link : "#"
+                            };
+                        }
+                        }
+                        
                     })
                     );
                 message_data = {
