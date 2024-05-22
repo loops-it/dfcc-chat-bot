@@ -42,10 +42,12 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
     const body = req.body;
     //let message_body; 
     let message_body: { message: { text: any }; sender: { id: any } } = { message: { text: '' }, sender: { id: '' } };  
+    
     let chatHistory = req.body.messages || [];
     
     if (body.object === 'page') {
         body.entry.forEach(async (entry: any) => {
+        console.log("ENTRY.....",entry);
         message_body = entry.messaging[0];
         });
         
@@ -410,16 +412,7 @@ try {
                     }
                 };
                 console.log("message DATA",message_data);
-                // console.log("buttons DATA",buttons);
-                // message_data = {
-                //     recipient: {
-                //         id: message_body.sender.id
-                //     },
-                //     messaging_type: "RESPONSE",
-                //     message: {
-                //         text: "BUTTON GROUP",
-                //     },
-                // };
+
                 break;
             }
             case 'cardGroup': {
@@ -437,20 +430,27 @@ try {
                             title = cardData.title;
                             subtitle = cardData.description;
                             image_url = 'https://flow-builder-chi.vercel.app/images/Slide%2006.png';
-                            // cardElements.push({
-                            //     title: cardData.title,
-                            //     subtitle: cardData.description,
-                            //     image_url: 'https://flow-builder-chi.vercel.app/images/Slide%2006.png'
-                            // });
+            
                         }
                     } else {
                         const buttonData = await FlowButtonData.findOne({ where: { node_id: child.node_id } });
+                        const button_edge = await Edge.findOne({ where: { source: child.node_id } });
                         if (buttonData) {
-                            buttons.push({
-                                type: "postback",
-                                title: buttonData.text,
-                                payload: buttonData.link ? buttonData.link : "#"
-                            });
+                            if(button_edge){
+                                buttons.push({
+                                    type: "postback",
+                                    title: buttonData.text,
+                                    payload: child.node_id 
+                                });
+                            }
+                            else{
+                                buttons.push({
+                                    type: "web_url",
+                                    title: buttonData.text,
+                                    url:buttonData.link ? buttonData.link : "#"
+                                });
+                            }
+                            
                         }
                     }
                 }));
@@ -476,17 +476,6 @@ try {
                         },
                     },
                 };
-                // console.log("buttons DATA",buttons);
-                // console.log("cardElements DATA",cardElements);
-                // message_data = {
-                //     recipient: {
-                //         id: message_body.sender.id
-                //     },
-                //     messaging_type: "RESPONSE",
-                //     message: {
-                //         text: "CARD GROUP",
-                //     },
-                // };
                 break;
             }
             default:
