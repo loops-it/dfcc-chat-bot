@@ -30,6 +30,7 @@ export const insertNode = async (req: Request, res: Response, next: Function) =>
     width: req.body.width,
     extent: req.body.extent,
     parentId: req.body.parentId,
+    language: req.body.language,
     });
     res.json({ status: "success"}) 
     } catch (error) {

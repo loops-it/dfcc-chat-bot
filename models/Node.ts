@@ -14,6 +14,7 @@ class Node extends Model {
   public extent!: string;
   public parentId!: string;
   public intent!: string;
+  public language!: string;
   public createdAt!: Date;
   public updatedAt!: Date;
 }
@@ -65,10 +66,14 @@ Node.init(
         type: new DataTypes.STRING(),
         allowNull: true,
     },
-    intent: {
+    intent:{
       type: new DataTypes.STRING(),
       allowNull: true,
   },
+  language: {
+    type: new DataTypes.STRING(),
+    allowNull: true,
+},
     createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
