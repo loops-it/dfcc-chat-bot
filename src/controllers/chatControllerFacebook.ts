@@ -45,7 +45,21 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
     
     let chatHistory = req.body.messages || [];
     
-    if (body.object === 'page') {
+    // if (body.object === 'page') {
+    //     body.entry.forEach(async (entry: any) => {
+    //     console.log("EVENT DATA:", entry.messaging[0]);
+    //     message_body = entry.messaging[0];
+        
+    //     if (message_body.postback) {
+    //         console.log("Postback Data:", message_body.postback);
+    //     } else {
+    //         console.log("Message Data:", message_body.message);
+    //     }
+    //     });
+        
+    // } else {
+    //         res.sendStatus(404);
+    // }
         body.entry.forEach(async (entry: any) => {
         console.log("EVENT DATA:", entry.messaging[0]);
         message_body = entry.messaging[0];
@@ -57,10 +71,7 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
         }
         });
         
-    } else {
-            res.sendStatus(404);
-    }
-
+ 
     const old_chats = await FacebookChats.findAll({
         where: {
           sender_id: message_body.sender.id
