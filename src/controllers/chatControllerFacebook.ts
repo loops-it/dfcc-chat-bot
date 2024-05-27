@@ -47,7 +47,9 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
     
     if (body.object === 'page') {
         body.entry.forEach(async (entry: any) => {
+        console.log("EVENT DATA:", entry.messaging[0].event);
         message_body = entry.messaging[0];
+        
         if (message_body.postback) {
             console.log("Postback Data:", message_body.postback);
         } else {
