@@ -8,7 +8,6 @@ import { chatResponse } from './controllers/chatController';
 import { liveChat,offlineFormSubmissions, saveRating,switchToAgent,liveChatUser } from './controllers/liveChatController';
 import { facebookChat } from './controllers/facebookChat';
 import { chatControllerFacebook } from './controllers/chatControllerFacebook';
-import { chatControllerFacebookNew } from './controllers/chatControllerFacebookNew';
 import "dotenv/config";
 import bodyParser from 'body-parser';
 import { viewDocuments } from './controllers/viewDocumentsController';
@@ -358,7 +357,7 @@ app.get('/webhook', (req, res) => {
     }
   }
 });
-app.post("/webhook",chatControllerFacebookNew)
+app.post("/webhook",chatControllerFacebook)
 
 // app.post('/webhook', (req, res) => {
 //   const body = req.body;
