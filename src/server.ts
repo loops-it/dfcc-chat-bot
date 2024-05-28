@@ -252,7 +252,9 @@ app.get('/delete-sector',adminLogged, async (req: Request, res: Response) => {
   );
   res.redirect('manage-sectors');
 });
-
+app.get('/english-questions', adminLogged, (req: Request, res: Response) => {
+  res.render('english-questions');
+});
 app.get('/add-agent',adminLogged, (req: Request, res: Response) => {
     const successMessage = req.flash('success')[0];
     const errorMessage = req.flash('error')[0];
