@@ -330,8 +330,8 @@ try {
 
     for (const node of node_details) {
         const { type, node_id } = node;
-        let nodeData;
-        let message_data;
+        let nodeData : any;
+        let message_data: any;
         switch (type) {
             case 'textOnly':
                 nodeData = await FlowTextOnly.findOne({ where: { node_id } });

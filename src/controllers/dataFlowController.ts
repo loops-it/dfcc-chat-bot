@@ -329,8 +329,11 @@ export const deleteEdge = async (req: Request, res: Response, next: Function) =>
 
 export const retrieveData = async (req: Request, res: Response, next: Function) => {
     //console.log("deleteNode",req.body);
+
     try {
-        const nodes = await Node.findAll({});
+        const nodes = await Node.findAll({where: {
+            language: req.body.language
+        }});
         const edges = await Edge.findAll({});
         const textOnly = await FlowTextOnly.findAll({});
         const textBox = await FlowTextBox.findAll({});

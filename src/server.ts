@@ -31,12 +31,15 @@ import { botChatsOnload,botChatsGetMessages,botChatsRefresh,botChatsRefreshMessa
 import { LiveChatHistoryOnload,LiveChatHistoryMessages,LiveChatHistoryRefresh,LiveChatHistoryRefreshMessages} from './controllers/LiveChatHistory';
 import { insertNode,insertEdge,updateNode,updateEdge,deleteNode,deleteEdge,retrieveData,textOnlyData,textBoxData,ButtonGroup
   ,ButtonData,CardData,getIntentData,getTargetData} from './controllers/dataFlowController';
+import { addQuestion} from './controllers/Questions';
 import Admin from '../models/Admin';
 import User from '../models/User';
 import BotChats from '../models/BotChats';
 import Sector from '../models/Sector';
 import Agent from '../models/Agent';
 import ChatTimer from '../models/ChatTimer';
+import Node from '../models/Node';
+import Question from '../models/Question';
 import { loadLiveChatHistory } from './controllers/loadLiveChatHistory';
 import { Op } from 'sequelize';
 import { getFlowPage } from './controllers/flowController';
@@ -252,8 +255,51 @@ app.get('/delete-sector',adminLogged, async (req: Request, res: Response) => {
   );
   res.redirect('manage-sectors');
 });
-app.get('/english-questions', adminLogged, (req: Request, res: Response) => {
-  res.render('english-questions');
+app.get('/english-questions', adminLogged, async (req: Request, res: Response) => {
+  const intents = await Node.findAll({
+    where: {
+      intent: {
+        [Op.not]: null
+        },
+        language: 'english'
+    }
+    
+});
+const questions = await Question.findAll({
+  where: {
+      language: 'english'
+  }
+  
+});
+  res.render('english-questions', {intents: intents,questions: questions});
+});
+app.post('/add-question', addQuestion);
+app.get('/edit-question', adminLogged, async (req: Request, res: Response) => {
+  const id = req.query.id;
+
+  const question_details  = await Question.findOne({
+      where: {
+          id : id,
+      },
+  });
+  let intent_details : any;
+  if(question_details){
+    intent_details  = await Node.findOne({
+      where: {
+          id : question_details.intent,
+      },
+  });
+  }
+  const intents = await Node.findAll({
+    where: {
+      intent: {
+        [Op.not]: null
+        },
+        language: 'english'
+    }
+    
+});
+  res.render('edit-question', {question_details: question_details,intent_details: intent_details,intents: intents});
 });
 app.get('/add-agent',adminLogged, (req: Request, res: Response) => {
     const successMessage = req.flash('success')[0];
@@ -443,7 +489,7 @@ app.post("/data-flow-update-node", updateNode);
 app.post("/data-flow-insert-edge", insertEdge);
 app.post("/data-flow-delete-node", deleteNode);
 app.post("/data-flow-delete-edge", deleteEdge);
-app.get("/data-flow-retrieve-data", retrieveData);
+app.post("/data-flow-retrieve-data", retrieveData);
 
 app.post("/data-flow-text", textOnlyData);
 app.post("/data-flow-text-box", textBoxData);
