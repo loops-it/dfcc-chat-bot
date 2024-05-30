@@ -259,9 +259,12 @@ app.get('/english-questions', adminLogged, async (req: Request, res: Response) =
   const intents = await Node.findAll({
     where: {
       intent: {
-        [Op.not]: null
-        },
-        language: 'english'
+        [Op.and]: {
+          [Op.not]: null,
+          [Op.ne]: ""
+        }
+      },
+      language: 'english'
     }
     
 });
@@ -277,9 +280,12 @@ app.get('/sinhala-questions', adminLogged, async (req: Request, res: Response) =
   const intents = await Node.findAll({
     where: {
       intent: {
-        [Op.not]: null
-        },
-        language: 'sinhala'
+        [Op.and]: {
+          [Op.not]: null,
+          [Op.ne]: ""
+        }
+      },
+      language: 'sinhala'
     }
     
 });
