@@ -300,6 +300,7 @@ const questions = await Question.findAll({
 app.post('/add-question', addQuestion);
 app.get('/edit-question', adminLogged, async (req: Request, res: Response) => {
   const id = req.query.id;
+  const language = req.query.language;
 
   const question_details  = await Question.findOne({
       where: {
@@ -317,9 +318,12 @@ app.get('/edit-question', adminLogged, async (req: Request, res: Response) => {
   const intents = await Node.findAll({
     where: {
       intent: {
-        [Op.not]: null
-        },
-        language: 'english'
+        [Op.and]: {
+          [Op.not]: null,
+          [Op.ne]: ""
+        }
+      },
+      language: language
     }
     
 });
