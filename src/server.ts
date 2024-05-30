@@ -273,6 +273,24 @@ const questions = await Question.findAll({
 });
   res.render('english-questions', {intents: intents,questions: questions});
 });
+app.get('/sinhala-questions', adminLogged, async (req: Request, res: Response) => {
+  const intents = await Node.findAll({
+    where: {
+      intent: {
+        [Op.not]: null
+        },
+        language: 'sinhala'
+    }
+    
+});
+const questions = await Question.findAll({
+  where: {
+      language: 'sinhala'
+  }
+  
+});
+  res.render('sinhala-questions', {intents: intents,questions: questions});
+});
 app.post('/add-question', addQuestion);
 app.get('/edit-question', adminLogged, async (req: Request, res: Response) => {
   const id = req.query.id;
