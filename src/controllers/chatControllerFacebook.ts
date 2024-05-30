@@ -12,6 +12,7 @@ import FlowTextBox from "../../models/FlowTextBox";
 import FlowCardData from "../../models/FlowCardData";
 import FlowButtonData from "../../models/FlowButtonData";
 import Edge from "../../models/Edge";
+import Question from "../../models/Question";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 if (!process.env.PINECONE_API_KEY || typeof process.env.PINECONE_API_KEY !== 'string') {
@@ -34,6 +35,14 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
         attributes: ["intent"],
         group: ["intent"],
     });
+    const questionList = await Question.findAll({
+        where: {
+            language: "english",
+        },
+        attributes: ["question"],
+        group: ["question"], 
+    });
+
     let cachedIntentsList: string[] = [];
     cachedIntentsList = intentsList
         .filter((intent) => intent.intent !== null)

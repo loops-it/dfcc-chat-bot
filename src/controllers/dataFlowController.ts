@@ -10,6 +10,7 @@ import FlowButtonData from '../../models/FlowButtonData';
 import FlowCardData from '../../models/FlowCardData';
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import Question from '../../models/Question';
 
 interface intentData {
     type: string;
@@ -501,10 +502,27 @@ export const CardData = async (req: Request, res: Response, next: Function) => {
 };
 export const getIntentData = async (req: Request, res: Response, next: NextFunction) => {
     try {
+
+        const question_details = await Question.findOne({
+            where: {
+                question: req.body.question,
+            },
+        });
+        let intent = "";
+        if(question_details){
+            const node = await Node.findOne({
+                where: {
+                    id: question_details.intent,
+                },
+            });
+            if(node){
+            intent = node.intent;
+            }
+        }
         let intentData: any[] = [];
         const node_details = await Node.findAll({
             where: {
-                intent: req.body.intent,
+                intent: intent,
             },
         });
 
