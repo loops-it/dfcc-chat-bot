@@ -586,30 +586,56 @@ document
                                         </div>
                                     </div>`;
 
+                            // case 'cardGroup':
+                            //     const buttonsMainCardHTML = item.node_data.map(buttonItem =>
+                            //         {
+                            //             if (buttonItem.button.link) {
+                            //                 return `<div class="linkWrapper">
+                            //                 <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                            //             </div>`;
+                            //             } else {
+                            //                 return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                            //             }
+                            //         }).join('');
+                            //     return `
+                            //         <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                            //             <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                            //                 <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                            //                 <div class="cardGroup px-2" style="box-shadow: none !important">
+                            //                     <h4 class="px-2 mt-2">${item.node_data[0].card.title}</h4>
+                            //                     <p class="px-2">${item.node_data[0].card.description}</p>
+                            //                     <div class="buttonGroup p-0" style="box-shadow: none !important">
+                            //                     ${buttonsMainCardHTML}
+                            //                     </div>
+                            //                 </div>
+                            //             </div>
+                            //         </div>`;
+
                             case 'cardGroup':
-                                const buttonsMainCardHTML = item.node_data.map(buttonItem =>
-                                    {
-                                        if (buttonItem.button.link) {
-                                            return `<div class="linkWrapper">
-                                            <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                        </div>`;
-                                        } else {
-                                            return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
-                                        }
-                                    }).join('');
-                                return `
-                                    <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-                                        <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                            <img src="../images/bg-1.jpg" alt="" class="cardImage">
-                                            <div class="cardGroup px-2" style="box-shadow: none !important">
-                                                <h4 class="px-2 mt-2">${item.node_data[0].card.title}</h4>
-                                                <p class="px-2">${item.node_data[0].card.description}</p>
-                                                <div class="buttonGroup p-0" style="box-shadow: none !important">
-                                                ${buttonsMainCardHTML}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>`;
+    const buttonsMainCardHTML = item.node_data.map(buttonItem => {
+        if (buttonItem.button && buttonItem.button.link) {
+            return `<div class="linkWrapper">
+                        <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                    </div>`;
+        } else if (buttonItem.button) {
+            return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+        }
+        return ''; // Return empty string if buttonItem is undefined or does not have a button property
+    }).join('');
+    return `
+        <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                <div class="cardGroup px-2" style="box-shadow: none !important">
+                    <h4 class="px-2 mt-2">${item.node_data[0].card.title}</h4>
+                    <p class="px-2">${item.node_data[0].card.description}</p>
+                    <div class="buttonGroup p-0" style="box-shadow: none !important">
+                        ${buttonsMainCardHTML}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
                             case 'textOnly':
                                 if (item.node_data.text.includes('●')) {
                                     const bulletPoints = item.node_data.text.split('●').filter(point => point.trim() !== '');
