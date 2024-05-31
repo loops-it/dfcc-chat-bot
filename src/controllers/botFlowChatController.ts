@@ -47,6 +47,40 @@ export const chatFlowResponse = async (
     let language = req.body.language;
     let cachedIntentsList: string[] = [];
 
+    const questionArray = await Question.findAll({
+        where: {
+            language: language,
+        },
+        attributes: ["question","id"],
+        group: ["question"],
+    });
+    const questionList = questionArray.map(item => item.dataValues.question);
+
+    async function translateToEnglish(userQuestion: string) {
+        const [translationsToEng] = await translate.translate(userQuestion, "en");
+        const finalQuestion = Array.isArray(translationsToEng)
+            ? translationsToEng.join(", ")
+            : translationsToEng;
+        return finalQuestion;
+    }
+
+    console.log("language : ", language)
+    if (language === 'Sinhala') {
+        const translatedQuestions = await Promise.all(
+            questionList.map(question => translateToEnglish(question))
+        );
+
+        console.log("translated questionList:", translatedQuestions);
+    }
+    console.log("questionList : ", questionList)
+    // const questionList:String[] = [
+    //     "What is savings account",
+    //     "What is creadit card",
+    //     "What is Housing loan",
+    //     "What is green loan",
+    //     "What is aloka account",
+    // ]
+
     // Fetch intents from the database
     const intentsList = await Node.findAll({
         attributes: ["intent"],
@@ -140,6 +174,17 @@ export const chatFlowResponse = async (
         // If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, and check if mentioned service or product is in the intent list as it is, if yes State only its name. If it is not in the intent list, just say this word "not product".
 
         console.log("translatedQuestion : ", translatedQuestion);
+        // const productOrServiceQuestion = await openai.completions.create({
+        //     model: "gpt-3.5-turbo-instruct",
+        //     prompt: `If the given question : "${translatedQuestion}" is related to a service or product, check if it is mentioned in the intent list :  ${cachedIntentsList}, if it is in the intent list state Only matching intent name from the list. Do not add any other words. If it is not just say this word "not a product".`,
+        //     max_tokens: 20,
+        //     temperature: 0,
+        // });
+
+
+
+
+
         const productOrServiceQuestion = await openai.completions.create({
             model: "gpt-3.5-turbo-instruct",
             prompt: `Compare the given user question: "${translatedQuestion}" with the question list: ${questionList} and if the user question matches a question in the question list then give only the question in that question list. Do not state anything else. if you cannot find a match then just say "not a product".`,
