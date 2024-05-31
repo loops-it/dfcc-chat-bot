@@ -505,7 +505,7 @@ export const getIntentData = async (req: Request, res: Response, next: NextFunct
 
         const question_details = await Question.findOne({
             where: {
-                question: req.body.intent,
+                id: req.body.intent,
             },
         });
         let intent = "";
