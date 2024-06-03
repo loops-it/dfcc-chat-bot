@@ -99,7 +99,7 @@ export const refreshLiveChats = async (req: Request, res: Response, next: NextFu
           order: [['id', 'DESC']],
         });
         let time = "";
-        if(lastMessage){
+        if(lastMessage[0]){
           const timestamp = new Date(`${lastMessage[0].createdAt}`);
           time = timestamp.toLocaleTimeString([], { timeStyle: 'short' });
         }
