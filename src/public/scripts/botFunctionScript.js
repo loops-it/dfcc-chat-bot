@@ -7,12 +7,12 @@ function setFormattedOpenedTime() {
     Opendhours = Opendhours % 12;
     Opendhours = Opendhours ? Opendhours : 12; // the hour '0' should be '12'
     const formattedOpenedTime = `${Opendhours.toString().padStart(2, '0')}:${Openedminutes} ${Openedampm}`;
-  
+
     document.getElementById('OpenedTime2').textContent = formattedOpenedTime;
-  }
-  
-  // Call the function to set the time
-  setFormattedOpenedTime();
+}
+
+// Call the function to set the time
+setFormattedOpenedTime();
 
 
 
@@ -193,13 +193,13 @@ function isList(content) {
 function appendListContent(messageDiv, content) {
 
     const currentTime = new Date();
-      let hours = currentTime.getHours();
-      const minutes = currentTime.getMinutes().toString().padStart(2, '0');
-      const seconds = currentTime.getSeconds().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+    let hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+    const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
 
     const listItems = content.split("\n").map(item => `<li style="margin-bottom: 10px !important;">${item}</li>`).join("");
     messageDiv.innerHTML = `<div class="messageWrapper">
@@ -390,6 +390,16 @@ function handleProductButtonClick(data) {
             //     }
             // });
 
+
+            const currentTime = new Date();
+            let hours = currentTime.getHours();
+            const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+            const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
             const textOnlyItems = [];
             const textInputItems = [];
             const cardStyleOneItems = [];
@@ -414,7 +424,10 @@ function handleProductButtonClick(data) {
             });
 
             // Generate HTML for each type of item
-            const textOnlyHTML = textOnlyItems.map(item => `<p>text: ${item.text}<br>id: ${item.node_id}</p>`).join("");
+            const textOnlyHTML = textOnlyItems.map(item => `
+            <p>text: ${item.text}<br>id: ${item.node_id}</p>
+            `).join("");
+
             const textInputHTML = textInputItems.map(item => `<p>title: ${item.title || 'N/A'}<br>description: ${item.description || 'N/A'}<br>id: ${item.node_id}</p>`).join("");
             const cardStyleOneHTML = cardStyleOneItems.map(item => `
             <p>title: ${item.title || 'N/A'}<br>
@@ -452,13 +465,13 @@ function handleProductButtonClick(data) {
 
 function appendPlainTextContent(messageDiv, content) {
     const currentTime = new Date();
-      let hours = currentTime.getHours();
-      const minutes = currentTime.getMinutes().toString().padStart(2, '0');
-      const seconds = currentTime.getSeconds().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+    let hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+    const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
 
     messageDiv.innerHTML = `<div class="messageWrapper">
         <span class="botname-message">${formattedTime}</span>
@@ -532,13 +545,13 @@ function appendLanguageMessage(content) {
     image.src = "/agent.png";
 
     const currentTime = new Date();
-      let hours = currentTime.getHours();
-      const minutes = currentTime.getMinutes().toString().padStart(2, '0');
-      const seconds = currentTime.getSeconds().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+    let hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+    const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
 
     // Use innerHTML to allow HTML formatting in the message
     messageDiv.innerHTML = `<div class="messageWrapper">
@@ -596,6 +609,18 @@ document
             questionInput.disabled = true;
             // Show typing animation
             showTypingAnimation();
+
+
+            const currentTime = new Date();
+            let hours = currentTime.getHours();
+            const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+            const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
+
             try {
                 const response = await fetch("/api/chat-response-flow", {
                     method: "POST",
@@ -623,16 +648,15 @@ document
                     const generateHTMLForItem = (item, index) => {
                         switch (item.type) {
                             case 'buttonGroup':
-                                const buttonsHTML = item.node_data.map(buttonItem =>
-                                    {
-                                        if (buttonItem.button.link) {
-                                            return `<div class="linkWrapper">
+                                const buttonsHTML = item.node_data.map(buttonItem => {
+                                    if (buttonItem.button.link) {
+                                        return `<div class="linkWrapper">
                                             <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
                                         </div>`;
-                                        } else {
-                                            return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
-                                        }
-                                    }).join('');
+                                    } else {
+                                        return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                                    }
+                                }).join('');
 
                                 return `
                                     <div class="buttonGroup p-0" style="box-shadow: none !important">
@@ -673,30 +697,29 @@ document
                             //         </div>`;
 
                             case 'cardGroup':
-    const buttonsMainCardHTML = item.node_data.map(buttonItem => {
-        if (buttonItem.button && buttonItem.button.link) {
-            return `<div class="linkWrapper">
-                        <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                    </div>`;
-        } else if (buttonItem.button) {
-            return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
-        }
-        return ''; // Return empty string if buttonItem is undefined or does not have a button property
-    }).join('');
-    return `
-        <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                <img src="../images/bg-1.jpg" alt="" class="cardImage">
-                <div class="cardGroup px-2" style="box-shadow: none !important">
-                    <h4 class="px-2 mt-2">${item.node_data[0].card.title}</h4>
-                    <p class="px-2">${item.node_data[0].card.description}</p>
-                    <div class="buttonGroup p-0" style="box-shadow: none !important">
-                        ${buttonsMainCardHTML}
-                    </div>
-                </div>
-            </div>
-        </div>`;
-
+                                const buttonsMainCardHTML = item.node_data.map(buttonItem => {
+                                    if (buttonItem.button && buttonItem.button.link) {
+                                        return `<div class="linkWrapper">
+                                                    <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                                                </div>`;
+                                    } else if (buttonItem.button) {
+                                        return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                                    }
+                                    return '';
+                                }).join('');
+                                return `
+                                        <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                                                <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                                                <div class="cardGroup px-2" style="box-shadow: none !important">
+                                                    <h4 class="px-2 mt-2">${item.node_data[0].card.title}</h4>
+                                                    <p class="px-2">${item.node_data[0].card.description}</p>
+                                                    <div class="buttonGroup p-0" style="box-shadow: none !important">
+                                                        ${buttonsMainCardHTML}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`;
                             case 'textOnly':
                                 if (item.node_data.text.includes('●')) {
                                     const bulletPoints = item.node_data.text.split('●').filter(point => point.trim() !== '');
@@ -786,7 +809,7 @@ document
                                                 return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
                                             }
                                         }).join('');
-                                    
+
                                         return `
                                             <div class="buttonGroup p-0" style="box-shadow: none !important">
                                                 ${buttonsGroupHTML}
@@ -829,7 +852,7 @@ document
                         if (data.sourceData.length > 1) {
                             const uniqueCarouselId = `carousel-${Date.now()}`;
                             appendMessageToResponse("product", `
-                                <div style="background-color: #fff; padding: 0px !important; box-shadow: none !important" id="${uniqueCarouselId}" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
+                                <div id="${uniqueCarouselId}" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
                                     <div class="carousel-inner p-0">
                                     ${carouselDataHTML}
                                     </div>
@@ -845,7 +868,7 @@ document
                             `);
                         } else if (data.sourceData.length === 1) {
                             appendMessageToResponse("product", `
-                                <div style="background-color: #fff; padding: 10px !important; box-shadow: none !important">
+                                <div>
                                     ${carouselDataHTML}
                                 </div>
                             `);
@@ -866,7 +889,7 @@ document
                     if (items.length > 1) {
                         // Append the generated HTML to the response as a carousel if there is more than one item
                         appendMessageToResponse("product", `
-                            <div style="background-color: #fff; padding: 0px !important; box-shadow: none !important" id="carouselExampleControls" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
+                            <div id="carouselExampleControls" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
                                 <div class="carousel-inner p-0">
                                 ${carouselItemsHTML}
                                 </div>
@@ -883,7 +906,7 @@ document
                     } else if (items.length === 1) {
                         // Append the generated HTML to the response without the carousel if there is only one item
                         appendMessageToResponse("product", `
-                            <div style="background-color: #fff; padding: 10px !important; box-shadow: none !important">
+                            <div>
                                 ${carouselItemsHTML}
                             </div>
                         `);
