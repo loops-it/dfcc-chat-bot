@@ -51,10 +51,17 @@ export const chatFlowResponse = async (
         where: {
             language: language,
         },
-        attributes: ["question","id"],
+        attributes: ["question", "id"],
         group: ["question"],
     });
-    const questionList = questionArray.map(item => item.dataValues.question);
+    // const questionList = questionArray.map(item => item.dataValues.question);
+
+    const questionList = questionArray.map(item => ({
+        question: item.dataValues.question,
+        id: item.dataValues.id
+    }));
+
+    console.log(questionList);
 
     async function translateToEnglish(userQuestion: string) {
         const [translationsToEng] = await translate.translate(userQuestion, "en");
@@ -65,13 +72,49 @@ export const chatFlowResponse = async (
     }
 
     console.log("language : ", language)
+    let translatedQuestions: { question: string; id: any }[] = [];
+
     if (language === 'Sinhala') {
-        const translatedQuestions = await Promise.all(
-            questionList.map(question => translateToEnglish(question))
+        translatedQuestions = await Promise.all(
+            questionList.map(async item => {
+                const translatedQuestion = await translateToEnglish(item.question);
+                return {
+                    question: translatedQuestion,
+                    id: item.id
+                };
+            })
         );
 
-        console.log("translated questionList:", translatedQuestions);
+        console.log("translated questionList sinhala:", translatedQuestions);
     }
+    else if (language === 'Tamil') {
+        translatedQuestions = await Promise.all(
+            questionList.map(async item => {
+                const translatedQuestion = await translateToEnglish(item.question);
+                return {
+                    question: translatedQuestion,
+                    id: item.id
+                };
+            })
+        );
+
+        console.log("translated questionList tamil :", translatedQuestions);
+    }
+    else {
+        translatedQuestions = await Promise.all(
+            questionList.map(async item => {
+                const translatedQuestion = await translateToEnglish(item.question);
+                return {
+                    question: translatedQuestion,
+                    id: item.id
+                };
+            })
+        );
+
+        console.log("translated questionList english:", translatedQuestions);
+    }
+
+    console.log("translatedQuestions:", translatedQuestions);
     console.log("questionList : ", questionList)
     // const questionList:String[] = [
     //     "What is savings account",
@@ -182,59 +225,68 @@ export const chatFlowResponse = async (
         // });
 
 
-
+        // const productOrServiceQuestion = await openai.completions.create({
+        //     model: "gpt-3.5-turbo-instruct",
+        //     prompt: `Compare the given user question: "${translatedQuestion}" with the question list: ${questionList} and if the user question matches a question in the question list then give only the question in that question list. Do not state anything else. if you cannot find a match then just say "not a product".`,
+        //     max_tokens: 20,
+        //     temperature: 0,
+        // });
+        const prompt = `Compare the given user question: "${translatedQuestion}" with the question list: ${JSON.stringify(translatedQuestions)} and if the user question matches a question in the question list, then give only the id in that question list. Do not state anything else. if you cannot find a match then just say "not a product".`;
 
 
         const productOrServiceQuestion = await openai.completions.create({
             model: "gpt-3.5-turbo-instruct",
-            prompt: `Compare the given user question: "${translatedQuestion}" with the question list: ${questionList} and if the user question matches a question in the question list then give only the question in that question list. Do not state anything else. if you cannot find a match then just say "not a product".`,
+            prompt: prompt,
             max_tokens: 20,
             temperature: 0,
         });
         console.log("--------------------------------------");
         console.log(
-            "productOrServiceQuestion Question :",
+            "productOrServiceQuestion Question ------- :",
             productOrServiceQuestion.choices[0].text
         );
+
+
+
 
         let botResponseIntent: string | null = productOrServiceQuestion.choices[0].text;
         let translatedIntentAnswer = "";
         let answerLanguage = 'en';
-        if (language === 'Sinhala') {
-            answerLanguage = 'si';
-                if (botResponseIntent !== null) {
-                    translatedIntentAnswer = await translateToLanguageQuestion(botResponseIntent);
-                }
-        } else if (language === 'Tamil') {
-            answerLanguage = "ta";
-                if (botResponseIntent !== null) {
-                    translatedIntentAnswer = await translateToLanguageQuestion(botResponseIntent);
-                }
-        } else {
-            answerLanguage = 'en';
-            translatedIntentAnswer = translatedQuestion
-        }
-        
-        async function translateToLanguageQuestion(botResponseIntent: string) {
-            const [translationsToLanguage] = await translate.translate(
-                botResponseIntent,
-                answerLanguage
-            );
-            const finalAnswer = Array.isArray(translationsToLanguage)
-                ? translationsToLanguage.join(", ")
-                : translationsToLanguage;
-            return finalAnswer;
-        }
-        
-        console.log("translated Intent Answer : ", translatedIntentAnswer);
-        
+        // if (language === 'Sinhala') {
+        //     answerLanguage = 'si';
+        //         if (botResponseIntent !== null) {
+        //             translatedIntentAnswer = await translateToLanguageQuestion(botResponseIntent);
+        //         }
+        // } else if (language === 'Tamil') {
+        //     answerLanguage = "ta";
+        //         if (botResponseIntent !== null) {
+        //             translatedIntentAnswer = await translateToLanguageQuestion(botResponseIntent);
+        //         }
+        // } else {
+        //     answerLanguage = 'en';
+        //     translatedIntentAnswer = translatedQuestion
+        // }
+
+        // async function translateToLanguageQuestion(botResponseIntent: string) {
+        //     const [translationsToLanguage] = await translate.translate(
+        //         botResponseIntent,
+        //         answerLanguage
+        //     );
+        //     const finalAnswer = Array.isArray(translationsToLanguage)
+        //         ? translationsToLanguage.join(", ")
+        //         : translationsToLanguage;
+        //     return finalAnswer;
+        // }
+
+        // console.log("translated Intent Answer : ", translatedIntentAnswer);
+
 
 
         // ==================================================
         // ==========  intent variable is stateProduct=======
         // ==================================================
         // const stateProduct = productOrServiceQuestion.choices[0].text;
-        const stateProduct = translatedIntentAnswer;
+        const stateProduct = botResponseIntent;
         console.log("--------------------------------------");
 
         if (stateProduct && (await stateProduct).toLowerCase().includes("not a product")) {
@@ -393,9 +445,9 @@ Standalone question:`;
             try {
 
                 // const intentToSend = stateProduct.toLocaleLowerCase()
-                const intentToSend = (stateProduct).trim().toLowerCase(); 
+                const intentToSend = (stateProduct).trim().toLowerCase();
                 // const intentToSend =  stateProduct 
-                
+
                 console.log("intentToSend (processed): ", intentToSend);
 
                 const response = await fetch("https://dfcc-chat-bot.vercel.app/chat-bot-get-intent-data", {
