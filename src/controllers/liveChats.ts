@@ -99,9 +99,11 @@ export const refreshLiveChats = async (req: Request, res: Response, next: NextFu
           order: [['id', 'DESC']],
         });
         let time = "";
+        let message = "";
         if(lastMessage[0]){
           const timestamp = new Date(`${lastMessage[0].createdAt}`);
           time = timestamp.toLocaleTimeString([], { timeStyle: 'short' });
+          message = lastMessage[0].message.slice(0, 30);
         }
       for (var c = 0; c < languages.length; c++){
           if(languages[c].language == chats[i].language){
@@ -110,7 +112,7 @@ export const refreshLiveChats = async (req: Request, res: Response, next: NextFu
                   <a class="me-15  avatar avatar-lg" href="#"><img class="bg-primary-light" src="../images/avatar/avatar-1.png" alt="..."></a>
                   <div>
                     <a class="hover-primary mb-5" href="#"><strong>#`+chats[i].message_id+`</strong></a>
-                    <p class="mb-0">`+lastMessage[0].message.slice(0, 30)+` ...</p>
+                    <p class="mb-0">`+message+` ...</p>
                     <button type="button" class="waves-effect waves-light btn btn-success mb-5 btn-sm" onclick="ReplayToLiveChat('`+chats[i].message_id+`')">REPLY</button>
                   </div>
               </div>
