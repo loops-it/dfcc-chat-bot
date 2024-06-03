@@ -1,3 +1,21 @@
+function setFormattedOpenedTime() {
+    const OpenedTime = new Date();
+    let Opendhours = OpenedTime.getHours();
+    const Openedminutes = OpenedTime.getMinutes().toString().padStart(2, '0');
+    const Openedseconds = OpenedTime.getSeconds().toString().padStart(2, '0');
+    const Openedampm = Opendhours >= 12 ? 'PM' : 'AM';
+    Opendhours = Opendhours % 12;
+    Opendhours = Opendhours ? Opendhours : 12; // the hour '0' should be '12'
+    const formattedOpenedTime = `${Opendhours.toString().padStart(2, '0')}:${Openedminutes} ${Openedampm}`;
+  
+    document.getElementById('OpenedTime2').textContent = formattedOpenedTime;
+  }
+  
+  // Call the function to set the time
+  setFormattedOpenedTime();
+
+
+
 // Define global variables
 let chatHistory = [];
 let messageDiv;
@@ -163,7 +181,7 @@ function createMessageDiv(role, content) {
 function createMessageImage(role) {
     const image = document.createElement("img");
     image.classList.add("message-image");
-    image.src = role === "user" ? "/user.webp" : "/chat-header.webp";
+    image.src = role === "user" ? "/user.webp" : "/agent.png";
     return image;
 }
 
@@ -173,8 +191,23 @@ function isList(content) {
 }
 
 function appendListContent(messageDiv, content) {
+
+    const currentTime = new Date();
+      let hours = currentTime.getHours();
+      const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+      const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
     const listItems = content.split("\n").map(item => `<li style="margin-bottom: 10px !important;">${item}</li>`).join("");
-    messageDiv.innerHTML = `<div><ul style="list-style: none; padding: 0px !important">${listItems}</ul></div>`;
+    messageDiv.innerHTML = `<div class="messageWrapper">
+    <span class="botname-message">${formattedTime}</span>
+    <div>
+      <ul style="list-style: none; padding: 0px !important">${listItems}</ul>
+    </div>
+  </div>`;
 }
 
 function appendLiveAgentContent(messageDiv, content, data) {
@@ -418,7 +451,21 @@ function handleProductButtonClick(data) {
 }
 
 function appendPlainTextContent(messageDiv, content) {
-    messageDiv.innerHTML = `<div>${content}</div>`;
+    const currentTime = new Date();
+      let hours = currentTime.getHours();
+      const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+      const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
+    messageDiv.innerHTML = `<div class="messageWrapper">
+        <span class="botname-message">${formattedTime}</span>
+        <div>
+          <p class="mb-0">${content}</p>
+        </div>
+      </div>`;
 }
 
 function appendRatingForm(messageDiv) {
@@ -482,10 +529,24 @@ function appendLanguageMessage(content) {
     // Create an image element for the message
     const image = document.createElement("img");
     image.classList.add("message-image");
-    image.src = "/chat-header.webp";
+    image.src = "/agent.png";
+
+    const currentTime = new Date();
+      let hours = currentTime.getHours();
+      const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+      const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
 
     // Use innerHTML to allow HTML formatting in the message
-    messageDiv.innerHTML = `<div>${content}</div>`;
+    messageDiv.innerHTML = `<div class="messageWrapper">
+    <span class="botname-message">${formattedTime}</span>
+    <div>
+      <p class="mb-0">${content}</p>
+    </div>
+  </div>`;
     messageDiv.prepend(image);
 
     responseDiv.appendChild(messageDiv);
