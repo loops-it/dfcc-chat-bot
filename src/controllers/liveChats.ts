@@ -98,9 +98,11 @@ export const refreshLiveChats = async (req: Request, res: Response, next: NextFu
           },
           order: [['id', 'DESC']],
         });
-        
-        const timestamp = new Date(`${lastMessage[0].createdAt}`);
-       const time = timestamp.toLocaleTimeString([], { timeStyle: 'short' });
+        let time = "";
+        if(lastMessage){
+          const timestamp = new Date(`${lastMessage[0].createdAt}`);
+          time = timestamp.toLocaleTimeString([], { timeStyle: 'short' });
+        }
       for (var c = 0; c < languages.length; c++){
           if(languages[c].language == chats[i].language){
               chat += `<div class="p-20 bb-1 d-flex align-items-center justify-content-between pull-up">
