@@ -810,11 +810,13 @@ document
                                         const buttonsCardHTML = item.source_data.slice(1).map(buttonItem => {
                                             if (buttonItem.button.link) {
                                                 return `
-                                                <div class="linkWrapper">
+                                                <div class="linkWrapper p-0">
                                                     <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
                                                 </div>`;
                                             } else {
-                                                return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                                                return `<div class="linkWrapper">
+                                                <button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>
+                                                </div>`;
                                             }
                                         }).join('');
 
