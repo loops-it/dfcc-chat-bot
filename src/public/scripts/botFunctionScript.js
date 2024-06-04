@@ -802,116 +802,221 @@ document
                         const data = await response.json();
                         console.log("node data === ", data)
 
+                        // const generateHTMLForData = (items) => {
+                        //     return items.map((item, index) => {
+                        //         switch (item.type) {
+                        //             case 'cardGroup':
+                        //                 console.log("type : ", item.source_data)
+                        //                 const buttonsCardHTML = item.source_data.slice(1).map(buttonItem => {
+                        //                     if (buttonItem.button.link) {
+                        //                         return `
+                        //                         <div class="linkWrapper p-0">
+                        //                             <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        //                         </div>`;
+                        //                     } else {
+                        //                         return `<div class="linkWrapper">
+                        //                         <button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>
+                        //                         </div>`;
+                        //                     }
+                        //                 }).join('');
+
+                        //                 // ${item.source_data.slice(1).map(buttonItem => `<button id="${buttonItem.button.node_id}" class="mb-2">${buttonItem.button.text}</button>`).join('')}
+                        //                 return `
+                        //                 <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                        //                     <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        //                         <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                        //                         <div class="cardGroup px-2" style="box-shadow: none !important">
+                        //                             <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
+                        //                             <p class="px-2">${item.source_data[0].card.description}</p>
+                        //                             <div class="buttonGroup p-0" style="box-shadow: none !important">
+                        //                             ${buttonsCardHTML}
+                        //                             </div>
+                        //                         </div>
+                        //                     </div>
+                        //                 </div>`;
+                        //             case 'buttonGroup':
+                        //                 const buttonsGroupHTML = item.source_data.slice(0).map(buttonItem => {
+                        //                     if (buttonItem.button.link) {
+                        //                         return `
+                        //                         <div class="linkWrapper">
+                        //                             <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        //                         </div>`;
+                        //                     } else {
+                        //                         return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                        //                     }
+                        //                 }).join('');
+
+                        //                 return `
+                        //                     <div class="buttonGroup p-0" style="box-shadow: none !important">
+                        //                         ${buttonsGroupHTML}
+                        //                     </div>`;
+                        //             case 'textOnly':
+                        //                 console.log("text only : ", item)
+                        //                 return `
+                        //                 <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                        //                     <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        //                         <p class="px-2 mb-0">${item.source_data.text}</p>
+                        //                     </div>
+                        //                 </div>`;
+
+                        //             case 'textinput':
+                        //                 console.log("text input : ", item.source_data)
+                        //                 return `
+                        //                 <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                        //                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        //                     <p class="px-2 ">${item.source_data.title}</p>
+                        //                     <p class="px-2 mb-0">${item.source_data.description}</p>
+                        //                 </div>
+                        //             </div>`;
+                        //             case 'cardStyleOne':
+                        //                 return `
+                        //                             <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                        //                                 <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        //                                     <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                        //                                     <div class="cardGroup px-2" style="box-shadow: none !important">
+                        //                                         <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
+                        //                                         <p class="px-2">${item.source_data[0].card.description}</p>
+                        //                                     </div>
+                        //                                 </div>
+                        //                             </div>`;
+                        //             default:
+                        //                 return '';
+                        //         }
+                        //     }).join("");
+                        // }
+
+                        // const carouselDataHTML = generateHTMLForData(data.sourceData);
+
+                        // if (data.sourceData.length > 1) {
+                        //     console.log("length : ", data.sourceData.length)
+                        //     const uniqueCarouselId = `carousel-${Date.now()}`;
+                        //     appendMessageToResponse("product", `
+                        //         <div id="${uniqueCarouselId}" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
+                        //             <div class="carousel-inner p-0">
+                        //             ${carouselDataHTML}
+                        //             </div>
+                        //             <button class="carousel-control-prev" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="prev">
+                        //                 <i class="bi bi-caret-left-fill text-danger"></i>
+                        //                 <span class="visually-hidden">Previous</span>
+                        //             </button>
+                        //             <button class="carousel-control-next" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="next">
+                        //                 <i class="bi bi-caret-right-fill text-danger"></i>
+                        //                 <span class="visually-hidden">Next</span>
+                        //             </button>
+                        //         </div>
+                        //     `);
+                        // } else if (data.sourceData.length === 1) {
+                        //     appendMessageToResponse("product", `
+                        //         <div>
+                        //             ${carouselDataHTML}
+                        //         </div>
+                        //     `);
+                        // }
+
                         const generateHTMLForData = (items) => {
-                            return items.map((item, index) => {
-                                switch (item.type) {
-                                    case 'cardGroup':
-                                        console.log("type : ", item.source_data)
-                                        const buttonsCardHTML = item.source_data.slice(1).map(buttonItem => {
-                                            if (buttonItem.button.link) {
-                                                return `
-                                                <div class="linkWrapper p-0">
-                                                    <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                                </div>`;
-                                            } else {
-                                                return `<div class="linkWrapper">
-                                                <button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>
-                                                </div>`;
-                                            }
-                                        }).join('');
+    return items.map((item, index) => {
+        switch (item.type) {
+            case 'cardGroup':
+                const buttonsCardHTML = item.source_data.slice(1).map(buttonItem => {
+                    if (buttonItem.button.link) {
+                        return `
+                        <div class="linkWrapper p-0">
+                            <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        </div>`;
+                    } else {
+                        return `<div class="linkWrapper">
+                        <button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>
+                        </div>`;
+                    }
+                }).join('');
 
-                                        // ${item.source_data.slice(1).map(buttonItem => `<button id="${buttonItem.button.node_id}" class="mb-2">${buttonItem.button.text}</button>`).join('')}
-                                        return `
-                                        <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-                                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                <img src="../images/bg-1.jpg" alt="" class="cardImage">
-                                                <div class="cardGroup px-2" style="box-shadow: none !important">
-                                                    <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
-                                                    <p class="px-2">${item.source_data[0].card.description}</p>
-                                                    <div class="buttonGroup p-0" style="box-shadow: none !important">
-                                                    ${buttonsCardHTML}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>`;
-                                    case 'buttonGroup':
-                                        const buttonsGroupHTML = item.source_data.slice(0).map(buttonItem => {
-                                            if (buttonItem.button.link) {
-                                                return `
-                                                <div class="linkWrapper">
-                                                    <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                                                </div>`;
-                                            } else {
-                                                return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
-                                            }
-                                        }).join('');
+                return `
+                <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                    <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                        <div class="cardGroup px-2" style="box-shadow: none !important">
+                            <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
+                            <p class="px-2">${item.source_data[0].card.description}</p>
+                            <div class="buttonGroup p-0" style="box-shadow: none !important">
+                            ${buttonsCardHTML}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            case 'buttonGroup':
+                const buttonsGroupHTML = item.source_data.slice(0).map(buttonItem => {
+                    if (buttonItem.button.link) {
+                        return `
+                        <div class="linkWrapper">
+                            <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                        </div>`;
+                    } else {
+                        return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                    }
+                }).join('');
 
-                                        return `
-                                            <div class="buttonGroup p-0" style="box-shadow: none !important">
-                                                ${buttonsGroupHTML}
-                                            </div>`;
-                                    case 'textOnly':
-                                        console.log("text only : ", item)
-                                        return `
-                                        <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-                                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                <p class="px-2 mb-0">${item.source_data.text}</p>
-                                            </div>
-                                        </div>`;
+                return `
+                    <div class="buttonGroup p-0" style="box-shadow: none !important">
+                        ${buttonsGroupHTML}
+                    </div>`;
+            case 'textOnly':
+                return `
+                <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                    <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <p class="px-2 mb-0">${item.source_data.text}</p>
+                    </div>
+                </div>`;
+            case 'textinput':
+                return `
+                <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                    <p class="px-2 ">${item.source_data.title}</p>
+                    <p class="px-2 mb-0">${item.source_data.description}</p>
+                </div>
+            </div>`;
+            case 'cardStyleOne':
+                return `
+                <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                    <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                        <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                        <div class="cardGroup px-2" style="box-shadow: none !important">
+                            <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
+                            <p class="px-2">${item.source_data[0].card.description}</p>
+                        </div>
+                    </div>
+                </div>`;
+            default:
+                return '';
+        }
+    }).join("");
+}
 
-                                    case 'textinput':
-                                        console.log("text input : ", item.source_data)
-                                        return `
-                                        <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-                                        <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                            <p class="px-2 ">${item.source_data.title}</p>
-                                            <p class="px-2 mb-0">${item.source_data.description}</p>
-                                        </div>
-                                    </div>`;
-                                    case 'cardStyleOne':
-                                        return `
-                                                    <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-                                                        <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                                            <img src="../images/bg-1.jpg" alt="" class="cardImage">
-                                                            <div class="cardGroup px-2" style="box-shadow: none !important">
-                                                                <h4 class="px-2 mt-2">${item.source_data[0].card.title}</h4>
-                                                                <p class="px-2">${item.source_data[0].card.description}</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>`;
-                                    default:
-                                        return '';
-                                }
-                            }).join("");
-                        }
+const carouselDataHTML = generateHTMLForData(data.sourceData);
 
-                        const carouselDataHTML = generateHTMLForData(data.sourceData);
-
-                        if (data.sourceData.length > 1) {
-                            console.log("length : ", data.sourceData.length)
-                            const uniqueCarouselId = `carousel-${Date.now()}`;
-                            appendMessageToResponse("product", `
-                                <div id="${uniqueCarouselId}" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
-                                    <div class="carousel-inner p-0">
-                                    ${carouselDataHTML}
-                                    </div>
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="prev">
-                                        <i class="bi bi-caret-left-fill text-danger"></i>
-                                        <span class="visually-hidden">Previous</span>
-                                    </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="next">
-                                        <i class="bi bi-caret-right-fill text-danger"></i>
-                                        <span class="visually-hidden">Next</span>
-                                    </button>
-                                </div>
-                            `);
-                        } else if (data.sourceData.length === 1) {
-                            appendMessageToResponse("product", `
-                                <div>
-                                    ${carouselDataHTML}
-                                </div>
-                            `);
-                        }
+if (data.sourceData.length > 1) {
+    const uniqueCarouselId = `carousel-${Date.now()}`;
+    appendMessageToResponse("product", `
+        <div id="${uniqueCarouselId}" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
+            <div class="carousel-inner p-0" style="display: block !important;">
+            ${carouselDataHTML}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="prev">
+                <i class="bi bi-caret-left-fill text-danger"></i>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#${uniqueCarouselId}" data-bs-slide="next">
+                <i class="bi bi-caret-right-fill text-danger"></i>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    `);
+} else if (data.sourceData.length === 1) {
+    appendMessageToResponse("product", `
+        <div>
+            ${carouselDataHTML}
+        </div>
+    `);
+}
                     }
 
 
