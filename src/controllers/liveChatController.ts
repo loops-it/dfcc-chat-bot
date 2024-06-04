@@ -282,3 +282,32 @@ export const offlineFormSubmissions = async (req: Request, res: Response, next: 
         res.status(500).json({ error: "An error occurred." });
     }
 };
+
+export const directConnectAgent = async (req: Request, res: Response, next: NextFunction) => {
+    const {language} = req.body
+    try {
+        let chatId = req.body.chatId || "";
+        const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = ('0' + (currentDate.getMonth() + 1)).slice(-2);
+            const day = ('0' + currentDate.getDate()).slice(-2);
+            const hours = ('0' + currentDate.getHours()).slice(-2);
+            const minutes = ('0' + currentDate.getMinutes()).slice(-2);
+            const seconds = ('0' + currentDate.getSeconds()).slice(-2);
+
+            const prefix = 'chat';
+            chatId = `${prefix}_${year}${month}${day}_${hours}${minutes}${seconds}`;
+        
+        await ChatHeader.create({
+            message_id: chatId,
+            language: language,
+            status: "live",
+            agent: "unassigned",
+        });
+        res.json({ status: "success",chatId: chatId })
+    }
+    catch (error) {
+        console.error("Error processing question:", error);
+        res.status(500).json({ error: "An error occurred." });
+    }
+};
