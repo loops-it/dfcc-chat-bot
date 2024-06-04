@@ -7,12 +7,12 @@ function setFormattedOpenedTime() {
     Opendhours = Opendhours % 12;
     Opendhours = Opendhours ? Opendhours : 12; // the hour '0' should be '12'
     const formattedOpenedTime = `${Opendhours.toString().padStart(2, '0')}:${Openedminutes} ${Openedampm}`;
-  
+
     document.getElementById('OpenedTime2').textContent = formattedOpenedTime;
-  }
-  
-  // Call the function to set the time
-  setFormattedOpenedTime();
+}
+
+// Call the function to set the time
+setFormattedOpenedTime();
 
 
 
@@ -118,7 +118,7 @@ function handleEndChat() {
 
     // Show star rating form message
     appendMessageToResponse(
-        "bot",
+        "rate",
         "Please rate your chat experience:",
         null,
         true
@@ -128,8 +128,11 @@ function handleEndChat() {
 // Function to append message to response div
 function appendMessageToResponse(role, content, data, isRatingForm = false) {
     const responseDiv = document.getElementById("response");
-    const messageDiv = createMessageDiv(role, content);
-    const image = createMessageImage(role);
+    // const messageDiv = createMessageDiv(role, content);
+    // const image = createMessageImage(role);
+
+    const messageDiv = createMessageDiv(isRatingForm ? "rate" : role, content);
+    const image = createMessageImage(isRatingForm ? "rate" : role);
 
     if (isList(content)) {
         appendListContent(messageDiv, content);
@@ -169,6 +172,10 @@ function createMessageDiv(role, content) {
         messageDiv.classList.add("bot-message");
     } else if (role === "product") {
         messageDiv.classList.add("product-message");
+    } else if (role === 'liveagent') {
+        messageDiv.classList.add("bot-message");
+    } else if (role === 'rate') {
+        messageDiv.classList.add("rate-message");
     }
 
     // Optionally, add the content to the messageDiv
@@ -193,13 +200,13 @@ function isList(content) {
 function appendListContent(messageDiv, content) {
 
     const currentTime = new Date();
-      let hours = currentTime.getHours();
-      const minutes = currentTime.getMinutes().toString().padStart(2, '0');
-      const seconds = currentTime.getSeconds().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+    let hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+    const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
 
     const listItems = content.split("\n").map(item => `<li style="margin-bottom: 10px !important;">${item}</li>`).join("");
     messageDiv.innerHTML = `<div class="messageWrapper">
@@ -211,9 +218,23 @@ function appendListContent(messageDiv, content) {
 }
 
 function appendLiveAgentContent(messageDiv, content, data) {
-    messageDiv.innerHTML = `
-      <button id="LiveAgentButton" class="liveagentBtn">Chat with live agent</button>
-      <div>${content}</div>`;
+    const currentTime = new Date();
+    let hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+    const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
+    messageDiv.innerHTML = `<div class="messageWrapper">
+    <span class="botname-message">${formattedTime}</span>
+    <div class="d-flex flex-column">
+        <button id="LiveAgentButton" class="liveagentBtn">Chat with live agent</button>
+      <div>${content}</div>
+    </div>
+  </div>
+      `;
     const liveAgentButton = messageDiv.querySelector("#LiveAgentButton");
     liveAgentButton.addEventListener("click", handleLiveAgentButtonClick(data));
 }
@@ -390,6 +411,16 @@ function handleProductButtonClick(data) {
             //     }
             // });
 
+
+            const currentTime = new Date();
+            let hours = currentTime.getHours();
+            const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+            const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
             const textOnlyItems = [];
             const textInputItems = [];
             const cardStyleOneItems = [];
@@ -398,15 +429,19 @@ function handleProductButtonClick(data) {
                 switch (item.type) {
                     case "textOnly":
                         textOnlyItems.push(item.node_data);
+                        console.log("textOnly : ", item.node_data)
                         break;
                     case "textinput":
                         textInputItems.push(item.node_data);
+                        console.log("textinput : ", item.node_data)
                         break;
                     case "cardStyleOne":
                         cardStyleOneItems.push(item.node_data);
+                        console.log("cardStyleOne : ", item.node_data)
                         break;
                     case "cardGroup":
                         cardGroupItems.push(item.node_data);
+                        console.log("cardGroup : ", item.node_data)
                         break;
                     default:
                         console.log("no data found");
@@ -414,7 +449,10 @@ function handleProductButtonClick(data) {
             });
 
             // Generate HTML for each type of item
-            const textOnlyHTML = textOnlyItems.map(item => `<p>text: ${item.text}<br>id: ${item.node_id}</p>`).join("");
+            const textOnlyHTML = textOnlyItems.map(item => `
+            <p>text: ${item.text}<br>id: ${item.node_id}</p>
+            `).join("");
+
             const textInputHTML = textInputItems.map(item => `<p>title: ${item.title || 'N/A'}<br>description: ${item.description || 'N/A'}<br>id: ${item.node_id}</p>`).join("");
             const cardStyleOneHTML = cardStyleOneItems.map(item => `
             <p>title: ${item.title || 'N/A'}<br>
@@ -452,13 +490,13 @@ function handleProductButtonClick(data) {
 
 function appendPlainTextContent(messageDiv, content) {
     const currentTime = new Date();
-      let hours = currentTime.getHours();
-      const minutes = currentTime.getMinutes().toString().padStart(2, '0');
-      const seconds = currentTime.getSeconds().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+    let hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+    const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
 
     messageDiv.innerHTML = `<div class="messageWrapper">
         <span class="botname-message">${formattedTime}</span>
@@ -470,7 +508,7 @@ function appendPlainTextContent(messageDiv, content) {
 
 function appendRatingForm(messageDiv) {
     const ratingFormHTML = `
-      <div class="star-rating-form d-flex flex-column" style="margin-bottom: 10px;">
+      <div class="star-rating-form d-flex flex-column px-2 py-3 mt-3" style="margin-bottom: 10px;">
         <label for="rating">Rate your experience:</label>
         <div class="rating-icons" style="border: none !important;">
           <i class="bi bi-star rating-icon"></i>
@@ -480,11 +518,22 @@ function appendRatingForm(messageDiv) {
           <i class="bi bi-star rating-icon"></i>
         </div>
         <input type="hidden" id="rating" name="rating" value="0">
-        <textarea type="text" id="feedbackMessage" name="feedbackMessage" class="feedbackMessage"></textarea>
-        <button id="submitRatingButton" class="btnNotoClose">Submit</button>
+        <textarea type="text" id="feedbackMessage" name="feedbackMessage" class="feedbackMessage mb-2"></textarea>
+        <button id="submitRatingButton" class="btnNotoClose" onclick="handleRatingSubmission()">Submit</button>
       </div>
     `;
+
+
+
+    messageDiv.innerHTML = `<div class="messageWrapper">
+    <span class="botname-message">${formattedTime}</span>
+    <div>
+      <p class="mb-0">${content}</p>
+    </div>
+  </div>`;
+
     messageDiv.innerHTML += ratingFormHTML;
+
     addRatingIconEventListeners(messageDiv);
 }
 
@@ -519,8 +568,6 @@ function showAlert(message) {
     alertDiv.scrollIntoView({ behavior: "smooth" });
 }
 
-
-
 function appendLanguageMessage(content) {
     const responseDiv = document.getElementById("response");
     const messageDiv = document.createElement("div");
@@ -532,13 +579,13 @@ function appendLanguageMessage(content) {
     image.src = "/agent.png";
 
     const currentTime = new Date();
-      let hours = currentTime.getHours();
-      const minutes = currentTime.getMinutes().toString().padStart(2, '0');
-      const seconds = currentTime.getSeconds().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // the hour '0' should be '12'
-      const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+    let hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+    const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
 
     // Use innerHTML to allow HTML formatting in the message
     messageDiv.innerHTML = `<div class="messageWrapper">
@@ -596,6 +643,18 @@ document
             questionInput.disabled = true;
             // Show typing animation
             showTypingAnimation();
+
+
+            const currentTime = new Date();
+            let hours = currentTime.getHours();
+            const minutes = currentTime.getMinutes().toString().padStart(2, '0');
+            const seconds = currentTime.getSeconds().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+
+
             try {
                 const response = await fetch("/api/chat-response-flow", {
                     method: "POST",
@@ -623,16 +682,15 @@ document
                     const generateHTMLForItem = (item, index) => {
                         switch (item.type) {
                             case 'buttonGroup':
-                                const buttonsHTML = item.node_data.map(buttonItem =>
-                                    {
-                                        if (buttonItem.button.link) {
-                                            return `<div class="linkWrapper">
+                                const buttonsHTML = item.node_data.map(buttonItem => {
+                                    if (buttonItem.button.link) {
+                                        return `<div class="linkWrapper">
                                             <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
                                         </div>`;
-                                        } else {
-                                            return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
-                                        }
-                                    }).join('');
+                                    } else {
+                                        return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                                    }
+                                }).join('');
 
                                 return `
                                     <div class="buttonGroup p-0" style="box-shadow: none !important">
@@ -673,30 +731,29 @@ document
                             //         </div>`;
 
                             case 'cardGroup':
-    const buttonsMainCardHTML = item.node_data.map(buttonItem => {
-        if (buttonItem.button && buttonItem.button.link) {
-            return `<div class="linkWrapper">
-                        <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
-                    </div>`;
-        } else if (buttonItem.button) {
-            return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
-        }
-        return ''; // Return empty string if buttonItem is undefined or does not have a button property
-    }).join('');
-    return `
-        <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                <img src="../images/bg-1.jpg" alt="" class="cardImage">
-                <div class="cardGroup px-2" style="box-shadow: none !important">
-                    <h4 class="px-2 mt-2">${item.node_data[0].card.title}</h4>
-                    <p class="px-2">${item.node_data[0].card.description}</p>
-                    <div class="buttonGroup p-0" style="box-shadow: none !important">
-                        ${buttonsMainCardHTML}
-                    </div>
-                </div>
-            </div>
-        </div>`;
-
+                                const buttonsMainCardHTML = item.node_data.map(buttonItem => {
+                                    if (buttonItem.button && buttonItem.button.link) {
+                                        return `<div class="linkWrapper">
+                                                    <a href="${buttonItem.button.link}" target="__blank" class="linkItem mb-2">${buttonItem.button.text}</a>
+                                                </div>`;
+                                    } else if (buttonItem.button) {
+                                        return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
+                                    }
+                                    return '';
+                                }).join('');
+                                return `
+                                        <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
+                                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                                                <img src="../images/bg-1.jpg" alt="" class="cardImage">
+                                                <div class="cardGroup px-2" style="box-shadow: none !important">
+                                                    <h4 class="px-2 mt-2">${item.node_data[0].card.title}</h4>
+                                                    <p class="px-2">${item.node_data[0].card.description}</p>
+                                                    <div class="buttonGroup p-0" style="box-shadow: none !important">
+                                                        ${buttonsMainCardHTML}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`;
                             case 'textOnly':
                                 if (item.node_data.text.includes('●')) {
                                     const bulletPoints = item.node_data.text.split('●').filter(point => point.trim() !== '');
@@ -749,7 +806,7 @@ document
                             return items.map((item, index) => {
                                 switch (item.type) {
                                     case 'cardGroup':
-                                        // console.log("type : ", item.source_data)
+                                        console.log("type : ", item.source_data)
                                         const buttonsCardHTML = item.source_data.slice(1).map(buttonItem => {
                                             if (buttonItem.button.link) {
                                                 return `
@@ -786,25 +843,27 @@ document
                                                 return `<button id="${buttonItem.button.node_id}" class="buttonItem mb-2">${buttonItem.button.text}</button>`;
                                             }
                                         }).join('');
-                                    
+
                                         return `
                                             <div class="buttonGroup p-0" style="box-shadow: none !important">
                                                 ${buttonsGroupHTML}
                                             </div>`;
                                     case 'textOnly':
+                                        console.log("text only : ", item)
                                         return `
                                         <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
-                                        <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                            <p class="px-2">${item.source_data.title}</p>
-                                            <p class="px-2">${item.source_data.description}</p>
-                                        </div>
-                                    </div>`;
+                                            <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
+                                                <p class="px-2 mb-0">${item.source_data.text}</p>
+                                            </div>
+                                        </div>`;
+
                                     case 'textinput':
+                                        console.log("text input : ", item.source_data)
                                         return `
                                         <div class="carousel-item p-0 ${index === 0 ? 'active' : ''}" style="box-shadow: none !important">
                                         <div class="slideInnerConteiner p-0" style="box-shadow: none !important">
-                                            <p class="px-2">${item.source_data.title}</p>
-                                            <p class="px-2">${item.source_data.description}</p>
+                                            <p class="px-2 ">${item.source_data.title}</p>
+                                            <p class="px-2 mb-0">${item.source_data.description}</p>
                                         </div>
                                     </div>`;
                                     case 'cardStyleOne':
@@ -827,9 +886,10 @@ document
                         const carouselDataHTML = generateHTMLForData(data.sourceData);
 
                         if (data.sourceData.length > 1) {
+                            console.log("length : ", data.sourceData.length)
                             const uniqueCarouselId = `carousel-${Date.now()}`;
                             appendMessageToResponse("product", `
-                                <div style="background-color: #fff; padding: 0px !important; box-shadow: none !important" id="${uniqueCarouselId}" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
+                                <div id="${uniqueCarouselId}" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
                                     <div class="carousel-inner p-0">
                                     ${carouselDataHTML}
                                     </div>
@@ -845,7 +905,7 @@ document
                             `);
                         } else if (data.sourceData.length === 1) {
                             appendMessageToResponse("product", `
-                                <div style="background-color: #fff; padding: 10px !important; box-shadow: none !important">
+                                <div>
                                     ${carouselDataHTML}
                                 </div>
                             `);
@@ -866,7 +926,7 @@ document
                     if (items.length > 1) {
                         // Append the generated HTML to the response as a carousel if there is more than one item
                         appendMessageToResponse("product", `
-                            <div style="background-color: #fff; padding: 0px !important; box-shadow: none !important" id="carouselExampleControls" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
+                            <div id="carouselExampleControls" class="carousel slide bsSlider p-0" data-bs-ride="carousel">
                                 <div class="carousel-inner p-0">
                                 ${carouselItemsHTML}
                                 </div>
@@ -883,7 +943,7 @@ document
                     } else if (items.length === 1) {
                         // Append the generated HTML to the response without the carousel if there is only one item
                         appendMessageToResponse("product", `
-                            <div style="background-color: #fff; padding: 10px !important; box-shadow: none !important">
+                            <div>
                                 ${carouselItemsHTML}
                             </div>
                         `);
@@ -925,7 +985,7 @@ document
 
             // Append the response to the response div
 
-            checkForAgent();
+            // checkForAgent();
             // Hide typing animation
             // hideTypingAnimation();
 
