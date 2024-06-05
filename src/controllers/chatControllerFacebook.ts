@@ -98,7 +98,7 @@ export const chatControllerFacebook = async (req: RequestWithChatId, res: Respon
     }
     // console.log("req : ", req.body.chatId) 
     const index = pc.index("dfccchatbot");
-    const namespace = index.namespace('pinecone-gpt-test');
+    const namespace = index.namespace('dfcc-vector-db');
  
     let language = "English";
 

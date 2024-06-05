@@ -39,7 +39,7 @@ export const uploadDocuments = async (req: Request, res: Response, next: Functio
           model: "text-embedding-ada-002",
           input: text,
       });
-      await index.namespace("pinecone-gpt-test").upsert([
+      await index.namespace("dfcc-vector-db").upsert([
         {
           "id": uniqueId, 
           "values": embedding.data[0].embedding,
@@ -70,7 +70,7 @@ export const uploadDocuments = async (req: Request, res: Response, next: Functio
     });
     //console.log(embedding.data[0].embedding);
 
-    await index.namespace("pinecone-gpt-test").upsert([
+    await index.namespace("dfcc-vector-db").upsert([
         {
           "id": uniqueId, 
           "values": embedding.data[0].embedding,

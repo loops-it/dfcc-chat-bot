@@ -12,7 +12,7 @@ const pc = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 export const editDocument = async (req: Request, res: Response) => {
     const id = req.query.id;
     const index = pc.index("dfccchatbot")
-    const fetchResult = await index.namespace('pinecone-gpt-test').fetch([`${id}`]);
+    const fetchResult = await index.namespace('dfcc-vector-db').fetch([`${id}`]);
     //console.log(fetchResult.records[`${id}`].metadata)
     const metadata = fetchResult.records[`${id}`].metadata;
     res.render('edit-document', { metadata: metadata, id: req.query.id });

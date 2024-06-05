@@ -30,7 +30,7 @@ export const viewDocuments = async (req: Request, res: Response) => {
 
               const ids = fileIds.map(file => file.file_id);
             console.log(ids);
-            const fetchResult = await index.namespace('pinecone-gpt-test').fetch(ids);
+            const fetchResult = await index.namespace('dfcc-vector-db').fetch(ids);
                 
 
             // console.log("IDs:", fetchResult.records);
